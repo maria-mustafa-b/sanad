@@ -37,14 +37,13 @@ export function SituationDraft() {
 
   const recognitionRef = useRef<any>(null);
 
-  const [language, setLanguage] = useState("mr-IN"); // Defaulting to Marathi based on request
+
 
   const speakText = (textContent: string, targetLanguage?: string) => {
     if (!("speechSynthesis" in window)) return;
     const utterance = new SpeechSynthesisUtterance(textContent);
 
-    // Use AI's detected language, otherwise fallback to the user's selected dropdown language
-    const langToUse = targetLanguage || language;
+    const langToUse = targetLanguage || "mr-IN";
 
     // Get all available browser voices
     const voices = window.speechSynthesis.getVoices();
@@ -63,6 +62,40 @@ export function SituationDraft() {
     utterance.lang = langToUse;
 
     window.speechSynthesis.speak(utterance);
+  };
+
+  const [isRecordingReply, setIsRecordingReply] = useState(false);
+  const replyRecognitionRef = useRef<any>(null);
+
+  const toggleRecordingReply = () => {
+    if (isRecordingReply) {
+      replyRecognitionRef.current?.stop();
+      setIsRecordingReply(false);
+      setMessage("Reply recording stopped.");
+      return;
+    }
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech recognition is not supported in this browser. Please use Chrome.");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript + " ";
+      }
+      if (finalTranscript) setReplyText((prev) => prev + finalTranscript);
+    };
+    recognition.onerror = () => { setIsRecordingReply(false); setMessage("Error in reply recognition."); };
+    recognition.onend = () => setIsRecordingReply(false);
+    recognition.start();
+    replyRecognitionRef.current = recognition;
+    setIsRecordingReply(true);
+    setMessage("Listening for reply... Speak now.");
   };
 
   // Initialize Speech Recognition (Web Speech API)
@@ -86,7 +119,6 @@ export function SituationDraft() {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = language; // Use the selected language
 
     recognition.onresult = (event: any) => {
       let finalTranscript = "";
@@ -237,7 +269,6 @@ export function SituationDraft() {
               <p className="italic mt-1">"{aiData.clarificationMessage}"</p>
               <Button
                 variant="ghost"
-                size="sm"
                 className="mt-2"
                 onClick={() => speakText(aiData.clarificationMessage, aiData.detectedLanguage)}
               >
@@ -284,12 +315,19 @@ export function SituationDraft() {
                 </label>
                 <div className="flex gap-2 mb-2">
                   <input type="file" id="docUploadFollowup" className="hidden" onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      setReplyText(prev => prev + ` [Attached Document: ${e.target.files[0].name}] `);
+                    const files = e.target.files;
+                    if (files && files[0]) {
+                      setReplyText(prev => prev + ` [Attached Document: ${files[0].name}] `);
                     }
                   }} />
-                  <Button variant="outline" size="sm" onClick={() => document.getElementById('docUploadFollowup')?.click()}>
+                  <Button variant="outline" onClick={() => document.getElementById('docUploadFollowup')?.click()}>
                     📎 Attach Document
+                  </Button>
+                  <Button
+                    variant={isRecordingReply ? "destructive" : "outline"}
+                    onClick={toggleRecordingReply}
+                  >
+                    {isRecordingReply ? "🛑 Stop" : "🎤 Speak Reply"}
                   </Button>
                 </div>
                 <textarea
