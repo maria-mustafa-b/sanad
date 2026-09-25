@@ -1,0 +1,1386 @@
+You are the lead full-stack engineer, AI engineer, Web3 engineer, UX engineer, accessibility engineer, database architect, and DevOps engineer for this project.
+
+I am participating in a 36-hour hackathon and I will actively assist you while building.
+
+PROJECT NAME:
+SANAD
+
+TAGLINE:
+"Understand your situation. Prove what matters. Find the support you need."
+
+CORE CONCEPT:
+SANAD is a multilingual AI-powered government and support-services navigator combined with a portable verifiable credential system.
+
+The user should be able to explain their situation naturally, even using mixed languages, phonetic spelling, Arabizi, Hinglish, Hindi-English, Urdu-English, or Arabic-English.
+
+SANAD understands the situation, converts it into structured facts, asks for clarification where necessary, lets the user confirm the interpretation, creates a verifiable record/credential of the confirmed claim, identifies potentially relevant government/support services from a curated verified database, guides the user through the service journey, allows the credential to be attached as evidence, tracks the application, announces meaningful interface/status changes accessibly, and allows an external party to independently verify the credential.
+
+IMPORTANT:
+This must NOT look like a generic chatbot.
+This must NOT look like a crypto dashboard.
+This must NOT be two unrelated products glued together.
+
+The entire product should feel like ONE coherent platform.
+
+==================================================
+1. HACKATHON TRACK ALIGNMENT
+==================================================
+
+SANAD must strongly demonstrate all three challenge areas:
+
+TRACK 1 — AI/ML:
+"CODE-SWITCHING AND SPELLING BY EAR"
+
+Demonstrate:
+- mixed-language input
+- Arabic-English
+- Hindi-English
+- Urdu-English
+- Arabizi
+- Hinglish
+- phonetic spelling
+- imperfect grammar
+- spelling by sound
+- natural conversational input
+- intent extraction
+- entity/fact extraction
+- clarification
+- confidence scoring
+
+TRACK 2 — BLOCKCHAIN/WEB3:
+"VERIFICATION ASSUMES SETTLED RESIDENCY"
+
+Demonstrate:
+- portable credentials
+- identity-independent claim verification
+- credentials not tied to a permanent address
+- verification across employers/jurisdictions
+- credential hash
+- issue
+- verify
+- revoke
+- public verification
+- QR verification
+
+TRACK 3 — WEB DEVELOPMENT:
+"INTERFACES THAT CHANGE SILENTLY"
+
+Demonstrate:
+- dynamic status changes
+- visible change indicators
+- screen-reader announcements
+- aria-live
+- accessible application timeline
+- keyboard navigation
+- semantic HTML
+- focus management
+- meaningful notifications
+
+==================================================
+2. PRIMARY DEMO STORY
+==================================================
+
+The main demo scenario should be:
+
+A worker says:
+
+"Meri job chali gayi hai aur August ki salary bhi nahi mili."
+
+The system should:
+
+1. Accept mixed-language input.
+2. Detect that the user is describing employment loss and unpaid wages.
+3. Extract structured facts.
+4. Display what SANAD understood.
+5. Ask for missing information if necessary.
+6. Allow the user to confirm.
+7. Create a structured claim.
+8. Generate a cryptographic hash.
+9. Issue a verifiable credential.
+10. Record the credential on Polygon Amoy testnet.
+11. Match the situation against the curated service database.
+12. Show potentially relevant services.
+13. Explain WHY those services are being recommended.
+14. Show required documents.
+15. Allow the user to start an application.
+16. Attach the SANAD credential as evidence.
+17. Show an application timeline.
+18. Simulate a status change.
+19. Visually highlight the change.
+20. Announce the change to a screen reader.
+21. Generate a QR code.
+22. Open the public verification page.
+23. Allow a third party to verify the credential.
+24. Show that the credential is valid and has not been revoked.
+
+This must be the golden path through the entire application.
+
+==================================================
+3. IMPORTANT TRUST MODEL
+==================================================
+
+Do NOT incorrectly claim:
+
+"The blockchain proves that the user's claim is true."
+
+That is NOT what the system proves.
+
+Instead distinguish:
+
+USER_REPORTED
+AI_EXTRACTED
+USER_CONFIRMED
+ISSUER_VERIFIED
+CREDENTIAL_VALID
+CREDENTIAL_REVOKED
+
+The credential proves that a particular record/claim was issued and has not been altered or revoked.
+
+The underlying factual truth can only be established through evidence or an authorized issuer.
+
+Every relevant UI should communicate this distinction.
+
+Use language such as:
+
+"User-confirmed claim"
+
+"Credential issued"
+
+"Credential valid"
+
+"Potentially eligible"
+
+"Based on the information provided"
+
+Never make definitive legal eligibility claims unless the official source explicitly supports them.
+
+==================================================
+4. TECH STACK
+==================================================
+
+Use a modern production-style stack.
+
+FRONTEND:
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- responsive design
+- accessible components
+- Lucide icons
+
+BACKEND:
+Use Next.js API routes/server actions OR a clearly separated backend architecture if required.
+
+DATABASE:
+- Supabase
+- PostgreSQL
+
+AUTH:
+- Supabase Auth
+
+AI:
+Use a configurable AI provider.
+
+Preferred architecture:
+
+AI_PROVIDER=
+OPENAI / AZURE_OPENAI / GEMINI
+
+Do not hardcode the provider throughout the application.
+
+Create a service abstraction:
+
+lib/ai/
+
+so the provider can be changed through environment variables.
+
+AI features:
+- intent detection
+- structured extraction
+- multilingual understanding
+- clarification
+- confidence
+- service matching
+- document analysis
+- explanation generation
+
+RAG:
+Use a curated service knowledge base.
+
+VECTOR SEARCH:
+Supabase pgvector if practical.
+
+BLOCKCHAIN:
+- Solidity
+- Polygon Amoy testnet
+- ethers.js or viem
+- OpenZeppelin where useful
+
+VOICE:
+- browser speech recognition where supported
+- configurable speech-to-text provider if necessary
+
+QR:
+Use a standard QR library.
+
+DEPLOYMENT:
+- Vercel frontend/backend
+- Supabase
+- Polygon Amoy
+
+==================================================
+5. COMPLETE PROJECT ARCHITECTURE
+==================================================
+
+Build a clean architecture.
+
+Suggested structure:
+
+app/
+  page.tsx
+
+  onboarding/
+  dashboard/
+  understand/
+  claims/
+  credentials/
+  services/
+  applications/
+  notifications/
+  verify/
+  profile/
+  admin/
+
+  api/
+    auth/
+    ai/
+    claims/
+    credentials/
+    blockchain/
+    services/
+    documents/
+    applications/
+    notifications/
+    verification/
+    escalation/
+    analytics/
+    health/
+
+components/
+  ui/
+  layout/
+  ai/
+  claims/
+  credentials/
+  services/
+  applications/
+  accessibility/
+  verification/
+
+lib/
+  ai/
+  blockchain/
+  database/
+  services/
+  credentials/
+  validation/
+  accessibility/
+  analytics/
+
+contracts/
+  SANADCredential.sol
+
+supabase/
+  migrations/
+  seed/
+
+types/
+  ai.ts
+  claim.ts
+  credential.ts
+  service.ts
+  application.ts
+  notification.ts
+  user.ts
+
+public/
+  icons/
+  illustrations/
+
+tests/
+  unit/
+  integration/
+  e2e/
+
+docs/
+  architecture.md
+  api.md
+  setup.md
+  blockchain.md
+  demo.md
+
+==================================================
+6. DATABASE
+==================================================
+
+Design a proper relational schema.
+
+Tables should include at minimum:
+
+users
+profiles
+claims
+claim_facts
+credentials
+credential_events
+services
+service_requirements
+service_sources
+documents
+applications
+application_documents
+application_credentials
+application_events
+notifications
+escalations
+analytics_events
+
+Use UUIDs.
+
+Use created_at and updated_at.
+
+Use proper foreign keys.
+
+Use indexes where necessary.
+
+Implement Row Level Security.
+
+Never expose another user's private claims/documents.
+
+==================================================
+7. API ENDPOINTS
+==================================================
+
+Build ALL of these.
+
+AUTH:
+
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/auth/me
+POST /api/auth/refresh
+
+AI:
+
+POST /api/ai/analyze
+POST /api/ai/analyze-voice
+POST /api/ai/clarify
+POST /api/ai/confirm
+
+CLAIMS:
+
+POST   /api/claims
+GET    /api/claims
+GET    /api/claims/:id
+PATCH  /api/claims/:id
+POST   /api/claims/:id/confirm
+POST   /api/claims/:id/revoke
+
+CREDENTIALS:
+
+POST /api/credentials/issue
+GET  /api/credentials
+GET  /api/credentials/:id
+GET  /api/credentials/:id/status
+POST /api/credentials/:id/revoke
+GET  /api/credentials/:id/qr
+
+BLOCKCHAIN:
+
+POST /api/blockchain/issue
+GET  /api/blockchain/verify/:credentialId
+POST /api/blockchain/revoke
+GET  /api/blockchain/transaction/:txHash
+
+SERVICES:
+
+GET  /api/services
+GET  /api/services/:id
+POST /api/services/search
+POST /api/services/match
+GET  /api/services/categories
+
+JOURNEYS:
+
+GET   /api/services/:id/journey
+POST  /api/services/:id/start
+GET   /api/journeys/:id
+PATCH /api/journeys/:id
+POST  /api/journeys/:id/submit
+
+DOCUMENTS:
+
+POST   /api/documents
+GET    /api/documents
+GET    /api/documents/:id
+DELETE /api/documents/:id
+POST   /api/documents/:id/analyze
+
+APPLICATIONS:
+
+POST  /api/applications
+GET   /api/applications
+GET   /api/applications/:id
+PATCH /api/applications/:id
+POST  /api/applications/:id/submit
+GET   /api/applications/:id/timeline
+
+NOTIFICATIONS:
+
+GET   /api/notifications
+POST  /api/notifications
+PATCH /api/notifications/:id/read
+GET   /api/applications/:id/updates
+
+VERIFICATION:
+
+GET  /api/verify/:credentialId
+POST /api/verify
+GET  /api/verify/hash/:hash
+
+ESCALATION:
+
+POST /api/escalation
+GET  /api/escalation/:id
+GET  /api/escalation
+POST /api/escalation/:id/message
+
+ANALYTICS:
+
+POST /api/analytics/event
+GET  /api/analytics/overview
+
+HEALTH:
+
+GET /api/health
+GET /api/health/database
+GET /api/health/blockchain
+GET /api/health/ai
+
+==================================================
+8. AI STRUCTURED OUTPUT
+==================================================
+
+AI must return structured JSON.
+
+Example:
+
+{
+  "intent": "employment_support",
+  "confidence": 0.94,
+  "languageSignals": [
+    "Hindi",
+    "English"
+  ],
+  "facts": {
+    "employment_status": "lost_job",
+    "issue": "unpaid_wages",
+    "salary_period": "August"
+  },
+  "missing_information": [
+    "employment_end_date"
+  ],
+  "potential_categories": [
+    "unpaid_wages",
+    "employment_support"
+  ]
+}
+
+Use Zod or equivalent schema validation.
+
+Never blindly trust LLM JSON.
+
+Validate every AI response.
+
+==================================================
+9. CLAIM FLOW
+==================================================
+
+Claim states:
+
+DRAFT
+AI_ANALYZED
+WAITING_FOR_CONFIRMATION
+USER_CONFIRMED
+ISSUED
+REVOKED
+
+The user must confirm extracted facts before credential issuance.
+
+Show:
+
+"Here's what SANAD understood."
+
+Then display:
+
+Employment status:
+Lost job
+
+Issue:
+Unpaid wages
+
+Salary period:
+August
+
+Then:
+
+[Confirm information]
+
+[Edit information]
+
+==================================================
+10. BLOCKCHAIN
+==================================================
+
+Create a real Solidity smart contract.
+
+Contract responsibilities:
+
+issue credential hash
+verify credential
+revoke credential
+retrieve credential status
+
+Use OpenZeppelin where appropriate.
+
+Do not store PII on-chain.
+
+On-chain data should be minimal:
+
+credential hash
+credential ID or identifier
+issuer
+timestamp
+status
+
+Store detailed data in Supabase.
+
+Create blockchain service:
+
+lib/blockchain/
+
+Implement:
+
+issueCredential()
+verifyCredential()
+revokeCredential()
+
+Handle:
+
+wallet errors
+RPC errors
+transaction pending
+transaction failure
+confirmation
+
+Display transaction hash after successful issuance.
+
+Provide a blockchain explorer link.
+
+==================================================
+11. MOCK FALLBACK
+==================================================
+
+Because this is a 36-hour hackathon, implement a safe fallback.
+
+Environment variable:
+
+BLOCKCHAIN_MODE=real
+
+or
+
+BLOCKCHAIN_MODE=mock
+
+In mock mode, clearly display:
+
+"Demo/Testnet Simulation"
+
+Never pretend mock records are real blockchain records.
+
+==================================================
+12. SERVICE KNOWLEDGE BASE
+==================================================
+
+Create a curated prototype database containing approximately 20–30 government/support services.
+
+Each service should have:
+
+id
+title
+description
+category
+eligibility guidance
+required documents
+steps
+official source
+last_verified
+keywords
+supported situations
+
+Do NOT invent government programs.
+
+If a real official service is included, store its official source.
+
+The AI must retrieve from this dataset instead of hallucinating services.
+
+Every service result should contain:
+
+"Why you're seeing this"
+
+Example:
+
+"Your confirmed situation includes unpaid wages and recent job loss, which matches the employment-support criteria represented in this service."
+
+==================================================
+13. ELIGIBILITY
+==================================================
+
+Never say:
+
+"You are definitely eligible."
+
+Instead:
+
+"You may be eligible."
+
+"Potentially relevant."
+
+"Based on the information provided."
+
+Show:
+
+Potential match: 92%
+
+But clearly label this as:
+
+"AI relevance score"
+
+NOT:
+
+"Official eligibility score."
+
+==================================================
+14. DOCUMENT SYSTEM
+==================================================
+
+Allow users to:
+
+upload documents
+view documents
+delete documents
+analyze documents
+
+AI can extract:
+
+document type
+date
+employer name
+salary period
+relevant fields
+
+But don't make unsupported legal conclusions.
+
+Show extracted information to the user for confirmation.
+
+==================================================
+15. APPLICATION SYSTEM
+==================================================
+
+Users can:
+
+start application
+attach documents
+attach SANAD credential
+review
+submit
+track
+
+Application status:
+
+DRAFT
+SUBMITTED
+UNDER_REVIEW
+ADDITIONAL_DOCUMENTS_REQUIRED
+VERIFIED
+COMPLETED
+
+Create a timeline.
+
+Example:
+
+✓ Application created
+✓ Documents uploaded
+✓ SANAD credential attached
+✓ Application submitted
+● Under review
+○ Completed
+
+==================================================
+16. ACCESSIBILITY
+==================================================
+
+Accessibility is a CORE feature.
+
+Do not treat accessibility as an afterthought.
+
+Implement:
+
+semantic HTML
+ARIA
+aria-live
+aria-atomic
+keyboard navigation
+visible focus states
+screen-reader labels
+proper headings
+accessible forms
+accessible dialogs
+accessible status messages
+accessible tables
+accessible buttons
+
+When status changes:
+
+Visually:
+
+"Application status changed"
+
+Screen reader:
+
+"Application status changed. Additional documents are required."
+
+Create a reusable component:
+
+<AccessibleStatusAnnouncer />
+
+and a notification system.
+
+==================================================
+17. THIRD-PARTY VERIFICATION
+==================================================
+
+Create:
+
+/verify
+
+This page must NOT require authentication.
+
+Input:
+
+Credential ID
+
+or
+
+QR scan.
+
+Display:
+
+SANAD Credential
+
+VALID
+
+Credential ID
+Issuer
+Issued date
+Claim type
+Blockchain verification
+Revocation status
+
+Never expose private personal information.
+
+==================================================
+18. DASHBOARD
+==================================================
+
+Create a polished dashboard.
+
+Cards:
+
+My situation
+My credentials
+Potential support
+Applications
+Notifications
+
+Example:
+
+MY CREDENTIALS
+
+✓ Employment Situation
+Valid
+Issued 25 Sep 2026
+
+POTENTIAL SUPPORT
+
+3 potentially relevant services
+
+APPLICATIONS
+
+1 under review
+
+NOTIFICATIONS
+
+1 important update
+
+==================================================
+19. USER PROFILE
+==================================================
+
+Profile should contain only necessary information.
+
+Sections:
+
+Personal information
+Language preferences
+Accessibility preferences
+Credentials
+Security
+
+Allow preferred language:
+
+English
+Arabic
+Hindi
+Urdu
+
+Accessibility:
+
+Screen reader mode
+Reduced motion
+Larger text
+
+==================================================
+20. ADMIN DASHBOARD
+==================================================
+
+Build a real admin dashboard.
+
+Metrics:
+
+Total users
+Claims
+Credentials
+Applications
+Pending applications
+Escalations
+Verification requests
+
+Charts:
+
+claims by category
+service usage
+application status
+AI confidence distribution
+
+Admin can manage the curated service database.
+
+==================================================
+21. SECURITY
+==================================================
+
+Implement:
+
+authentication
+authorization
+RLS
+input validation
+Zod validation
+rate limiting where practical
+secure API keys
+environment variables
+no secret keys in frontend
+sanitized user input
+secure file handling
+
+Never expose:
+
+AI API keys
+Supabase service role key
+private blockchain keys
+
+Use environment variables.
+
+Create:
+
+.env.example
+
+with all required variables.
+
+==================================================
+22. ERROR HANDLING
+==================================================
+
+Every API should have structured errors.
+
+Example:
+
+{
+  "success": false,
+  "error": {
+    "code": "AI_ANALYSIS_FAILED",
+    "message": "We couldn't understand the request."
+  }
+}
+
+Frontend should display human-friendly messages.
+
+Never expose stack traces to users.
+
+==================================================
+23. LOADING STATES
+==================================================
+
+Every asynchronous operation must have:
+
+loading state
+success state
+error state
+retry state
+
+AI:
+
+"Understanding your situation..."
+
+Blockchain:
+
+"Waiting for blockchain confirmation..."
+
+Service matching:
+
+"Finding potentially relevant support..."
+
+Application:
+
+"Submitting application..."
+
+==================================================
+24. UI DESIGN
+==================================================
+
+Visual style:
+
+premium
+modern
+government-grade
+trustworthy
+minimal
+professional
+accessible
+
+Avoid:
+
+crypto aesthetics
+neon blockchain visuals
+excessive gradients
+generic AI robot graphics
+overly rounded cartoon UI
+
+Use subtle Arabic/UAE-inspired visual elements where appropriate.
+
+Primary design principle:
+
+TRUST + CLARITY + ACCESSIBILITY
+
+==================================================
+25. MOBILE
+==================================================
+
+The entire application must be responsive.
+
+Test:
+
+mobile
+tablet
+desktop
+
+The primary user flow must work perfectly on mobile.
+
+==================================================
+26. DEMO MODE
+==================================================
+
+Create a demo mode.
+
+A judge should be able to click:
+
+"Try Demo"
+
+and immediately enter the golden path.
+
+Preload demo scenario:
+
+"Meri job chali gayi hai aur August ki salary bhi nahi mili."
+
+Demo should demonstrate:
+
+AI
+claim
+credential
+blockchain
+service matching
+application
+status update
+accessibility
+verification
+
+==================================================
+27. TESTING
+==================================================
+
+Write tests.
+
+Unit tests:
+
+AI parser
+claim validation
+credential hashing
+service matching
+eligibility/relevance logic
+status transitions
+
+Integration tests:
+
+AI → claim
+claim → credential
+credential → blockchain
+claim → service
+service → application
+application → notification
+
+E2E:
+
+complete golden-path demo.
+
+==================================================
+28. DOCUMENTATION
+==================================================
+
+Generate:
+
+README.md
+docs/architecture.md
+docs/api.md
+docs/database.md
+docs/blockchain.md
+docs/setup.md
+docs/demo.md
+
+README must explain:
+
+what SANAD is
+problem
+solution
+architecture
+tech stack
+setup
+environment variables
+database setup
+blockchain setup
+running locally
+testing
+deployment
+demo flow
+
+==================================================
+29. API DOCUMENTATION
+==================================================
+
+Document EVERY endpoint.
+
+For each endpoint include:
+
+method
+path
+authentication requirement
+request body
+response
+errors
+example
+
+Create either:
+
+OpenAPI specification
+
+or a very detailed API documentation file.
+
+==================================================
+30. ENVIRONMENT VARIABLES
+==================================================
+
+Create .env.example containing placeholders such as:
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+AI_PROVIDER=
+AI_API_KEY=
+AI_MODEL=
+
+BLOCKCHAIN_MODE=
+POLYGON_AMOY_RPC_URL=
+BLOCKCHAIN_PRIVATE_KEY=
+SANAD_CONTRACT_ADDRESS=
+
+NEXT_PUBLIC_APP_URL=
+
+Never commit real secrets.
+
+==================================================
+31. DEVELOPMENT WORKFLOW
+==================================================
+
+IMPORTANT:
+
+I will be actively assisting you.
+
+Do NOT attempt to generate everything blindly in one giant step.
+
+Build incrementally.
+
+Before beginning, create:
+
+docs/BUILD_PLAN.md
+
+Break development into phases:
+
+PHASE 1
+Project foundation
+
+PHASE 2
+Database + authentication
+
+PHASE 3
+AI pipeline
+
+PHASE 4
+Claims
+
+PHASE 5
+Blockchain credential
+
+PHASE 6
+Service knowledge base + RAG
+
+PHASE 7
+Applications
+
+PHASE 8
+Accessibility
+
+PHASE 9
+Verification
+
+PHASE 10
+Admin dashboard
+
+PHASE 11
+Testing
+
+PHASE 12
+Deployment
+
+==================================================
+32. HUMAN-IN-THE-LOOP DEVELOPMENT
+==================================================
+
+Whenever something requires me personally, STOP and clearly tell me.
+
+For example:
+
+"YOUR ACTION REQUIRED:
+Create a Polygon Amoy wallet."
+
+Then tell me exactly:
+
+1. Where to go
+2. What to create
+3. What value to copy
+4. Where to paste it
+5. What NOT to share
+
+Do this for:
+
+API keys
+Supabase setup
+wallet setup
+testnet funds
+OAuth configuration
+deployment
+domain configuration
+
+Never ask me for a private key in chat.
+
+Tell me to put secrets directly into my local .env file.
+
+==================================================
+33. GIT
+==================================================
+
+Use Git properly.
+
+Create logical commits after major milestones.
+
+Examples:
+
+feat: initialize SANAD architecture
+feat: add authentication
+feat: implement AI situation analysis
+feat: add claim confirmation flow
+feat: implement verifiable credentials
+feat: add Polygon Amoy integration
+feat: add service matching
+feat: add application tracking
+feat: add accessibility announcements
+feat: add public verification
+test: add SANAD golden path tests
+
+==================================================
+34. QUALITY CONTROL
+==================================================
+
+After each major phase:
+
+1. Run tests
+2. Run lint
+3. Run type checking
+4. Check database
+5. Check API
+6. Check UI
+7. Fix errors
+8. Tell me what changed
+9. Tell me what I need to do
+10. Continue to the next phase
+
+Do not leave obvious TypeScript errors.
+
+Do not leave broken routes.
+
+Do not create fake buttons that don't work.
+
+Every visible feature should have a real underlying implementation or be clearly labeled as demo functionality.
+
+==================================================
+35. FINAL HACKATHON CHECKLIST
+==================================================
+
+Before declaring the project complete, verify:
+
+[ ] Authentication works
+[ ] AI understands mixed language
+[ ] AI handles phonetic input
+[ ] AI extracts structured facts
+[ ] User confirmation works
+[ ] Claims stored in database
+[ ] Credential issuance works
+[ ] Hash generated
+[ ] Polygon Amoy integration works
+[ ] Verify works
+[ ] Revoke works
+[ ] QR works
+[ ] Service database works
+[ ] AI service matching works
+[ ] Official sources shown
+[ ] Documents work
+[ ] Application workflow works
+[ ] Credential can be attached
+[ ] Application timeline works
+[ ] Status changes work
+[ ] Screen-reader announcements work
+[ ] Keyboard navigation works
+[ ] Public verification works
+[ ] Admin dashboard works
+[ ] Error handling works
+[ ] Loading states work
+[ ] Mobile responsive
+[ ] Tests pass
+[ ] README complete
+[ ] API documentation complete
+[ ] .env.example complete
+[ ] Deployment works
+[ ] Demo mode works
+
+==================================================
+36. MOST IMPORTANT SUCCESS CRITERION
+==================================================
+
+The entire system must tell ONE story:
+
+USER SPEAKS NATURALLY
+        ↓
+AI UNDERSTANDS
+        ↓
+USER CONFIRMS
+        ↓
+SANAD CREATES A TRUSTED RECORD
+        ↓
+VERIFIABLE CREDENTIAL
+        ↓
+RELEVANT SUPPORT FOUND
+        ↓
+CREDENTIAL ATTACHED AS EVIDENCE
+        ↓
+APPLICATION SUBMITTED
+        ↓
+STATUS CHANGES
+        ↓
+USER IS VISUALLY + AUDIBLY INFORMED
+        ↓
+THIRD PARTY VERIFIES CREDENTIAL
+
+This is SANAD.
+
+Do not lose this narrative while implementing individual features.
+
+==================================================
+37. START NOW
+==================================================
+
+First, inspect the current project directory.
+
+If a project already exists, understand its architecture before modifying it.
+
+Then:
+
+1. Create BUILD_PLAN.md
+2. Create architecture
+3. Initialize required dependencies
+4. Create database schema
+5. Create environment configuration
+6. Create API structure
+7. Create frontend shell
+8. Start implementing Phase 1
+
+After completing each major phase, report:
+
+DONE:
+- what was implemented
+
+FILES:
+- important files created/modified
+
+TEST:
+- tests run and results
+
+YOUR ACTION:
+- anything I need to configure manually
+
+NEXT:
+- next implementation phase
+
+Do not stop at UI mockups.
+
+Build the actual working system.

@@ -32,4 +32,7 @@ Mixed-language worker statement → extracted facts → clarification → user c
 ## Current progress
 - Repository inspected: empty, default branch main; connected account has push access.
 - Build plan created before implementation.
-- Phase 1 in progress; phases 2–12 pending.
+- Phase 1 foundation implemented: shell, API conventions, environment validation, initial SQL migration, CI, documentation and tests.
+- Lint, typecheck, 6 tests and production build passed. Browser E2E/visual checks remain blocked by an invalid Chromium download.
+- Phase 2 awaits the user-owned Supabase setup described in docs/setup.md, per the brief’s human-in-the-loop instruction.
+- Phases 2–12 pending; no hosted integration or deployment is claimed.
