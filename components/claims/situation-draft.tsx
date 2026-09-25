@@ -10,7 +10,7 @@ export function SituationDraft() {
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [aiData, setAiData] = useState<Record<string, any>>(null as unknown as Record<string, any>);
+  const [aiData, setAiData] = useState<Record<string, any> | null>(null);
   const [editableFacts, setEditableFacts] = useState<string[]>([]);
   const [replyText, setReplyText] = useState("");
 
@@ -80,7 +80,7 @@ export function SituationDraft() {
       return;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognition = (window as unknown as Record<string, unknown>).SpeechRecognition || (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert("Speech recognition is not supported in this browser. Please use Chrome.");
       return;
@@ -116,8 +116,8 @@ export function SituationDraft() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SpeechRecognition =
-      (window as unknown as Record<string, unknown>).SpeechRecognition ||
-      (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
       alert("Speech recognition is not supported in this browser. Please use Chrome.");
