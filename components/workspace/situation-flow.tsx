@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Check, LoaderCircle, Mic } from "lucide-react";
@@ -38,15 +38,16 @@ export function SituationFlow() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
-  const [voiceSupported, setVoiceSupported] = useState(false);
+  const [voiceSupported] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
+  });
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("demo") === "1")
+    if (new URLSearchParams(window.location.search).get("demo") === "1") {
       queueMicrotask(() => {
         setText(sample);
-        setVoiceSupported(
-          "SpeechRecognition" in window || "webkitSpeechRecognition" in window,
-        );
       });
+    }
   }, []);
   async function work<T>(
     message: string,
@@ -66,16 +67,30 @@ export function SituationFlow() {
       setBusy("");
     }
   }
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<unknown>(null);
+
   function listen() {
+    if (isListening) {
+      (recognitionRef.current as { stop?: () => void })?.stop?.();
+      setIsListening(false);
+      setNotice("Recording stopped.");
+      return;
+    }
+
     type RecognitionInstance = {
       lang: string;
+      continuous: boolean;
+      interimResults: boolean;
       onresult:
         | ((event: {
             results: ArrayLike<ArrayLike<{ transcript: string }>>;
           }) => void)
         | null;
       onerror: (() => void) | null;
+      onend: (() => void) | null;
       start: () => void;
+      stop: () => void;
     };
     const browser = window as typeof window & {
       SpeechRecognition?: new () => RecognitionInstance;
@@ -86,13 +101,29 @@ export function SituationFlow() {
     if (!Construct) return;
     const recognition = new Construct();
     recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.interimResults = true;
     recognition.onresult = (e) => {
-      setText(e.results[0][0].transcript);
-      setNotice("Speech transcript added. Review it before continuing.");
+      let finalTranscript = "";
+      for (let i = 0; i < e.results.length; i++) {
+        finalTranscript += e.results[i][0].transcript + " ";
+      }
+      if (finalTranscript) {
+        setText(finalTranscript);
+        setNotice("Listening... Speech transcript updated.");
+      }
     };
-    recognition.onerror = () =>
-      setError("Speech recognition failed. You can type instead.");
+    recognition.onerror = () => {
+      setIsListening(false);
+      setError("Speech recognition failed or permission denied. You can type instead.");
+    };
+    recognition.onend = () => {
+      setIsListening(false);
+    };
     recognition.start();
+    recognitionRef.current = recognition;
+    setIsListening(true);
+    setNotice("Listening... Speak now.");
   }
   return (
     <div className="flow-stack">
@@ -158,8 +189,12 @@ export function SituationFlow() {
             Load demo example
           </Button>
           {voiceSupported && (
-            <Button variant="outline" type="button" onClick={listen}>
-              <Mic size={17} /> Speak
+            <Button
+              variant={isListening ? "destructive" : "outline"}
+              type="button"
+              onClick={listen}
+            >
+              <Mic size={17} /> {isListening ? "🛑 Stop Recording" : "🎤 Speak"}
             </Button>
           )}
         </div>
