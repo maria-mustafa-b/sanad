@@ -1,0 +1,50 @@
+import { spawn } from "node:child_process";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import assert from "node:assert/strict";
+const root = await mkdtemp(join(tmpdir(),"sanad-e2e-"));
+const port=3201;
+const server=spawn(process.execPath,["node_modules/next/dist/bin/next","start","--hostname","127.0.0.1","--port",String(port)],{cwd:process.cwd(),env:{...process.env,SANAD_MODE:"demo",BLOCKCHAIN_MODE:"mock",DEMO_STORAGE_PATH:root,NEXT_PUBLIC_APP_URL:`http://127.0.0.1:${port}`},stdio:["ignore","pipe","pipe"]});
+let log="";server.stdout.on("data",chunk=>log+=chunk);server.stderr.on("data",chunk=>log+=chunk);
+let cookie="";
+async function req(path,method="GET",body,session=cookie){const response=await fetch(`http://127.0.0.1:${port}/api/${path}`,{method,headers:{...(body?{"Content-Type":"application/json"}:{}),...(session?{Cookie:session}:{})},body:body?JSON.stringify(body):undefined});const raw=await response.text();let data;try{data=JSON.parse(raw);}catch{throw new Error(`${method} ${path}: HTTP ${response.status} body ${raw.slice(0,500)} server ${log.slice(-2000)}`);}return {response,data};}
+const check=(result,status=200)=>{assert.equal(result.response.status,status,JSON.stringify(result.data));return result.data.data;};
+try{
+ for(let i=0;i<80;i++){if(log.includes("Ready"))break;if(server.exitCode!==null)throw new Error(log);await new Promise(resolve=>setTimeout(resolve,200));}
+ assert.match(log,/Ready/);
+ check(await req("claims"),401);
+ const session=await req("auth/demo","POST",{});const demo=check(session,201);cookie=session.response.headers.get("set-cookie")?.split(";")[0]||"";assert.ok(cookie.includes("sanad_demo="));
+ const sample="Meri job chali gayi hai aur August ki salary bhi nahi mili.";
+ const analysis=check(await req("ai/analyze","POST",{text:sample}));assert.equal(analysis.analysis.facts.issue,"unpaid_wages");assert.equal(analysis.method,"demo_rules");
+ const claim=check(await req("claims","POST",{text:sample}),201);assert.equal(claim.status,"WAITING_FOR_CONFIRMATION");
+ check(await req("credentials/issue","POST",{claimId:claim.id}),409);
+ check(await req(`claims/${claim.id}`,"PATCH",{facts:{...analysis.analysis.facts,employment_end_date:"2026-09-15"}}));
+ const confirmed=check(await req(`claims/${claim.id}/confirm`,"POST",{}));assert.equal(confirmed.status,"USER_CONFIRMED");
+ const credential=check(await req("credentials/issue","POST",{claimId:claim.id}),201);assert.equal(credential.mode,"mock");
+ const verified=check(await req(`verify/${credential.id}`,"GET",undefined,""));assert.equal(verified.valid,true);assert.equal(verified.blockchainVerification,false);assert.equal(JSON.stringify(verified).includes("August"),false);assert.equal(JSON.stringify(verified).includes("salt"),false);
+ const matches=check(await req("services/match","POST",{claimId:claim.id}));assert.ok(matches.length>=2);assert.ok(matches.some(s=>s.title.includes("labour complaint")));
+ const application=check(await req("applications","POST",{service_id:matches[0].id,credential_id:credential.id}),201);assert.equal(application.status,"DRAFT");
+ const fileForm=new FormData();fileForm.set("file",new File(["Salary for August unpaid. Employer Example Co."],"example.txt",{type:"text/plain"}));
+ const uploadResponse=await fetch(`http://127.0.0.1:${port}/api/documents`,{method:"POST",headers:{Cookie:cookie},body:fileForm});
+ const uploaded=uploadResponse.status===201?(await uploadResponse.json()).data:assert.fail(`upload failed ${uploadResponse.status} ${await uploadResponse.text()}`);
+ check(await req(`documents/${uploaded.id}/analyze`,"POST",{consent:true}));
+ check(await req(`documents/${uploaded.id}/confirm`,"POST",{extraction:{document_type:"salary document",date:null,employer_name:null,salary_period:"August"}}));
+ check(await req(`applications/${application.id}/attach`,"POST",{kind:"document",evidence_id:uploaded.id}),201);
+ check(await req(`documents/${uploaded.id}`,"DELETE"),409);
+ const details=check(await req(`applications/${application.id}`));assert.equal(details.attachedCredentials.length,1);assert.equal(details.attachedDocuments.length,1);
+ check(await req(`applications/${application.id}/submit`,"POST",{}));
+ check(await req(`applications/${application.id}`,"PATCH",{status:"UNDER_REVIEW"}));
+ const changed=check(await req(`applications/${application.id}`,"PATCH",{status:"ADDITIONAL_DOCUMENTS_REQUIRED"}));assert.equal(changed.status,"ADDITIONAL_DOCUMENTS_REQUIRED");
+ const updates=check(await req(`applications/${application.id}/updates`));assert.ok(updates.some(n=>n.message.includes("Additional documents")));
+ const other=await req("auth/demo","POST",{});const otherCookie=other.response.headers.get("set-cookie")?.split(";")[0]||"";assert.notEqual(other.data.data.id,demo.id);
+ check(await req(`claims/${claim.id}`,"GET",undefined,otherCookie),404);
+ check(await req(`applications/${application.id}`,"GET",undefined,otherCookie),404);
+ check(await req(`documents/${uploaded.id}`,"GET",undefined,otherCookie),404);
+ check(await req(`credentials/${credential.id}/revoke`,"POST",{},otherCookie),404);
+ check(await req("analytics/overview","GET",undefined,otherCookie),403);
+ const qr=await fetch(`http://127.0.0.1:${port}/api/credentials/${credential.id}/qr`,{headers:{Cookie:cookie}});assert.equal(qr.status,200);assert.equal(qr.headers.get("content-type"),"image/png");
+ check(await req(`credentials/${credential.id}/revoke`,"POST",{}));assert.equal(check(await req(`verify/${credential.id}`,"GET",undefined,"" )).valid,false);
+ assert.equal(check(await req(`verify/${credential.id}`,"GET",undefined,"" )).revoked,true);
+ console.log("Golden path passed: analysis, confirmation, credential, sources, simulated application, alerts, isolation, QR and revocation.");
+}finally{server.kill("SIGTERM");await rm(root,{recursive:true,force:true});}

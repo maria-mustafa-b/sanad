@@ -32,4 +32,5 @@ export type Table =
   | "notifications"
   | "escalations"
   | "escalation_messages"
-  | "analytics_events";
+  | "analytics_events"
+  | "verification_events";

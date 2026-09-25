@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { domainRoute } from "./domain-router";
 import { actor, startDemo, logout, supabaseSession } from "@/lib/auth/session";
 import { demoMode, get, update, list } from "@/lib/database/repository";
 import { AppError } from "./errors";
@@ -93,7 +94,7 @@ export async function dispatch(request: Request) {
       await list("services");
       return ok({ status: "ok", mode: demoMode() ? "local_demo" : "supabase" });
     }
-    throw new AppError("NOT_FOUND", "Endpoint not found.", 404);
+    return await domainRoute(request, p, method);
   } catch (error) {
     if (error instanceof z.ZodError)
       return apiError(
