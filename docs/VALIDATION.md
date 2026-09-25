@@ -1,13 +1,11 @@
-# Foundation validation — 25 September 2026
+# Validation log — 25 September 2026
 
-- npm run lint: passed, no warnings after PostCSS cleanup.
-- npm run typecheck: passed.
-- npm test: 6 tests passed (configuration/API error tests plus executed migration and ownership isolation).
-- npm run build: passed; routes /, /understand, /verify and /api/health generated successfully.
-- Production HTTP smoke checks: /, /understand, /verify and /api/health returned 200; an unknown route returned 404.
-- Browser E2E suite: authored for desktop and mobile; not executed because Chromium installation returned an invalid/truncated archive from the download endpoint.
-- Visual, keyboard and screen-reader QA: pending browser availability; do not treat responsive CSS as visual verification.
-- Hosted Supabase connectivity/authentication: pending user-owned setup.
-- AI, Amoy and deployment tests: not applicable to foundation; those integrations are pending.
+- `npm run lint`, `npm run typecheck`: passed.
+- `npm test`: 12 tests passed, including migration/RLS harness, phonetic mixed-language extraction, hash tampering and curated matching.
+- `npm run test:contract`: passed with local compiled Solidity and Ganache; outsider issuance/revocation rejected.
+- `npm run build`: passed; all UI and API routes built.
+- `npm run test:integration`: complete local API golden path passed (analysis → confirmation → credential → source match → evidence upload/analysis/attachment → simulated application → notification → public/QR verify → revoke); a second demo user was denied access and admin requests were forbidden.
+- `npm run test:e2e`: 6 passed, desktop and mobile Chromium, covering navigation, complete golden-path UI and responsive width. Local Chromium was extracted from the packaged test binary because Playwright's direct download returned an invalid archive in this environment.
+- Live Supabase/Auth/Storage, remote AI provider calls, deployed Polygon Amoy transaction, Vercel URL, manual screen-reader review and complete translation: **not executed** without user-owned accounts/keys/deployment. These are remaining release gates, not simulated successes.
 
-The initial database migration passed in local PGlite PostgreSQL with a minimal Supabase auth harness. Full Supabase service integration still needs a configured project. CI is configured but its remote outcome must be inspected separately.
+CI runs independent checks from a clean checkout. Check the GitHub Actions run for the latest commit separately.

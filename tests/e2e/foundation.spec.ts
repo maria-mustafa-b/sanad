@@ -1,22 +1,20 @@
 import { test, expect } from "@playwright/test";
-test("foundation navigation and local example are honest and usable", async ({
-  page,
-}) => {
+test("navigation, demo entry and responsive foundation", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "Your situation is unique",
   );
-  await page.getByRole("link", { name: "Explore the situation flow" }).click();
-  await page.getByRole("button", { name: "Load example" }).click();
-  await expect(page.getByLabel("What is happening?")).toHaveValue(
-    "Meri job chali gayi hai aur August ki salary bhi nahi mili.",
-  );
-  await expect(page.getByRole("status")).toContainText("Example loaded");
-  await page.getByRole("button", { name: "Clear", exact: true }).click();
-  await expect(page.getByLabel("What is happening?")).toHaveValue("");
+  await page.getByRole("link", { name: "Try Demo", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Begin a clearer journey." }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Try Demo" }).click();
+  await expect(
+    page.getByLabel("Describe the situation in your own words"),
+  ).toHaveValue("Meri job chali gayi hai aur August ki salary bhi nahi mili.");
   await page.getByRole("link", { name: "Verification", exact: true }).click();
   await expect(
-    page.getByText("No credentials have been issued", { exact: false }),
+    page.getByRole("heading", { name: "A record you can check." }),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -24,10 +22,7 @@ test("foundation navigation and local example are honest and usable", async ({
     ),
   ).toBe(true);
 });
-test("health endpoint reports foundation without implying connectivity", async ({
-  request,
-}) => {
+test("health endpoint reports process availability", async ({ request }) => {
   const response = await request.get("/api/health");
   expect(response.ok()).toBe(true);
-  expect((await response.json()).data.integrations).toBe("not_yet_connected");
 });

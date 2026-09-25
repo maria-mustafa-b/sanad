@@ -31,10 +31,14 @@ export default function RootLayout({
           </Link>
           <nav aria-label="Main navigation">
             <Link href="/">Overview</Link>
+            <Link href="/dashboard">Dashboard</Link>
             <Link href="/understand">Your situation</Link>
+            <Link href="/services">Services</Link>
+            <Link href="/documents">Documents</Link>
             <Link href="/verify">Verification</Link>
+            <Link href="/onboarding">Sign in / Try Demo</Link>
           </nav>
-          <span className="phase-badge">Prototype · Foundation</span>
+          <span className="phase-badge">Prototype · Working demo</span>
         </header>
         {children}
         <footer>

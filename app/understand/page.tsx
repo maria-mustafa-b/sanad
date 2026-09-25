@@ -1,14 +1,14 @@
-import { SituationDraft } from "@/components/claims/situation-draft";
+import { SituationFlow } from "@/components/workspace/situation-flow";
 export default function Understand() {
   return (
-    <main id="main" className="narrow">
-      <p className="eyebrow">01 / Your situation</p>
+    <main id="main" className="narrow wide-flow">
+      <p className="eyebrow">Your SANAD journey</p>
       <h1>Start with your own words.</h1>
       <p className="lede">
-        This foundation preview lets you try the input experience. AI analysis
-        and account storage will be connected in the next phases.
+        Describe a situation, review the interpretation, confirm your facts and
+        carry a verifiable record to the next step.
       </p>
-      <SituationDraft />
+      <SituationFlow />
     </main>
   );
 }

@@ -30,9 +30,6 @@ Build incrementally and push a logical commit after each verified milestone to m
 Mixed-language worker statement → extracted facts → clarification → user confirmation → credential/hash → Amoy or labelled simulation → potentially relevant support → attach evidence → simulated application → visible/live status update → QR/public verification → revocation.
 
 ## Current progress
-- Repository inspected: empty, default branch main; connected account has push access.
-- Build plan created before implementation.
-- Phase 1 foundation implemented: shell, API conventions, environment validation, initial SQL migration, CI, documentation and tests.
-- Lint, typecheck, 6 tests and production build passed. Browser E2E/visual checks remain blocked by an invalid Chromium download.
-- Phase 2 awaits the user-owned Supabase setup described in docs/setup.md, per the brief’s human-in-the-loop instruction.
-- Phases 2–12 pending; no hosted integration or deployment is claimed.
+- Phases 1–10: implemented in repository and local demo, with Supabase/AI/Amoy adapters. Curated catalog contains 22 official-source records. Explicitly simulated application and local-chain modes are labelled throughout.
+- Phase 11: 12 unit/integration harness tests, local contract test, API golden path and desktop/mobile browser tests pass. Further manual assistive-tech review, hosted Supabase isolation and live provider/Amoy tests remain external release gates.
+- Phase 12: deployment configuration and steps are documented, but no user-owned Vercel, Supabase, AI or Amoy credentials were available to deploy and prove live integrations. Do not call this production-ready until those gates pass.

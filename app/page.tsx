@@ -19,14 +19,13 @@ export default function Home() {
             <em>Your next step can be clear.</em>
           </h1>
           <p className="lede">
-            Explain what’s happening in your own words. SANAD is being built to
-            help you confirm the facts, carry a verifiable record, and find
+            Explain what’s happening in your own words. SANAD helps you confirm the facts, carry a verifiable record, and find
             potentially relevant support.
           </p>
           <div className="actions">
             <Button asChild>
-              <Link href="/understand">
-                Explore the situation flow{" "}
+              <Link href="/onboarding">
+                Try Demo{" "}
                 <ArrowRight size={17} aria-hidden="true" />
               </Link>
             </Button>
