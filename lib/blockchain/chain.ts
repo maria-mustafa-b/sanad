@@ -26,7 +26,7 @@ function contract(write = false) {
       "Configure the Amoy RPC and deployed contract.",
       503,
     );
-  const provider = new JsonRpcProvider(rpc, 80002, { staticNetwork: true });
+  const provider = new JsonRpcProvider(rpc, 80002);
   const signer = write
     ? new Wallet(process.env.BLOCKCHAIN_PRIVATE_KEY || "", provider)
     : provider;
@@ -81,11 +81,17 @@ export async function verify(id: string, hash: string) {
   if (mode() === "mock")
     return { verified: false, mode: "mock", reason: "Demo/Testnet Simulation" };
   try {
-    const [stored, , , revoked] = await contract().status(onchainId(id));
+    const [stored, , issuedAt, revoked] = await contract().status(
+      onchainId(id),
+    );
     return {
       verified: stored.toLowerCase() === hash.toLowerCase() && !revoked,
       mode: "real",
       revoked: Boolean(revoked),
+      issuedAt:
+        Number(issuedAt) > 0
+          ? new Date(Number(issuedAt) * 1000).toISOString()
+          : null,
     };
   } catch {
     throw new AppError(

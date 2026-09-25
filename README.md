@@ -24,7 +24,7 @@ Open http://localhost:3000 and choose **Try Demo**. The sample is fictional: “
 - Zod-validated situation extraction with configurable OpenAI, Azure OpenAI and Gemini adapters; local rule-based sample fallback, explicitly labelled.
 - Editable facts, clarification inputs, guarded confirmation states and user-owned claims.
 - Salted deterministic snapshot hashes; issuer-restricted Solidity issue/verify/revoke on Polygon Amoy, or a labelled local simulation. QR and public metadata-only verification, including revocation.
-- A curated catalog of 22 official UAE government resource pages and service links, matching reasons and relevance scores labelled as relevance rather than official eligibility.
+- A curated catalog of 28 official UAE government resource pages and service links, matching reasons and relevance scores labelled as relevance rather than official eligibility.
 - Private document vault with MIME/magic/size checks, owner-scoped download, text/PDF extraction and AI image extraction when configured; user confirmation of tentative fields.
 - Simulated application journeys with credential/document evidence, timelines, notifications, status transitions and live screen-reader announcements.
 - Role-guarded administration with service publishing and aggregate metrics; responsive desktop/mobile pages, keyboard-visible focus, larger text and reduced-motion preferences.

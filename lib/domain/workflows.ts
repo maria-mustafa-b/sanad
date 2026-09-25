@@ -360,8 +360,9 @@ export async function publicVerify(id: string) {
     issuedAt: credential.issued_at,
     claimType: credential.snapshot?.type ?? "unspecified",
     blockchainVerification: onChain?.verified ?? false,
+    onChainIssuedAt: onChain?.issuedAt ?? null,
     transactionHash: credential.transaction_hash ?? null,
-    revoked: credential.status === "REVOKED",
+    revoked: credential.status === "REVOKED" || onChain?.revoked === true,
     notice:
       credential.mode === "mock"
         ? "Demo/Testnet Simulation — no blockchain transaction"

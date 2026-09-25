@@ -12,6 +12,7 @@ type Result = {
   issuedAt: string | null;
   claimType: string;
   blockchainVerification: boolean;
+  onChainIssuedAt: string | null;
   transactionHash: string | null;
   revoked: boolean;
   notice: string;
@@ -104,6 +105,12 @@ export function PublicVerifier() {
                   ? "Confirmed on Amoy"
                   : "Not confirmed"}
             </dd>
+            {result.onChainIssuedAt && (
+              <>
+                <dt>On-chain issued</dt>
+                <dd>{new Date(result.onChainIssuedAt).toLocaleString()}</dd>
+              </>
+            )}
             <dt>Revoked</dt>
             <dd>{result.revoked ? "Yes" : "No"}</dd>
           </dl>

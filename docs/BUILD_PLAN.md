@@ -30,6 +30,6 @@ Build incrementally and push a logical commit after each verified milestone to m
 Mixed-language worker statement → extracted facts → clarification → user confirmation → credential/hash → Amoy or labelled simulation → potentially relevant support → attach evidence → simulated application → visible/live status update → QR/public verification → revocation.
 
 ## Current progress
-- Phases 1–10: implemented in repository and local demo, with Supabase/AI/Amoy adapters. Curated catalog contains 22 official-source records. Explicitly simulated application and local-chain modes are labelled throughout.
+- Phases 1–10: implemented in repository and local demo, with Supabase/AI/Amoy adapters. Curated catalog contains 28 official-source records. Explicitly simulated application and local-chain modes are labelled throughout.
 - Phase 11: 12 unit/integration harness tests, local contract test, API golden path and desktop/mobile browser tests pass. Further manual assistive-tech review, hosted Supabase isolation and live provider/Amoy tests remain external release gates.
-- Phase 12: the user reports creating a fresh Supabase project, SANAD_2, and completing the four migrations. The hosted project has not yet been connected to this app or independently verified. Deployment configuration and steps are documented; Vercel, AI and Amoy credentials are still unavailable here. Do not call this production-ready until the live gates pass.
+- Phase 12: the user reports deleting the SANAD_2 Supabase project. No hosted database is connected to this app. Deployment configuration and steps are documented; Vercel, AI and Amoy credentials are still unavailable here. Do not call this production-ready until the live gates pass.

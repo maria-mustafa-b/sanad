@@ -22,7 +22,7 @@ try{
  check(await req(`claims/${claim.id}`,"PATCH",{facts:{...analysis.analysis.facts,employment_end_date:"2026-09-15"}}));
  const confirmed=check(await req(`claims/${claim.id}/confirm`,"POST",{}));assert.equal(confirmed.status,"USER_CONFIRMED");
  const credential=check(await req("credentials/issue","POST",{claimId:claim.id}),201);assert.equal(credential.mode,"mock");
- const verified=check(await req(`verify/${credential.id}`,"GET",undefined,""));assert.equal(verified.valid,true);assert.equal(verified.blockchainVerification,false);assert.equal(JSON.stringify(verified).includes("August"),false);assert.equal(JSON.stringify(verified).includes("salt"),false);
+ const verified=check(await req(`verify/${credential.id}`,"GET",undefined,""));assert.equal(verified.valid,true);assert.equal(verified.blockchainVerification,false);assert.equal(verified.onChainIssuedAt,null);assert.equal(JSON.stringify(verified).includes("August"),false);assert.equal(JSON.stringify(verified).includes("salt"),false);
  const matches=check(await req("services/match","POST",{claimId:claim.id}));assert.ok(matches.length>=2);assert.ok(matches.some(s=>s.title.includes("labour complaint")));
  const application=check(await req("applications","POST",{service_id:matches[0].id,credential_id:credential.id}),201);assert.equal(application.status,"DRAFT");
  const fileForm=new FormData();fileForm.set("file",new File(["Salary for August unpaid. Employer Example Co."],"example.txt",{type:"text/plain"}));
