@@ -135,7 +135,6 @@ async function extractText(doc: Row, bytes: Buffer) {
   if (doc.mime_type === "text/plain")
     return bytes.toString("utf8").slice(0, 15000);
   if (doc.mime_type === "application/pdf") {
-    // @ts-expect-error pdfjs-dist does not ship types for this path
     const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
     const pdf = await getDocument({
       data: new Uint8Array(bytes),

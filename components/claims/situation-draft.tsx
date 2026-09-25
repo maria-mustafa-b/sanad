@@ -72,6 +72,24 @@ export function SituationDraft() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const replyRecognitionRef = useRef<any>(null);
 
+  type SpeechRecognitionCtor = new () => {
+    continuous: boolean;
+    interimResults: boolean;
+    onresult: ((e: SpeechRecognitionEvent) => void) | null;
+    onerror: (() => void) | null;
+    onend: (() => void) | null;
+    start: () => void;
+    stop: () => void;
+  };
+  type ExtendedWindow = typeof window & {
+    SpeechRecognition?: SpeechRecognitionCtor;
+    webkitSpeechRecognition?: SpeechRecognitionCtor;
+  };
+  function getSpeechRecognition(): SpeechRecognitionCtor | undefined {
+    const w = window as ExtendedWindow;
+    return w.SpeechRecognition || w.webkitSpeechRecognition;
+  }
+
   const toggleRecordingReply = () => {
     if (isRecordingReply) {
       replyRecognitionRef.current?.stop();
@@ -79,18 +97,16 @@ export function SituationDraft() {
       setMessage("Reply recording stopped.");
       return;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    const Ctor = getSpeechRecognition();
+    if (!Ctor) {
       alert("Speech recognition is not supported in this browser. Please use Chrome.");
       return;
     }
-    const recognition = new SpeechRecognition();
+    const recognition = new Ctor();
     recognition.continuous = true;
     recognition.interimResults = true;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       let finalTranscript = "";
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript + " ";
@@ -114,22 +130,17 @@ export function SituationDraft() {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
+    const Ctor = getSpeechRecognition();
+    if (!Ctor) {
       alert("Speech recognition is not supported in this browser. Please use Chrome.");
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new Ctor();
     recognition.continuous = true;
     recognition.interimResults = true;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       let finalTranscript = "";
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
