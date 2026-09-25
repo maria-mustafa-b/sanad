@@ -10,8 +10,60 @@ export function SituationDraft() {
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [aiData, setAiData] = useState<any>(null);
+  const [replyText, setReplyText] = useState("");
+
+  const handleReply = async () => {
+    if (!replyText.trim() || !aiData) return;
+
+    setIsLoading(true);
+    setMessage("Processing follow-up with AI...");
+
+    // Call the same action but pass the previous facts and the previous question it asked
+    const result = await extractSituationFacts(replyText, aiData.facts, aiData.clarificationMessage);
+
+    setIsLoading(false);
+    if (result.success && result.data) {
+      setAiData(result.data);
+      setReplyText("");
+      setMessage("Follow-up analysis complete.");
+
+      if (result.data.clarificationMessage) {
+        speakText(result.data.clarificationMessage, result.data.detectedLanguage);
+      }
+    } else {
+      setMessage("Failed to analyze follow-up. Please try again.");
+    }
+  };
 
   const recognitionRef = useRef<any>(null);
+
+  const [language, setLanguage] = useState("mr-IN"); // Defaulting to Marathi based on request
+
+  const speakText = (textContent: string, targetLanguage?: string) => {
+    if (!("speechSynthesis" in window)) return;
+    const utterance = new SpeechSynthesisUtterance(textContent);
+
+    // Use AI's detected language, otherwise fallback to the user's selected dropdown language
+    const langToUse = targetLanguage || language;
+
+    // Get all available browser voices
+    const voices = window.speechSynthesis.getVoices();
+
+    // Try to find a voice that matches the exact language (e.g., mr-IN)
+    const baseLang = langToUse.split('-')[0];
+    const bestVoice =
+      voices.find(v => v.lang === langToUse) ||
+      voices.find(v => v.lang.startsWith(baseLang)) ||
+      voices.find(v => v.lang === 'hi-IN') || // Fallback to Hindi if Marathi voice doesn't exist
+      null;
+
+    if (bestVoice) {
+      utterance.voice = bestVoice;
+    }
+    utterance.lang = langToUse;
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   // Initialize Speech Recognition (Web Speech API)
   const toggleRecording = () => {
@@ -34,8 +86,7 @@ export function SituationDraft() {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    // Let it detect the language automatically as best as possible
-    recognition.lang = "en-US";
+    recognition.lang = language; // Use the selected language
 
     recognition.onresult = (event: any) => {
       let finalTranscript = "";
@@ -80,10 +131,9 @@ export function SituationDraft() {
       setAiData(result.data);
       setMessage("Analysis complete. See extracted facts below.");
 
-      // Automatic Text-To-Speech for the AI response
-      if ("speechSynthesis" in window && result.data.clarificationMessage) {
-        const utterance = new SpeechSynthesisUtterance(result.data.clarificationMessage);
-        window.speechSynthesis.speak(utterance);
+      // Automatic Text-To-Speech for the AI response matching the language they used
+      if (result.data.clarificationMessage) {
+        speakText(result.data.clarificationMessage, result.data.detectedLanguage);
       }
 
     } else {
@@ -115,7 +165,7 @@ export function SituationDraft() {
         className="w-full p-3 border rounded-md"
       />
 
-      <div className="actions flex gap-2 flex-wrap">
+      <div className="actions flex gap-2 flex-wrap items-center">
         <Button
           variant={isRecording ? "destructive" : "secondary"}
           onClick={toggleRecording}
@@ -189,15 +239,76 @@ export function SituationDraft() {
                 variant="ghost"
                 size="sm"
                 className="mt-2"
-                onClick={() => {
-                  if ("speechSynthesis" in window) {
-                    window.speechSynthesis.speak(new SpeechSynthesisUtterance(aiData.clarificationMessage));
-                  }
-                }}
+                onClick={() => speakText(aiData.clarificationMessage, aiData.detectedLanguage)}
               >
                 🔊 Read Aloud
               </Button>
             </div>
+
+            {aiData.processGuide && aiData.processGuide.length > 0 && (
+              <div className="mt-4 p-4 border border-teal-200 bg-teal-50 rounded-md">
+                <h4 className="font-semibold text-teal-900 mb-2">Recommended Next Steps & Guidance</h4>
+                <ol className="list-decimal pl-5 space-y-1 mb-3 text-sm text-teal-800">
+                  {aiData.processGuide.map((step: string, idx: number) => (
+                    <li key={idx}>{step}</li>
+                  ))}
+                </ol>
+                {aiData.serviceLinks && aiData.serviceLinks.length > 0 && (
+                  <div className="text-sm">
+                    <span className="font-semibold text-teal-900">Official Links:</span>
+                    <ul className="list-disc pl-5">
+                      {aiData.serviceLinks.map((link: string, idx: number) => (
+                        <li key={idx}><a href="#" className="text-blue-600 underline">{link}</a></li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="mt-4 pt-3 border-t border-teal-200">
+                  <input type="file" id="docUpload" className="hidden" onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setMessage(`Document '${e.target.files[0].name}' attached successfully! Analysis updated.`);
+                    }
+                  }} />
+                  <Button onClick={() => document.getElementById('docUpload')?.click()}>
+                    📎 Upload Requested Required Documents
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {(!aiData.processGuide || aiData.processGuide.length === 0) && (
+              <div className="mt-4 p-4 border rounded-md bg-background">
+                <label htmlFor="followup" className="block text-sm font-medium mb-2">
+                  Reply to AI to provide missing information or documents:
+                </label>
+                <div className="flex gap-2 mb-2">
+                  <input type="file" id="docUploadFollowup" className="hidden" onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setReplyText(prev => prev + ` [Attached Document: ${e.target.files[0].name}] `);
+                    }
+                  }} />
+                  <Button variant="outline" size="sm" onClick={() => document.getElementById('docUploadFollowup')?.click()}>
+                    📎 Attach Document
+                  </Button>
+                </div>
+                <textarea
+                  id="followup"
+                  dir="auto"
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  rows={3}
+                  placeholder="Type your reply here..."
+                  className="w-full p-3 border rounded-md mb-2"
+                />
+                <Button
+                  onClick={handleReply}
+                  disabled={isLoading || !replyText.trim()}
+                >
+                  {isLoading ? "Sending..." : "Send Reply"}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}

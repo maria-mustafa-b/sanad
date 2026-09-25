@@ -10,6 +10,9 @@ const variants = cva(
         default: "bg-teal-900 text-white hover:bg-teal-800",
         outline:
           "border border-stone-300 bg-white text-stone-900 hover:bg-stone-100",
+        destructive: "bg-red-500 text-destructive-foreground hover:bg-red-500/90",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
       },
     },
     defaultVariants: { variant: "default" },
