@@ -195,6 +195,38 @@ export const seedServices = [
     description:
       "Official overview of filing cases with the Rental Dispute Settlement Centre.",
   },
+  {
+    title: "Free legal aid and advice services",
+    category: "Justice & Law",
+    url: "https://u.ae/en/information-and-services/justice-safety-and-the-law/legal-aid",
+    situations: ["legal_aid", "court_case", "lawyer_support", "labour_dispute"],
+    description:
+      "Official Ministry of Justice and judicial department guidance on obtaining free legal aid.",
+  },
+  {
+    title: "Consumer protection and complaint portal",
+    category: "Commercial & Consumer",
+    url: "https://u.ae/en/information-and-services/business/consumer-protection",
+    situations: ["consumer_rights", "fraud", "scam", "commercial_dispute"],
+    description:
+      "Ministry of Economy official consumer rights protection and commercial complaint route.",
+  },
+  {
+    title: "Emergency financial and humanitarian aid",
+    category: "Social support",
+    url: "https://u.ae/en/information-and-services/social-affairs/charity-and-humanitarian-work",
+    situations: ["financial_hardship", "humanitarian_aid", "emergency_support"],
+    description:
+      "Official overview of registered charitable foundations and emergency social assistance.",
+  },
+  {
+    title: "Small business and entrepreneurship setup guidance",
+    category: "Business & SME",
+    url: "https://u.ae/en/information-and-services/business/starting-a-business",
+    situations: ["business", "sme", "entrepreneurship"],
+    description:
+      "Official UAE portal guidance on launching businesses, trade licenses, and SME support.",
+  },
 ] as const;
 export async function services(): Promise<Service[]> {
   const rows = await list("services", { published: true });
