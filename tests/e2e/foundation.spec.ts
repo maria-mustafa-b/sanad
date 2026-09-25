@@ -25,4 +25,7 @@ test("navigation, demo entry and responsive foundation", async ({ page }) => {
 test("health endpoint reports process availability", async ({ request }) => {
   const response = await request.get("/api/health");
   expect(response.ok()).toBe(true);
+  const result = await response.json();
+  expect(result.data.mode).toBe("demo");
+  expect(result.data.database).toBe("local_demo");
 });

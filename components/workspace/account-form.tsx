@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { api } from "./api";
-export function AccountForm() {
+export function AccountForm({ demoEnabled }: { demoEnabled: boolean }) {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -35,17 +35,26 @@ export function AccountForm() {
   }
   return (
     <div className="form-card">
-      <h2>Try the complete fictional demo</h2>
-      <p>
-        No account or external credentials needed on a local installation. Demo
-        data stays on this server and is labelled throughout the experience.
-      </p>
-      <Button disabled={busy} onClick={() => submit("demo")}>
-        Try Demo →
-      </Button>
-      <hr className="divider" />
+      {demoEnabled && (
+        <>
+          <h2>Try the complete fictional demo</h2>
+          <p>
+            No account or external credentials needed on a local installation.
+            Demo data stays on this server and is labelled throughout the
+            experience.
+          </p>
+          <Button disabled={busy} onClick={() => submit("demo")}>
+            Try Demo →
+          </Button>
+          <hr className="divider" />
+        </>
+      )}
       <h2>{mode === "login" ? "Sign in" : "Create your account"}</h2>
-      <p>Account access is available when Supabase mode is configured.</p>
+      <p>
+        {demoEnabled
+          ? "Account access is available when Supabase mode is configured."
+          : "Sign in with your SANAD account, or create one below."}
+      </p>
       <form
         onSubmit={(event) => {
           event.preventDefault();

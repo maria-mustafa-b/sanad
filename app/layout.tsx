@@ -36,9 +36,9 @@ export default function RootLayout({
             <Link href="/services">Services</Link>
             <Link href="/documents">Documents</Link>
             <Link href="/verify">Verification</Link>
-            <Link href="/onboarding">Sign in / Try Demo</Link>
+            <Link href="/onboarding">Get started</Link>
           </nav>
-          <span className="phase-badge">Prototype · Working demo</span>
+          <span className="phase-badge">Independent prototype</span>
         </header>
         {children}
         <footer>

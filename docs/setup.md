@@ -13,6 +13,8 @@ Install Node.js 24. Run `git clone https://github.com/maria-mustafa-b/sanad.git`
 5. Sign up in the app and confirm your email if the project requires it. To authorize a trusted admin, run the following manually in SQL Editor after that user exists (replace the email locally): `update public.users set role='admin' where id=(select id from auth.users where email='YOUR_ADMIN_EMAIL');`. Never expose an admin-granting API to ordinary users.
 6. Confirm a second account cannot read the first account's claims, documents or credentials. The local RLS harness is not a substitute for this hosted check.
 
+The onboarding page switches to account sign-in when `SANAD_MODE=supabase`; the local Try Demo action is hidden. Once the app has a reachable URL, open `/api/health` in a browser. A `status: "ok"`, `mode: "supabase"` and `database: "connected"` response confirms the server can query the new database. A 503 response means the server configuration, network connection or migrations still need attention; it never returns secret values. This health check does not verify sign-in, RLS isolation, private uploads, AI or Amoy.
+
 ## AI provider (optional demo; required for live AI)
 
 Set `AI_PROVIDER=OPENAI`, `AZURE_OPENAI` or `GEMINI`, `AI_API_KEY` and `AI_MODEL` in the server environment. Azure additionally needs `AZURE_OPENAI_ENDPOINT` and `AZURE_OPENAI_API_VERSION`. The default local demo rule-based analysis is labelled. Keep provider keys off the client. Document analysis sends a selected document to that provider only after the user chooses Analyze and explicitly checks consent.

@@ -7,7 +7,10 @@ import {
   Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { demoMode } from "@/lib/database/repository";
+export const dynamic = "force-dynamic";
 export default function Home() {
+  const demo = demoMode();
   return (
     <main id="main">
       <section className="hero">
@@ -19,13 +22,14 @@ export default function Home() {
             <em>Your next step can be clear.</em>
           </h1>
           <p className="lede">
-            Explain what’s happening in your own words. SANAD helps you confirm the facts, carry a verifiable record, and find
-            potentially relevant support.
+            Explain what’s happening in your own words. SANAD helps you confirm
+            the facts, carry a verifiable record, and find potentially relevant
+            support.
           </p>
           <div className="actions">
             <Button asChild>
               <Link href="/onboarding">
-                Try Demo{" "}
+                {demo ? "Try Demo" : "Get started"}{" "}
                 <ArrowRight size={17} aria-hidden="true" />
               </Link>
             </Button>
