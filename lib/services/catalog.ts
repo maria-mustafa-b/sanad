@@ -179,6 +179,22 @@ export const seedServices = [
     situations: ["domestic_work", "labour_dispute"],
     description: "Official overview of the domestic worker framework.",
   },
+  {
+    title: "Renting property and tenancy contract guidance",
+    category: "Housing",
+    url: "https://u.ae/en/information-and-services/housing/renting-a-property",
+    situations: ["housing", "rent_agreement", "tenancy"],
+    description:
+      "Official UAE portal guidance on tenancy contracts, Ejari registration, and tenant rights.",
+  },
+  {
+    title: "Resolving rental disputes (Rental Disputes Center)",
+    category: "Housing",
+    url: "https://u.ae/en/information-and-services/housing/resolving-rental-disputes",
+    situations: ["housing", "rent_dispute", "eviction"],
+    description:
+      "Official overview of filing cases with the Rental Dispute Settlement Centre.",
+  },
 ] as const;
 export async function services(): Promise<Service[]> {
   const rows = await list("services", { published: true });
