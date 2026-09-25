@@ -135,6 +135,7 @@ async function extractText(doc: Row, bytes: Buffer) {
   if (doc.mime_type === "text/plain")
     return bytes.toString("utf8").slice(0, 15000);
   if (doc.mime_type === "application/pdf") {
+    // @ts-ignore
     const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
     const pdf = await getDocument({
       data: new Uint8Array(bytes),
@@ -146,7 +147,7 @@ async function extractText(doc: Row, bytes: Buffer) {
       const p = await pdf.getPage(page);
       const items = await p.getTextContent();
       text +=
-        items.items.map((item) => ("str" in item ? item.str : "")).join(" ") +
+        items.items.map((item: any) => ("str" in item ? item.str : "")).join(" ") +
         "\n";
     }
     return text.slice(0, 15000);
