@@ -5,7 +5,14 @@ import { AccessibleStatusAnnouncer } from "@/components/accessibility/accessible
 import { extractSituationFacts } from "@/lib/actions/extract";
 
 export function SituationDraft() {
-  const [text, setText] = useState("");
+  const DEMO_TEXT = "Meri job chali gayi hai aur August ki salary bhi nahi mili.";
+  const [text, setText] = useState(() => {
+    if (typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("demo") === "1") {
+      return DEMO_TEXT;
+    }
+    return "";
+  });
   const [message, setMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -197,7 +204,7 @@ export function SituationDraft() {
   return (
     <section className="form-card flex flex-col gap-4">
       <div>
-        <label htmlFor="situation">What is happening?</label>
+        <label htmlFor="situation">Describe the situation in your own words</label>
         <p id="input-help">
           Type your situation, or click the microphone to speak. You can mix languages.
         </p>
