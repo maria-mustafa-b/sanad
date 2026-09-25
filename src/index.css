@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #faf6f0;
+    color: #2e3230;
+    line-height: 1.6;
+  }
+
+  /* RTL typography adjustments */
+  [dir="rtl"] {
+    font-family: 'Cairo', 'Noto Sans Arabic', system-ui, sans-serif;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Material symbol baseline align */
+.material-symbols-outlined {
+  user-select: none;
+}

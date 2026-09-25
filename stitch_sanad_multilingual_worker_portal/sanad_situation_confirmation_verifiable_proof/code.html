@@ -1,0 +1,690 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><title>SANAD (سند) — Multilingual Worker Support &amp; Verifiable Proof Platform</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&amp;family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary": "#4a7c59", "on-secondary-fixed": "#1e1a13", "secondary": "#6b6358", "inverse-primary": "#8ecf9e", "tertiary": "#705c30", "on-surface": "#2e3230", "surface-bright": "#faf6f0", "on-tertiary-fixed": "#221a05", "tertiary-container": "#c4a66a", "surface-container-highest": "#e4e0d8", "surface-container-lowest": "#ffffff", "primary-container": "#78a886", "on-secondary": "#ffffff", "surface-variant": "#e4e0d8", "on-secondary-container": "#5e5548", "secondary-container": "#f0e8db", "tertiary-fixed-dim": "#dcc48e", "on-surface-variant": "#4a4e4a", "on-background": "#2e3230", "on-tertiary": "#ffffff", "surface-container": "#f0ece4", "surface-container-low": "#f5f1ea", "primary-fixed-dim": "#8ecf9e", "surface-dim": "#dbd7cf", "secondary-fixed": "#f0e8db", "inverse-surface": "#2e3230", "tertiary-fixed": "#f8e0a8", "outline": "#74796e", "inverse-on-surface": "#f5f0e8", "on-error-container": "#690005", "error": "#b83230", "surface": "#faf6f0", "on-tertiary-container": "#554020", "on-error": "#ffffff", "outline-variant": "#c4c8bc", "on-primary-fixed": "#002110", "surface-tint": "#4a7c59", "on-primary-fixed-variant": "#2a6038", "surface-container-high": "#eae6de", "on-primary-container": "#d8f0de", "secondary-fixed-dim": "#d4ccbf", "background": "#faf6f0", "error-container": "#ffdad8", "on-secondary-fixed-variant": "#4a4538", "on-primary": "#ffffff", "primary-fixed": "#c8e8d0", "on-tertiary-fixed-variant": "#554020" }, "borderRadius": { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" }, "spacing": {}, "fontFamily": { "headline": ["Literata"], "display": ["Literata"], "body": ["Nunito Sans"], "label": ["Nunito Sans"] }, "fontSize": {} } } };</script></head><body class="bg-surface font-body text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(46,50,48,0.06)]"><div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="h-24 flex items-center justify-between gap-4"><div class="flex items-center gap-4 min-w-0"><div class="flex items-center gap-3"><div class="w-11 h-11 rounded-xl bg-primary flex items-center justify-center text-on-primary font-headline font-bold text-xl shadow-sm tracking-tight">سـ</div><div class="flex flex-col min-w-0"><div class="flex items-baseline gap-2"><span class="font-headline font-bold text-lg text-primary tracking-tight">SANAD</span><span class="font-headline text-base text-tertiary font-semibold">سَنَد</span><span class="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>SANAD Prototype Demo • Demonstration State</span></div><span class="text-xs text-on-surface-variant truncate font-normal">Support you can find. Proof you can trust. | Independent worker support</span></div></div></div><div class="flex items-center gap-2 sm:gap-3 flex-shrink-0"><div class="hidden lg:flex items-center bg-surface-container rounded-lg p-0.5"><button class="px-2 py-1 text-xs font-semibold rounded-md text-on-surface hover:bg-surface-container-high transition-colors" title="Standard Font Size" type="button">A</button><button class="px-2 py-1 text-xs font-semibold rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Enlarge Text" type="button">A+</button><button class="px-2 py-1 text-xs font-semibold rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Maximum Text Size" type="button">A++</button><button class="px-2 py-1 flex items-center gap-1 text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-md transition-colors" title="Voice Assistance" type="button"><span class="material-symbols-outlined text-[16px]">record_voice_over</span></button></div><div class="relative inline-block"><button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-xs font-medium text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-tertiary">translate</span><span class="hidden sm:inline font-semibold">EN / العربية</span><span class="material-symbols-outlined text-[16px]">expand_more</span></button></div><a class="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed text-xs font-semibold hover:bg-tertiary-fixed-dim transition-colors" data-path="help-and-human-support" href="#"><span class="material-symbols-outlined text-[16px]">support_agent</span><span class="">Get Help</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><nav class="flex items-center gap-1 overflow-x-auto pb-2 pt-0 -mt-1 scrollbar-none" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="journey-demo" href="#">Journey Demo</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="tell-sanad" href="#">Tell SANAD</a><a aria-current="page" class="px-3 py-1.5 rounded-lg tracking-wide whitespace-nowrap transition-colors bg-primary-container text-on-primary-container font-semibold" data-path="my-proof" href="#">My Proof</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="applications-and-tracking" href="#">Applications &amp; Tracking</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="public-verification" href="#">Public Verification</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="updates-and-notifications" href="#">Updates &amp; Notifications</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="help-and-human-support" href="#">Help &amp; Human Support</a></nav></div></header><main class="w-full pt-24 bg-surface min-h-[calc(100vh-14rem)]"><div class="flex flex-col w-full">
+<!-- Subtle Ambient Glow -->
+<div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="absolute -top-12 right-1/4 w-96 h-96 bg-primary-container/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-1/2 left-4 w-72 h-72 bg-tertiary-fixed/30 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<!-- JOURNEY STEPPER -->
+<section aria-label="Journey Progress" class="mb-10">
+<div class="bg-surface-container rounded-2xl p-4 sm:p-6 shadow-sm">
+<div class="flex items-center justify-between gap-2 overflow-x-auto pb-2 scrollbar-none">
+<!-- Step 1: Done -->
+<div class="flex items-center gap-3 shrink-0">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-xs shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary">Step 01</span>
+<span class="text-xs font-semibold text-on-surface">Tell SANAD</span>
+</div>
+</div>
+<div class="h-0.5 w-6 sm:w-12 bg-primary/40 shrink-0"></div>
+<!-- Step 2: Active (Current Combined View) -->
+<div class="flex items-center gap-3 shrink-0 bg-surface-container-lowest px-3.5 py-2 rounded-xl shadow-sm">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs">
+              2
+            </div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-wider text-primary">Active Stage</span>
+<span class="text-xs font-bold text-on-surface">Confirm &amp; Create Proof</span>
+</div>
+</div>
+<div class="h-0.5 w-6 sm:w-12 bg-surface-container-highest shrink-0"></div>
+<!-- Step 3: Pending -->
+<div class="flex items-center gap-3 shrink-0 opacity-60">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold text-xs">
+              3
+            </div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary">Step 03</span>
+<span class="text-xs font-medium text-on-surface">Find Support</span>
+</div>
+</div>
+<div class="h-0.5 w-6 sm:w-12 bg-surface-container-highest shrink-0"></div>
+<!-- Step 4: Pending -->
+<div class="flex items-center gap-3 shrink-0 opacity-60">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold text-xs">
+              4
+            </div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary">Step 04</span>
+<span class="text-xs font-medium text-on-surface">Apply &amp; Track</span>
+</div>
+</div>
+<div class="h-0.5 w-6 sm:w-12 bg-surface-container-highest shrink-0"></div>
+<!-- Step 5: Pending -->
+<div class="flex items-center gap-3 shrink-0 opacity-60">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold text-xs">
+              5
+            </div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary">Step 05</span>
+<span class="text-xs font-medium text-on-surface">Verify</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- MAIN TWO-STAGE WORKFLOW (Screen 05 & Screen 06) -->
+<div class="space-y-16">
+<!-- ========================================== -->
+<!-- SECTION 1: SCREEN 05 (Confirm Situation)   -->
+<!-- ========================================== -->
+<section class="relative" id="confirm-stage">
+<!-- Section Header with Editorial Serif -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold uppercase tracking-wider mb-3">
+<span class="material-symbols-outlined text-[14px]">fact_check</span>
+<span class="">Screen 05 • Verification &amp; Calibration</span>
+</div>
+<h2 class="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">
+              Is this what happened?
+            </h2>
+<p class="font-body text-base text-on-surface-variant max-w-2xl mt-2 leading-relaxed">
+              Review what SANAD understood from your statement. You can edit any item before creating your verifiable proof.
+            </p>
+</div>
+<!-- Worker Context Pill -->
+<div class="flex items-center gap-3 bg-surface-container px-4 py-2.5 rounded-xl shrink-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<div class="text-xs">
+<p class="text-secondary font-medium">Verified ID Context</p>
+<p class="text-on-surface font-bold font-mono">SANAD-STMT-8842</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Structured Provenance Card Grid (Cols 1-8) -->
+<div class="lg:col-span-8 space-y-4">
+<div class="bg-surface-container-low rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+<div class="flex items-center justify-between border-b pb-4 border-surface-container-high">
+<div>
+<h3 class="font-headline text-lg font-bold text-on-surface">Extracted Situation Facts</h3>
+<p class="text-xs text-on-surface-variant">Each record preserves full audit provenance for receiving NGOs &amp; legal aid</p>
+</div>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface text-xs font-mono">4 items reviewed</span>
+</div>
+<!-- Fact 1: Employment -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider">Employment Status</span>
+<div class="flex items-center gap-2">
+<span class="text-base font-bold text-on-surface" id="val-employment">Recently ended</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[11px] font-bold">
+<span class="material-symbols-outlined text-[12px]">auto_awesome</span>
+                        AI EXTRACTED
+                      </span>
+</div>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary text-xs font-bold shadow-sm hover:bg-surface-container transition-colors" onclick="editField('val-employment', 'Employment Status')" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span class="">Edit inline</span>
+</button>
+</div>
+</div>
+<!-- Fact 2: Issue -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider">Primary Issue Reported</span>
+<div class="flex items-center gap-2">
+<span class="text-base font-bold text-on-surface" id="val-issue">Unpaid wages</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[11px] font-bold">
+<span class="material-symbols-outlined text-[12px]">auto_awesome</span>
+                        AI EXTRACTED
+                      </span>
+</div>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary text-xs font-bold shadow-sm hover:bg-surface-container transition-colors" onclick="editField('val-issue', 'Reported Issue')" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span class="">Edit inline</span>
+</button>
+</div>
+</div>
+<!-- Fact 3: Salary Period -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider">Salary Period</span>
+<div class="flex items-center gap-2">
+<span class="text-base font-bold text-on-surface" id="val-salary">August</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[11px] font-bold">
+<span class="material-symbols-outlined text-[12px]">auto_awesome</span>
+                        AI EXTRACTED
+                      </span>
+</div>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary text-xs font-bold shadow-sm hover:bg-surface-container transition-colors" onclick="editField('val-salary', 'Salary Period')" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span class="">Edit inline</span>
+</button>
+</div>
+</div>
+<!-- Fact 4: Employer response -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-1">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider">Employer Response</span>
+<div class="flex items-center gap-2">
+<span class="text-base font-bold text-on-surface" id="val-employer">Unknown (No response provided)</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-[11px] font-bold">
+<span class="material-symbols-outlined text-[12px]">person_pin</span>
+                        USER REPORTED
+                      </span>
+</div>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary text-xs font-bold shadow-sm hover:bg-surface-container transition-colors" onclick="editField('val-employer', 'Employer Response')" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span class="">Edit inline</span>
+</button>
+</div>
+</div>
+<!-- Missing Information Gap Alert & Focused Single Question -->
+<div class="p-5 rounded-xl bg-tertiary-fixed/40 space-y-3">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary mt-0.5 text-[22px]">help_center</span>
+<div class="space-y-1 w-full">
+<div class="flex items-center justify-between">
+<h4 class="text-sm font-bold text-on-tertiary-fixed">Information still needed: Employment end date</h4>
+<span class="text-[11px] font-semibold text-tertiary uppercase">High Precision Requirement</span>
+</div>
+<p class="text-xs text-on-tertiary-fixed leading-relaxed">
+                      To qualify for expedited labour dispute registration, please specify the formal separation date.
+                    </p>
+<div class="pt-2">
+<label class="block text-xs font-bold text-on-surface mb-1.5" for="last-working-day">
+                        What was your last working day?
+                      </label>
+<div class="flex flex-col sm:flex-row gap-2">
+<input class="px-3 py-2 rounded-lg bg-surface-container-lowest text-on-surface text-xs focus:outline-none focus:ring-2 focus:ring-primary shadow-sm" id="last-working-day" type="date" value="2026-08-31">
+<button class="px-4 py-2 rounded-lg bg-tertiary text-on-tertiary text-xs font-bold hover:bg-on-tertiary-container transition-colors" onclick="recordDate()" type="button">
+                          Save Date
+                        </button>
+</div>
+<span class="hidden text-xs text-primary font-semibold mt-1 inline-flex items-center gap-1" id="date-saved-msg">
+<span class="material-symbols-outlined text-[14px]">done</span> Saved as: 31 August 2026
+                      </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Confirmation Actions -->
+<div class="pt-4 flex flex-col sm:flex-row items-center gap-3">
+<button class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-primary hover:bg-primary-container text-on-primary text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2" onclick="triggerCredentialCreation()" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="">Confirm Situation Details</span>
+</button>
+<button class="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-surface-container-highest hover:bg-surface-container text-on-surface text-sm font-semibold transition-colors flex items-center justify-center gap-2" onclick="toggleExplanationModal()" type="button">
+<span class="material-symbols-outlined text-[18px]">psychology_alt</span>
+<span class="">Ask SANAD to Explain</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Understanding Confidence & AI Provenance Sidecard (Cols 9-12) -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Gauge Card -->
+<div class="bg-surface-container-low rounded-2xl p-6 shadow-sm space-y-6">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold uppercase tracking-wider text-secondary">SANAD Cognitive Intake</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Live Model
+                </span>
+</div>
+<!-- SVG Confidence Donut Chart -->
+<div class="flex flex-col items-center justify-center pt-2">
+<div class="relative w-40 h-40 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+<!-- Background Ring -->
+<circle class="text-surface-container-highest fill-none" cx="50" cy="50" r="40" stroke="currentColor" stroke-width="9"></circle>
+<!-- Foreground Confidence Arc (94% of 251.2 = 236.1) -->
+<circle class="text-primary fill-none transition-all duration-1000 ease-out" cx="50" cy="50" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="15.1" stroke-linecap="round" stroke-width="9"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-headline text-3xl font-bold text-on-surface tracking-tight">94%</span>
+<span class="text-[10px] font-semibold text-secondary uppercase tracking-wider">Confidence</span>
+</div>
+</div>
+<h4 class="font-headline font-bold text-sm text-on-surface mt-3 text-center">Confidence in understanding: 94%</h4>
+<p class="text-xs text-on-surface-variant text-center mt-1 leading-relaxed px-2">Reflects comprehension of statement, not a legal assessment.</p>
+</div>
+<!-- Breakdown mini-metrics -->
+<div class="space-y-3 pt-2 border-t border-surface-container-high text-xs">
+<div class="flex justify-between items-center text-on-surface">
+<span class="text-on-surface-variant">Linguistic Intent Clarity</span>
+<span class="font-bold font-mono">98%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[98%] rounded-full"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface">
+<span class="text-on-surface-variant">Temporal Match (Salary Month)</span>
+<span class="font-bold font-mono">95%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[95%] rounded-full"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface">
+<span class="text-on-surface-variant">Entity Disambiguation</span>
+<span class="font-bold font-mono">89%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[89%] rounded-full"></div>
+</div>
+</div>
+<!-- Privacy Seal -->
+<div class="p-3 bg-surface-container rounded-xl flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">lock</span>
+<p class="text-[11px] text-on-surface-variant leading-relaxed">
+                  Your raw voice notes and text are encrypted on your device. Only confirmed canonical facts are hashed.
+                </p>
+</div>
+</div>
+<!-- Contextual Helper Card with Photo of Community Officer -->
+<div class="bg-surface-container-low rounded-2xl overflow-hidden shadow-sm">
+<div class="h-32 bg-cover bg-center relative" data-alt="Warm natural photograph of a compassionate female legal aid caseworker smiling warmly in a bright community office with wood tables and plants, soft natural light, warm cream tones." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCmEsN3iuGtLMQcrazeFUgxN1rKSwrHnc5_VQtXTFRy2i7liKQTxFEqH1PaWWs6XNdYhZc_uoSmZuhgFUD4WKxz4pKCwi-OVIYLEaIDxHsiu5lLmeui_qp2TK-yk1DjWzMHvdaN8KKtBG9E2daA772-Z8h8KKxelNjd1xu-N5qgTArX7bQlwBXTVGgyp6YfTQNndyw1CFjaRba_RVkJvJmQuyEaFANRn5VNE8xQ5u1s_283lVCV7mQD')">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+</div>
+<div class="p-5 -mt-6 relative">
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary">Community Case Advocate</span>
+<h5 class="font-headline font-bold text-sm text-on-surface mt-0.5">Need a human eye before confirming?</h5>
+<p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">
+                  You can call or voice message SANAD support workers in Hindi, Arabic, Bengali, or English anytime.
+                </p>
+<div class="mt-3 flex items-center justify-between">
+<a class="text-xs font-bold text-primary hover:underline flex items-center gap-1" data-path="help-and-human-support" href="#">
+<span class="">Talk with Maryam (Case Lead)</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Explainer Drawer / Dialogue (Hidden by default, toggleable) -->
+<div class="hidden mt-6 bg-surface-container p-6 rounded-2xl shadow-sm transition-all duration-300" id="sanad-explanation">
+<div class="flex items-start justify-between gap-4">
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">smart_toy</span>
+<h4 class="font-headline font-bold text-base text-on-surface">How SANAD Parsed Your Voice &amp; Chat Statement</h4>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed max-w-3xl">
+                SANAD applied our zero-retention multilingual legal parser. We identified that you stated you worked through August without receiving regular wages, and that you stopped working at the site. We flagged the exact end date as a gap to ensure strict alignment with the Ministry of Human Resources and Emiratisation / Labour Relations claim forms.
+              </p>
+<div class="flex flex-wrap gap-2 pt-1 text-[11px] font-mono text-secondary">
+<span class="bg-surface-container-high px-2 py-0.5 rounded">Model: LegalExtract-v3.1</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded">Jurisdiction: Standard Labour Code Art. 54</span>
+<span class="bg-surface-container-high px-2 py-0.5 rounded">Zero-PII-Leakage Tested</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0" onclick="toggleExplanationModal()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+</section>
+<!-- SECTION SEPARATOR DIVIDER -->
+<div class="relative flex items-center justify-center py-4">
+<div class="w-full border-t border-surface-container-highest"></div>
+<div class="absolute px-4 bg-surface text-secondary text-xs uppercase font-mono tracking-widest flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+          Transition to Screen 06
+          <span class="w-2 h-2 rounded-full bg-primary"></span>
+</div>
+</div>
+<!-- ========================================== -->
+<!-- SECTION 2: SCREEN 06 (Credential Created)  -->
+<!-- ========================================== -->
+<section class="relative pb-12" id="credential-stage">
+<!-- Header -->
+<div class="mb-8">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold uppercase tracking-wider mb-3">
+<span class="material-symbols-outlined text-[14px]">lock_open</span>
+<span class="">Screen 06 • Cryptographic Issuance</span>
+</div>
+<h2 class="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">
+            Your proof is ready
+          </h2>
+<p class="font-body text-base text-on-surface-variant max-w-2xl mt-2 leading-relaxed">
+            You confirmed this situation. SANAD created a portable verifiable credential.
+          </p>
+<!-- Legal / Reliance Notice Banner -->
+<div class="mt-4 p-3.5 rounded-xl bg-secondary-container/80 flex items-start gap-3 max-w-3xl">
+<span class="material-symbols-outlined text-tertiary text-[20px] shrink-0 mt-0.5">info</span>
+<p class="text-xs text-on-secondary-container leading-relaxed"><strong class="font-bold">Notice:</strong> This credential records the situation you confirmed. Acceptance depends on the receiving support service. It carries cryptographic provenance to prevent tampering.</p>
+</div>
+</div>
+<!-- Master Bento Grid: Credential Card & Next Actions -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- The Signature Official SANAD-VC (Cols 1-8) -->
+<div class="lg:col-span-8">
+<div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 shadow-md relative overflow-hidden"><!-- Subtle decorative watermark stamp -->
+<div class="absolute -right-8 -bottom-8 w-48 h-48 rounded-full bg-primary-container/10 flex items-center justify-center font-headline font-bold text-8xl text-primary/10 select-none pointer-events-none">
+  سَنَد
+</div>
+<!-- Top VC Ribbon -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-surface-container-high">
+  <div class="flex items-center gap-3">
+    <div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-on-primary font-headline font-bold text-xl shadow-sm">
+      سـ
+    </div>
+    <div>
+      <div class="flex items-center gap-2">
+        <h3 class="font-headline font-bold text-lg text-on-surface tracking-tight">SANAD Verifiable Credential</h3>
+      </div>
+      <span class="font-mono text-xs text-secondary font-medium tracking-wider">Record ID: SANAD-VC-00124</span>
+    </div>
+  </div>
+  <!-- Status Pill -->
+  <div class="flex items-center gap-2 self-start sm:self-center">
+    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-on-primary text-xs font-bold shadow-sm">
+      <span class="material-symbols-outlined text-[14px]">verified</span>
+      <span class="">ISSUED &amp; VERIFIED</span>
+    </span>
+  </div>
+</div>
+<!-- Worker-Facing Core Summary Grid: 4 Core Pillars -->
+<div class="py-6 border-b border-surface-container-high space-y-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <!-- 1. What happened -->
+    <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high space-y-1">
+      <div class="flex items-center gap-2 text-primary">
+        <span class="material-symbols-outlined text-[18px]">history_edu</span>
+        <span class="text-xs font-bold uppercase tracking-wider text-secondary">1. What happened</span>
+      </div>
+      <p class="font-headline font-bold text-base text-on-surface">Employment Ended &amp; Unpaid Wages</p>
+      <p class="text-xs text-on-surface-variant">Worker reported regular salary withheld for August 2026 work period.</p>
+    </div>
+    <!-- 2. What SANAD understood -->
+    <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high space-y-1">
+      <div class="flex items-center gap-2 text-primary">
+        <span class="material-symbols-outlined text-[18px]">psychology</span>
+        <span class="text-xs font-bold uppercase tracking-wider text-secondary">2. What SANAD understood</span>
+      </div>
+      <p class="font-headline font-bold text-base text-on-surface">Salary Dispute Claim</p>
+      <p class="text-xs text-on-surface-variant">94% understanding confidence; identified missing final date &amp; calibrated facts.</p>
+    </div>
+    <!-- 3. What you confirmed -->
+    <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high space-y-1">
+      <div class="flex items-center gap-2 text-primary">
+        <span class="material-symbols-outlined text-[18px]">check_circle</span>
+        <span class="text-xs font-bold uppercase tracking-wider text-secondary">3. What you confirmed</span>
+      </div>
+      <p class="font-headline font-bold text-base text-on-surface">4 Validated Statement Facts</p>
+      <p class="text-xs text-on-surface-variant">Employment status: Ended; Period: August 2026; Separation date: 31 Aug 2026.</p>
+    </div>
+    <!-- 4. What proof was created -->
+    <div class="p-4 rounded-xl bg-surface-container-low border border-surface-container-high space-y-1">
+      <div class="flex items-center gap-2 text-primary">
+        <span class="material-symbols-outlined text-[18px]">verified_user</span>
+        <span class="text-xs font-bold uppercase tracking-wider text-secondary">4. What proof was created</span>
+      </div>
+      <p class="font-headline font-bold text-base text-on-surface">Tamper-Proof Portable Credential</p>
+      <p class="text-xs text-on-surface-variant">W3C verifiable claim ready for offline inspection or support services.</p>
+    </div>
+  </div>
+</div>
+<!-- Offline QR verification pattern -->
+<div class="py-6 flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-surface-container-high">
+  <div class="flex items-center gap-4 w-full sm:w-auto">
+    <div class="w-20 h-20 p-2 bg-surface rounded-xl flex items-center justify-center shadow-inner shrink-0">
+      <svg class="w-full h-full text-on-surface" fill="currentColor" viewBox="0 0 100 100">
+        <rect fill="none" height="24" rx="3" stroke="currentColor" stroke-width="4" width="24" x="10" y="10"></rect>
+        <rect height="10" rx="1" width="10" x="17" y="17"></rect>
+        <rect fill="none" height="24" rx="3" stroke="currentColor" stroke-width="4" width="24" x="66" y="10"></rect>
+        <rect height="10" rx="1" width="10" x="73" y="17"></rect>
+        <rect fill="none" height="24" rx="3" stroke="currentColor" stroke-width="4" width="24" x="10" y="66"></rect>
+        <rect height="10" rx="1" width="10" x="17" y="73"></rect>
+        <rect height="6" width="6" x="42" y="14"></rect>
+        <rect height="6" width="6" x="52" y="14"></rect>
+        <rect height="6" width="6" x="42" y="24"></rect>
+        <rect height="6" width="6" x="14" y="42"></rect>
+        <rect height="6" width="6" x="24" y="48"></rect>
+        <rect fill="currentColor" height="16" rx="2" width="16" x="42" y="42"></rect>
+        <rect height="6" width="6" x="66" y="42"></rect>
+        <rect height="6" width="6" x="78" y="48"></rect>
+        <rect height="6" width="6" x="42" y="66"></rect>
+        <rect height="6" width="6" x="52" y="76"></rect>
+        <rect height="6" width="6" x="66" y="66"></rect>
+        <rect height="6" width="6" x="78" y="72"></rect>
+      </svg>
+    </div>
+    <div class="space-y-1">
+      <span class="text-xs font-bold text-on-surface">Offline Verification Ready</span>
+      <p class="text-[11px] text-on-surface-variant leading-relaxed">
+        Caseworkers and intake desks can scan this credential directly without an internet connection.
+      </p>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
+        <span class="material-symbols-outlined text-[13px]">verified_user</span> W3C Standard V2.0
+      </span>
+    </div>
+  </div>
+</div>
+<!-- Progressive Disclosure: Technical Details Accordion -->
+<div class="pt-4">
+  <button class="w-full flex items-center justify-between text-xs font-bold text-secondary hover:text-on-surface transition-colors py-2" onclick="toggleTechDetails()" type="button">
+    <span class="flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-[16px]">code</span>
+      <span class="">View Technical Details (Hash, DID, Cryptographic Signatures)</span>
+    </span>
+    <span class="material-symbols-outlined text-[18px] transition-transform" id="tech-chevron">expand_more</span>
+  </button>
+  <div class="hidden mt-4 p-4 rounded-xl bg-surface-container font-mono text-[11px] text-on-surface-variant space-y-3" id="tech-details-content">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 pb-2 border-b border-surface-container-high">
+      <span class="text-secondary">Cryptographic Hash Digest:</span>
+      <div class="flex items-center gap-2">
+        <code class="font-mono text-xs font-bold text-on-surface bg-surface-container-high px-2 py-0.5 rounded" id="vc-hash">0x7f3e84b9...a82c</code>
+        <button class="p-1 rounded bg-surface hover:bg-surface-container-highest text-on-surface transition-colors" onclick="copyHash()" title="Copy Hash" type="button">
+          <span class="material-symbols-outlined text-[14px]">content_copy</span>
+        </button>
+      </div>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-secondary">Holder DID:</span>
+      <span class="text-on-surface font-semibold truncate max-w-[200px]">did:sanad:zk77x89q390v1z</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-secondary">Proof Type:</span>
+      <span class="text-on-surface font-semibold">Zero-Knowledge zk-SNARK (Groth16)</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-secondary">Issuer Authority:</span>
+      <span class="text-on-surface font-semibold">SANAD Trust Root (Decentralized Consortium)</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-secondary">Timestamp:</span>
+      <span class="text-on-surface">25 September 2026 14:32:08 UTC</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-secondary">Revocation Status:</span>
+      <span class="text-primary font-bold">Not Revoked (On-Chain Accumulator Verified)</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-secondary">Schema:</span>
+      <span class="text-on-surface">urn:sanad:schema:claim:employment-v1</span>
+    </div>
+  </div>
+</div></div>
+</div>
+<!-- Actions & Supporting Ecosystem Next Steps (Cols 9-12) -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Primary Continuation Box -->
+<div class="bg-surface-container-low rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
+<h4 class="font-headline font-bold text-lg text-on-surface tracking-tight">Next Step</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                Connect your verified proof directly with accredited legal aid programs, food voucher relief, or labour mediation desks.
+              </p>
+<div class="space-y-3">
+<a class="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2" data-path="journey-demo" href="#">
+<span class="">Continue to Support Matches</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<button class="w-full py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-bold transition-colors flex items-center justify-center gap-2" onclick="downloadProof()" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span class="">Download Offline Proof (.json-ld / PDF)</span>
+</button>
+</div>
+<!-- Storage notice -->
+<div class="pt-3 border-t border-surface-container-high flex items-center gap-2 text-[11px] text-secondary">
+<span class="material-symbols-outlined text-[15px] text-primary">cloud_done</span>
+<span class="">Auto-saved to your safe SANAD Local Vault</span>
+</div>
+</div>
+<!-- Matched Support Preview Widget -->
+<div class="bg-surface-container rounded-2xl p-5 space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary">Instantly Qualified Matches</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-bold">3 Available</span>
+</div>
+<!-- Service 1 -->
+<div class="p-3 rounded-xl bg-surface-container-lowest flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">balance</span>
+</div>
+<div class="min-w-0 flex-1"><p class="text-xs font-bold text-on-surface truncate">Wage Dispute Support</p><p class="text-[11px] text-on-surface-variant truncate">Community Mediation &amp; Intake Assistance • Free</p></div>
+<span class="material-symbols-outlined text-secondary text-[16px]">chevron_right</span>
+</div>
+<!-- Service 2 -->
+<div class="p-3 rounded-xl bg-surface-container-lowest flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-tertiary shrink-0">
+<span class="material-symbols-outlined text-[20px]">currency_exchange</span>
+</div>
+<div class="min-w-0 flex-1">
+<p class="text-xs font-bold text-on-surface truncate">Emergency Worker Wage Subsidy</p>
+<p class="text-[11px] text-on-surface-variant truncate">Red Crescent Urgent Relief Pool</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]">chevron_right</span>
+</div>
+<!-- Service 3 -->
+<div class="p-3 rounded-xl bg-surface-container-lowest flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">translate</span>
+</div>
+<div class="min-w-0 flex-1">
+<p class="text-xs font-bold text-on-surface truncate">Pro-Bono Advocate Consultation</p>
+<p class="text-[11px] text-on-surface-variant truncate">Urdu / Arabic / English translation</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]">chevron_right</span>
+</div>
+</div>
+<!-- Natural Imagery: Worker Community Hub -->
+<div class="rounded-2xl overflow-hidden shadow-sm relative group">
+<div class="h-44 bg-cover bg-center" data-alt="Candid, warm photograph of diverse migrant workers sitting at an outdoor wooden table in a supportive worker center in Dubai, smiling, holding paperwork with reassurance and relief, soft warm golden hour light, documentary photography style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAHnD55uZjJeX5uzA0_bT1Rs75zBB4t2RM3xR5w7tbE3_y4SV6mXUs4rSqhNVGLeFInQVVqVrawJkWwTNa67kSZoliEY5isy4x9X9DKo0LDkyJHgAzTHncMbd3qhYu5AnMbe3GYWLLzlIrG5c8TGBLhik7kQOIEBBPn0UweRSqmoI5p4u7dYXn_qSr6sLay8O1KlTLa0hLdfdDrSNgl3VZpeEFf9DllulTnb3GJ_uNnGChQzuFBF_QX')"></div>
+<div class="p-4 bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">lock_reset</span>
+<span class="text-xs font-bold text-on-surface">You hold full control</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-1 leading-relaxed">
+                  No embassy, sponsor, or landlord is notified when you generate or hold this verifiable credential.
+                </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+<script>
+  // Inline Edit Micro-Interaction
+  function editField(id, label) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const current = el.innerText;
+    const newVal = prompt('Edit ' + label + ':', current);
+    if (newVal !== null && newVal.trim() !== '') {
+      el.innerText = newVal.trim();
+    }
+  }
+
+  // Record End Date Micro-Interaction
+  function recordDate() {
+    const input = document.getElementById('last-working-day');
+    const msg = document.getElementById('date-saved-msg');
+    if (input && msg) {
+      msg.classList.remove('hidden');
+      setTimeout(() => {
+        msg.classList.add('opacity-80');
+      }, 2000);
+    }
+  }
+
+  // Ask SANAD to Explain Toggle
+  function toggleExplanationModal() {
+    const el = document.getElementById('sanad-explanation');
+    if (el) {
+      el.classList.toggle('hidden');
+      if (!el.classList.contains('hidden')) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }
+
+  // Trigger Credential Scroll & Highlight
+  function triggerCredentialCreation() {
+    const credStage = document.getElementById('credential-stage');
+    if (credStage) {
+      credStage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Copy Hash Micro-Interaction
+  function copyHash() {
+    const toast = document.getElementById('copied-toast');
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText('0x7f3e84b9c1d2e3f4a5b6c7d8e9f0123456789abcde0123456789abcdefa82c');
+    }
+    if (toast) {
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2500);
+    }
+  }
+
+  // Toggle Technical Details Accordion
+  function toggleTechDetails() {
+    const content = document.getElementById('tech-details-content');
+    const chevron = document.getElementById('tech-chevron');
+    if (content && chevron) {
+      content.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180');
+    }
+  }
+
+  // Download Mock VC
+  function downloadProof() {
+    const sampleVC = {
+      "@context": ["https://www.w3.org/2018/credentials/v1"],
+      "id": "urn:uuid:sanad-vc-00124",
+      "type": ["VerifiableCredential", "EmploymentClaimCredential"],
+      "issuer": "did:sanad:consortium-trust-root",
+      "issuanceDate": "2026-09-25T14:32:08Z",
+      "credentialSubject": {
+        "id": "did:sanad:zk77x89q390v1z",
+        "claimCategory": "Employment",
+        "issue": "Unpaid wages",
+        "period": "August 2026",
+        "status": "Employment ended"
+      },
+      "proof": {
+        "type": "Groth16ZkProof2024",
+        "created": "2026-09-25T14:32:08Z",
+        "hash": "0x7f3e84b9c1d2e3f4a5b6c7d8e9f0123456789abcde0123456789abcdefa82c"
+      }
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sampleVC, null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", "SANAD-VC-00124.jsonld");
+    dlAnchor.click();
+  }
+</script></main><footer class="w-full bg-surface-container-low shadow-[0_-1px_12px_rgba(46,50,48,0.04)] mt-16"><div class="max-w-7xl mx-auto px-6 lg:px-12 py-12"><div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10"><div class="space-y-3"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline font-bold text-sm">سـ</div><span class="font-headline font-bold text-primary tracking-tight text-base">SANAD</span><span class="font-headline text-tertiary text-sm">سَنَد</span></div><p class="text-xs text-on-surface-variant leading-relaxed">Human-centered decentralized worker support platform. Verifiable, private, multilingual proofs for migrant &amp; low-wage workers.</p><div class="flex items-center gap-2 text-xs font-semibold text-primary"><span class="material-symbols-outlined text-[16px]">verified_user</span><span class="">Zero-Knowledge Proof Secured</span></div></div><div class="space-y-2"><span class="text-xs font-bold uppercase tracking-wider text-secondary">Privacy &amp; Sovereign Trust</span><ul class="space-y-1.5 text-xs text-on-surface-variant"><li class="">• No personal documents saved on-chain</li><li class="">• Encrypted client-side storage</li><li class="">• Portable W3C Verifiable Credentials</li><li class="">• Tamper-proof cryptographic hashes</li></ul></div><div class="space-y-2"><span class="text-xs font-bold uppercase tracking-wider text-secondary">Emergency Support</span><p class="text-xs text-on-surface-variant">Free 24/7 confidential multilingual helpline for urgent wage theft, retention of documents, or safety.</p><div class="flex items-center gap-2 text-sm font-bold text-primary"><span class="material-symbols-outlined text-[18px]">call</span><span class="">800-SANAD (72623)</span></div><p class="text-xs text-on-surface-variant">WhatsApp &amp; Signal triage supported</p></div><div class="space-y-2"><span class="text-xs font-bold uppercase tracking-wider text-secondary">Supported Languages</span><p class="text-xs text-on-surface-variant leading-relaxed">English • العربية • हिन्दी • اردو • বাংলা • മലയാളം • தமிழ் • Tagalog</p><div class="pt-2 flex items-center gap-2 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">accessibility_new</span><span class="">WCAG 2.1 AAA Compliant UX</span></div></div></div><div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-on-surface-variant"><p class="">© 2024 SANAD Platform. Built for worker dignity and verifiable rights.</p><div class="flex items-center gap-6"><a class="hover:text-on-surface transition-colors" data-path="help-and-human-support" href="#">Independent Legal Partners</a><a class="hover:text-on-surface transition-colors" data-path="public-verification" href="#">Audited Smart Verification</a><span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[11px]">v2.4-root</span></div></div></div></footer>
+
+</body></html>

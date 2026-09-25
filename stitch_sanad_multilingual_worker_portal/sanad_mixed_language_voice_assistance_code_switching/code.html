@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,300..800;1,6..12,300..800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:wght@100..900&family=Nunito+Sans:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-error":"#ffffff","outline":"#74796e","on-primary-container":"#d8f0de","background":"#faf6f0","tertiary-fixed-dim":"#dcc48e","primary":"#4a7c59","primary-container":"#78a886","error-container":"#ffdad8","surface-container-low":"#f5f1ea","surface-variant":"#e4e0d8","secondary-container":"#f0e8db","surface-container-high":"#eae6de","tertiary-container":"#c4a66a","on-secondary":"#ffffff","inverse-primary":"#8ecf9e","on-tertiary-fixed-variant":"#554020","inverse-surface":"#2e3230","on-error-container":"#690005","surface-container":"#f0ece4","secondary-fixed-dim":"#d4ccbf","surface-container-highest":"#e4e0d8","on-secondary-container":"#5e5548","on-secondary-fixed-variant":"#4a4538","outline-variant":"#c4c8bc","on-tertiary-container":"#554020","on-primary":"#ffffff","on-background":"#2e3230","surface-bright":"#faf6f0","secondary":"#6b6358","on-tertiary":"#ffffff","secondary-fixed":"#f0e8db","on-surface-variant":"#4a4e4a","primary-fixed":"#c8e8d0","surface-container-lowest":"#ffffff","primary-fixed-dim":"#8ecf9e","on-surface":"#2e3230","inverse-on-surface":"#f5f0e8","surface":"#faf6f0","on-tertiary-fixed":"#221a05","tertiary-fixed":"#f8e0a8","surface-tint":"#4a7c59","tertiary":"#705c30","on-primary-fixed-variant":"#2a6038","error":"#b83230","on-secondary-fixed":"#1e1a13","on-primary-fixed":"#002110","surface-dim":"#dbd7cf"},"borderRadius":{"DEFAULT":"0.5rem","lg":"1rem","xl":"1.5rem","full":"9999px"},"spacing":{},"fontFamily":{"headline":["Literata"],"display":["Literata"],"body":["Nunito Sans"],"label":["Nunito Sans"]},"fontSize":{}}}}</script></head><body class="bg-surface font-body text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col pt-6 pb-6 shadow-[0_4px_20px_rgba(46,50,48,0.06)]"><div class="px-6 mb-6"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-2xl">shield_person</span></div><div><h1 class="font-headline font-bold text-lg text-on-surface leading-tight">SANAD <span class="text-primary font-normal font-headline">سند</span></h1><p class="text-xs text-on-surface-variant">Worker Support Gateway</p></div></div><div class="mt-4 p-3 rounded-xl bg-surface-container flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">verified_user</span><span class="text-xs text-on-surface font-medium">Protected Case Management</span></div></div><nav class="flex-1 px-4 space-y-1.5 overflow-y-auto" data-active-classes="bg-primary-container text-on-primary-container font-bold rounded-xl"><a class="flex items-center px-4 py-3 rounded-xl text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="services-and-claims" href="#"><span class="material-symbols-outlined mr-3 text-lg">account_balance_wallet</span>Services & Claims (المطالبات)</a><a class="flex items-center px-4 py-3 rounded-xl text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="voice-assistant-and-case-help" href="#"><span class="material-symbols-outlined mr-3 text-lg">mic</span>Voice Assistant & Case Help</a><a class="flex items-center px-4 py-3 rounded-xl text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="document-reader-and-translation" href="#"><span class="material-symbols-outlined mr-3 text-lg">document_scanner</span>Document Reader (قارئ الوثائق)</a><a class="flex items-center px-4 py-3 rounded-xl text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="worker-rights-and-grievance" href="#"><span class="material-symbols-outlined mr-3 text-lg">gavel</span>Worker Rights & Grievance</a><a class="flex items-center px-4 py-3 rounded-xl text-sm text-error hover:bg-error-container hover:text-on-error-container font-bold transition-all" data-path="emergency-worker-sos" href="#"><span class="material-symbols-outlined mr-3 text-lg">sos</span>Worker SOS Emergency</a></nav><div class="px-4 pt-4"><div class="bg-secondary-container p-3.5 rounded-xl text-on-secondary-container"><div class="flex items-center gap-2 mb-1"><span class="material-symbols-outlined text-[18px]">headset_mic</span><span class="text-xs font-bold">24/7 Hotline Active</span></div><p class="text-xs opacity-90">Dial 800-SANAD-SOS for real-time audio interpretation.</p></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(46,50,48,0.04)] z-40 flex items-center justify-between px-8"><div class="flex items-center gap-3"><div class="inline-flex items-center bg-surface-container px-3 py-1.5 rounded-xl text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[16px] mr-1.5">language</span><span class="font-bold text-on-surface">English</span><span class="mx-1 text-outline-variant">|</span><span>العربية</span><span class="mx-1 text-outline-variant">|</span><span>हिन्दी</span><span class="mx-1 text-outline-variant">|</span><span>বাংলা</span><span class="mx-1 text-outline-variant">|</span><span>اردو</span></div></div><div class="flex items-center gap-4"><button class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-tertiary-container text-on-tertiary-container text-xs font-bold hover:bg-tertiary hover:text-on-tertiary transition-all" type="button"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span></span><span class="material-symbols-outlined text-[16px]">mic</span><span>Voice Input</span></button><a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-error text-on-error text-xs font-bold hover:bg-error-container hover:text-on-error-container transition-all" data-path="emergency-worker-sos" href="#"><span class="material-symbols-outlined text-[16px]">e911_emergency</span>SOS</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full px-6 py-6 max-w-7xl mx-auto space-y-8">
+<!-- Friendly Guidance Banner with Organic Earth Tones -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-high p-5 shadow-sm">
+<div class="absolute -right-8 -top-8 w-44 h-44 rounded-full bg-primary/10 blur-2xl pointer-events-none"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-on-primary shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">record_voice_over</span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-xs uppercase tracking-wider font-semibold text-tertiary">Natural Code-Switching AI • الذكاء اللغوي</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-xs text-on-surface-variant font-medium">Multilingual Acoustic Engine v3.4</span>
+</div>
+<p class="font-headline text-lg md:text-xl text-on-surface font-semibold leading-snug">
+            Speak or type naturally. You can use your mother tongue, colloquial dialect, or mix languages freely.
+          </p>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+            بولیں یا ٹائپ کریں اپنی زبان میں • تحدث بعفويتك دون تدقيق لغوي • अपनी स्वाभाविक भाषा में बोलें • কোন আনুষ্ঠানিক অনুবাদ লাগবে না
+          </p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 self-start md:self-auto bg-surface-container-lowest px-3.5 py-2 rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span class="text-xs font-bold text-on-surface">No Translation Needed</span>
+</div>
+</div>
+</div>
+<!-- Primary Voice Interaction Sandbox & Processing Stage -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left / Center: Interactive Voice Conversation & Mixed Speech Canvas -->
+<div class="lg:col-span-7 flex flex-col space-y-6">
+<!-- Real-time Voice Live Activity Display -->
+<div class="rounded-xl bg-surface-container-low p-6 shadow-sm relative overflow-hidden">
+<!-- Live Acoustic State Indicator Strip -->
+<div class="flex flex-wrap items-center justify-between gap-3 pb-5">
+<div class="flex items-center gap-3">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary text-on-primary text-xs font-bold transition-all shadow-sm" id="listeningPill">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-on-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-on-primary"></span>
+</span>
+<span id="activeStatusLabel">Listening / सुन रहा हूँ / يستمع</span>
+</div>
+<span class="text-xs font-medium text-on-surface-variant tracking-tight font-mono">CODE-SWITCH DETECT: HIN+ARA+ENG</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-2.5 py-1 rounded-lg">
+<span class="material-symbols-outlined text-primary text-[16px]">graphic_eq</span>
+<span class="text-xs font-bold text-on-surface">48 kHz Live Stream</span>
+</div>
+</div>
+<!-- Ambient Waveform Graphic Canvas -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-4 flex flex-col items-center justify-center space-y-3 shadow-inner relative">
+<div class="w-full h-16 flex items-center justify-center gap-1.5 px-4 overflow-hidden" id="waveformBars">
+<span class="w-1.5 bg-primary/40 rounded-full h-4 transition-all duration-300"></span>
+<span class="w-1.5 bg-primary/70 rounded-full h-8 transition-all duration-200"></span>
+<span class="w-1.5 bg-primary rounded-full h-14 animate-pulse"></span>
+<span class="w-1.5 bg-primary/80 rounded-full h-11 transition-all duration-300"></span>
+<span class="w-1.5 bg-primary rounded-full h-16 animate-pulse"></span>
+<span class="w-1.5 bg-primary/90 rounded-full h-12"></span>
+<span class="w-1.5 bg-tertiary rounded-full h-14 animate-pulse"></span>
+<span class="w-1.5 bg-tertiary-container rounded-full h-9"></span>
+<span class="w-1.5 bg-primary/80 rounded-full h-15 animate-pulse"></span>
+<span class="w-1.5 bg-primary rounded-full h-12"></span>
+<span class="w-1.5 bg-primary/70 rounded-full h-7"></span>
+<span class="w-1.5 bg-primary/50 rounded-full h-5"></span>
+<span class="w-1.5 bg-primary/80 rounded-full h-10 animate-pulse"></span>
+<span class="w-1.5 bg-primary rounded-full h-14 animate-pulse"></span>
+<span class="w-1.5 bg-primary/60 rounded-full h-8"></span>
+<span class="w-1.5 bg-primary/40 rounded-full h-4"></span>
+</div>
+<div class="flex items-center justify-between w-full px-2 text-[11px] text-on-surface-variant font-mono">
+<span>00:18 Recorded</span>
+<span class="text-primary font-bold">Confidence: 98.4% (Multi-Token Alignment)</span>
+</div>
+</div>
+<!-- Conversational Turn: User Utterance (Verbatim Mixed Language) -->
+<div class="mt-6 space-y-3">
+<div class="flex items-center justify-between text-xs text-on-surface-variant">
+<span class="font-bold uppercase tracking-wider text-secondary">Worker Speech verbatim • منطوق العامل الحرفي</span>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[11px] font-bold">Unmodified Original</span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm relative">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="space-y-2 flex-1">
+<p class="font-headline text-lg text-on-surface leading-relaxed">
+                  “<span class="bg-tertiary-fixed/60 px-1 py-0.5 rounded font-medium">Mera kafeel</span> passport <span class="bg-primary-fixed/70 px-1 py-0.5 rounded font-medium">return nahi kar raha hai</span> aur <span class="bg-tertiary-fixed/60 px-1 py-0.5 rounded font-medium">2 months ki salary</span> pending hai, <span class="text-primary font-medium">can SANAD help me file urgent grievance?</span>”
+                </p>
+<!-- Code-switch tags -->
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-bold">Hindi syntax</span>
+<span class="text-[10px] bg-tertiary-fixed text-on-tertiary-fixed px-2 py-0.5 rounded-full font-bold">Arabic loan: كفيل (Kafeel)</span>
+<span class="text-[10px] bg-primary-fixed text-on-primary-fixed-variant px-2 py-0.5 rounded-full font-bold">English legal intent</span>
+<span class="text-[10px] bg-surface-container text-on-surface-variant px-2 py-0.5 rounded-full font-bold">Phonetic Romanized script</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-all" title="Replay Original Audio" type="button">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Conversational Turn: SANAD Empathetic AI Dual Response -->
+<div class="mt-4 p-5 rounded-xl bg-primary/10 relative shadow-sm">
+<div class="flex items-start gap-3.5">
+<div class="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">shield_person</span>
+</div>
+<div class="space-y-3 flex-1">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-primary uppercase tracking-wide">SANAD Case Advocate Response</span>
+<span class="text-[11px] font-mono text-on-surface-variant">Instant Synthetic Audio Ready</span>
+</div>
+<div class="p-3 bg-surface-container-lowest rounded-xl shadow-xs">
+<p class="font-headline text-base text-on-surface leading-relaxed">
+                  "हमने आपकी शिकायत पूरी तरह समझ ली है: आपका पासपोर्ट वापस दिलाना और 2 महीने का बकाया वेतन। SANAD आपके साथ खड़ा है। क्या हम लेबर कोर्ट और श्रम मंत्रालय में आधिकारिक केस दर्ज करें?"
+                </p>
+<p class="mt-2 text-xs text-on-surface-variant font-medium">
+<em>English synopsis:</em> "We have identified your dual claims: recovery of withheld passport and recovery of 2 unpaid monthly salaries. SANAD is ready to file formal dispute resolution."
+                </p>
+</div>
+<!-- Action Bar inside Response -->
+<div class="flex flex-wrap items-center gap-3 pt-1">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-on-primary text-xs font-bold shadow-sm hover:opacity-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">gavel</span>
+<span>हाँ, केस दर्ज करें / Yes, File Case</span>
+</button>
+<button class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container text-on-surface text-xs font-bold transition-all shadow-xs" type="button">
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+<span>🔊 ऑडियो सुनें (Listen Hindi)</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface text-xs font-semibold" type="button">
+<span class="material-symbols-outlined text-[16px]">translate</span>
+<span>استمع بالعربية</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Multimodal Input Command Bar -->
+<div class="rounded-xl bg-surface-container-low p-4 shadow-sm space-y-3">
+<div class="relative flex items-center">
+<input class="w-full pl-4 pr-32 py-3.5 bg-surface-container-lowest text-on-surface text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-primary shadow-inner" id="multilingualInput" placeholder="Type or speak in any language, dialect, or mix... (e.g. 'Mera iqama expire ho gaya')" type="text" value="Mera kafeel passport return nahi kar raha hai..."/>
+<div class="absolute right-2 flex items-center gap-1.5">
+<!-- Mic Tap / Hold Button -->
+<button class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center hover:opacity-90 shadow-sm active:scale-95 transition-all" id="micToggleBtn" title="Hold to speak or tap to start recording" type="button">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+<!-- Submit Action -->
+<button class="w-10 h-10 rounded-xl bg-tertiary text-on-tertiary flex items-center justify-center hover:opacity-90 shadow-sm transition-all" title="Process Statement" type="button">
+<span class="material-symbols-outlined text-xl">send</span>
+</button>
+</div>
+</div>
+<!-- Controls: Audio Playback Speed, Dialect Pills, and Mode Toggles -->
+<div class="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs">
+<!-- Audio Speed Controller -->
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-xl">
+<span class="text-on-surface-variant font-bold">Voice Speed:</span>
+<button class="px-2 py-0.5 rounded text-on-surface hover:bg-surface-container-high font-medium" type="button">0.8x</button>
+<button class="px-2 py-0.5 rounded bg-surface-container-lowest text-primary font-bold shadow-xs" type="button">1.0x</button>
+<button class="px-2 py-0.5 rounded text-on-surface hover:bg-surface-container-high font-medium" type="button">1.2x</button>
+</div>
+<!-- Dialect / Script Switcher Quick Tags -->
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="text-[11px] text-on-surface-variant">Presets:</span>
+<button class="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-primary/20 text-on-surface text-[11px] font-semibold transition-all" type="button">
+              Hinglish (हिंग्लिश)
+            </button>
+<button class="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-primary/20 text-on-surface text-[11px] font-semibold transition-all" type="button">
+              Gulf Arabic (خليجي)
+            </button>
+<button class="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-primary/20 text-on-surface text-[11px] font-semibold transition-all" type="button">
+              Bangla-Arab Mix
+            </button>
+<button class="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-primary/20 text-on-surface text-[11px] font-semibold transition-all" type="button">
+              Urdu Roman
+            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: SANAD Natural Language Resolution Panel & Core Issue Extractor -->
+<div class="lg:col-span-5 flex flex-col space-y-6">
+<!-- Extraction & Semantic Understanding Dashboard -->
+<div class="rounded-xl bg-surface-container-low p-6 shadow-sm space-y-6">
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<span class="text-xs uppercase tracking-wider font-bold text-tertiary">Semantic Parser Output</span>
+<span class="bg-primary/20 text-on-primary-fixed-variant px-2.5 py-0.5 rounded-full text-xs font-bold">100% Unforced Verbatim</span>
+</div>
+<h2 class="font-headline text-xl text-on-surface font-semibold">Extracted Grievance Summary</h2>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+            SANAD identifies actionable legal matters directly from colloquial speech without requiring workers to translate or standardize terms.
+          </p>
+</div>
+<!-- Issue 1: Passport Withholding -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm space-y-2 relative overflow-hidden">
+<div class="w-1.5 h-full bg-error absolute left-0 top-0"></div>
+<div class="flex items-start justify-between pl-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[20px]">badge</span>
+<h3 class="text-sm font-bold text-on-surface">Issue 1: Passport Withholding</h3>
+</div>
+<span class="text-[10px] font-mono bg-error-container text-on-error-container px-2 py-0.5 rounded font-bold">CRITICAL VIOLATION</span>
+</div>
+<p class="pl-2 text-xs text-on-surface-variant leading-relaxed">
+            Identified phrase: <span class="italic text-on-surface font-semibold">"kafeel passport return nahi kar raha hai"</span>
+</p>
+<div class="pl-2 pt-1 flex items-center gap-2 text-xs text-on-surface">
+<span class="material-symbols-outlined text-primary text-[16px]">menu_book</span>
+<span class="font-medium text-xs">Labor Law Art. 12: Unlawful Document Retention</span>
+</div>
+</div>
+<!-- Issue 2: Unpaid Wages -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm space-y-2 relative overflow-hidden">
+<div class="w-1.5 h-full bg-tertiary absolute left-0 top-0"></div>
+<div class="flex items-start justify-between pl-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px]">payments</span>
+<h3 class="text-sm font-bold text-on-surface">Issue 2: Delayed Wage Remittance</h3>
+</div>
+<span class="text-[10px] font-mono bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-bold">2 MONTHS DELAY</span>
+</div>
+<p class="pl-2 text-xs text-on-surface-variant leading-relaxed">
+            Identified phrase: <span class="italic text-on-surface font-semibold">"2 months ki salary pending hai"</span>
+</p>
+<div class="pl-2 pt-1 flex items-center gap-2 text-xs text-on-surface">
+<span class="material-symbols-outlined text-primary text-[16px]">account_balance</span>
+<span class="font-medium text-xs">Wage Protection System (WPS) Non-Compliance</span>
+</div>
+</div>
+<!-- Classification & Urgency Assessment -->
+<div class="p-4 rounded-xl bg-surface-container space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-on-surface">Triaged Urgency Index</span>
+<span class="text-xs font-bold text-error flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+              High Priority Dispute
+            </span>
+</div>
+<!-- Visual progress line -->
+<div class="w-full bg-surface-container-highest rounded-full h-2 overflow-hidden flex">
+<div class="bg-error h-full w-[85%] rounded-full"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-mono">
+<span>Automated Labor Triage</span>
+<span>File Ready for Dispute Comm.</span>
+</div>
+</div>
+<!-- Direct Action CTA Box -->
+<div class="flex flex-col gap-2 pt-2">
+<button class="w-full py-3 px-4 rounded-xl bg-primary text-on-primary font-bold text-sm flex items-center justify-center gap-2 hover:opacity-95 shadow-sm transition-all" type="button">
+<span class="material-symbols-outlined text-lg">fact_check</span>
+<span>Confirm & Generate Case Dossier</span>
+</button>
+<button class="w-full py-2.5 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-bold flex items-center justify-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">edit_note</span>
+<span>Add More Voice Context (صوت إضافي)</span>
+</button>
+</div>
+</div>
+<!-- Human Legal Counselor Bridge -->
+<div class="rounded-xl bg-secondary-container p-5 text-on-secondary-container shadow-sm space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-lowest text-on-surface flex items-center justify-center shrink-0 shadow-xs">
+<span class="material-symbols-outlined text-tertiary">support_agent</span>
+</div>
+<div>
+<h4 class="font-bold text-sm">Need a Native Speaker Case Worker?</h4>
+<p class="text-xs opacity-90">Hindi, Urdu, Bengali & Malayalam specialists available now.</p>
+</div>
+</div>
+<div class="pt-1 flex items-center justify-between">
+<span class="text-xs font-mono font-semibold">Average wait: < 2 minutes</span>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface font-bold text-xs hover:bg-surface transition-all shadow-xs" type="button">
+            Request Audio Call
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Transcript Log & Multilingual Acoustic Verification -->
+<div class="rounded-xl bg-surface-container-low p-6 shadow-sm space-y-5">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="text-xs uppercase tracking-wider font-bold text-tertiary">Audit Trail • سجل الصوت والمطابقة</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-xs font-bold text-primary">Case Draft #SND-84920</span>
+</div>
+<h3 class="font-headline text-lg text-on-surface font-semibold">Speech-to-Text & Code-Switch Breakdown</h3>
+</div>
+<!-- Filters & Toggles -->
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-xl bg-surface-container-lowest text-on-surface text-xs font-bold shadow-xs" type="button">
+          Verbatim View
+        </button>
+<button class="px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface text-xs font-medium" type="button">
+          Arabic Labor Court Formal View
+        </button>
+<button class="px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface text-xs font-medium" type="button">
+          English Diplomatic View
+        </button>
+</div>
+</div>
+<!-- Multi-Column Alignment Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant uppercase text-[11px] tracking-wider font-bold">
+<th class="py-3 px-4 rounded-l-xl">Timestamp & Speaker</th>
+<th class="py-3 px-4">Spoken Verbatim (Original Audio Script)</th>
+<th class="py-3 px-4">Token Breakdown & Dialect</th>
+<th class="py-3 px-4">Legal Normalized Term</th>
+<th class="py-3 px-4 rounded-r-xl text-right">Confidence</th>
+</tr>
+</thead>
+<tbody class="space-y-2">
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-3.5 px-4 font-mono text-on-surface-variant">
+<span class="font-bold text-on-surface">14:22:04</span><br/>
+<span class="text-[10px]">Worker (عامل)</span>
+</td>
+<td class="py-3.5 px-4 font-headline text-sm text-on-surface font-semibold">
+              "Mera kafeel passport return nahi kar raha hai"
+            </td>
+<td class="py-3.5 px-4">
+<span class="inline-block bg-tertiary-container/30 text-on-tertiary-container px-2 py-0.5 rounded font-mono text-[11px]">
+                [HIN] Mera + [ARA] Kafeel + [ENG] Passport
+              </span>
+</td>
+<td class="py-3.5 px-4 font-medium text-on-surface">
+              حجز جواز السفر (Withholding of Travel Document)
+            </td>
+<td class="py-3.5 px-4 text-right">
+<span class="inline-flex items-center gap-1 font-mono font-bold text-primary">
+<span class="w-2 h-2 rounded-full bg-primary"></span> 99.2%
+              </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-3.5 px-4 font-mono text-on-surface-variant">
+<span class="font-bold text-on-surface">14:22:09</span><br/>
+<span class="text-[10px]">Worker (عامل)</span>
+</td>
+<td class="py-3.5 px-4 font-headline text-sm text-on-surface font-semibold">
+              "aur 2 months ki salary pending hai"
+            </td>
+<td class="py-3.5 px-4">
+<span class="inline-block bg-primary/20 text-on-primary-fixed-variant px-2 py-0.5 rounded font-mono text-[11px]">
+                [HIN] aur + [ENG] 2 months + salary pending
+              </span>
+</td>
+<td class="py-3.5 px-4 font-medium text-on-surface">
+              تأخر الأجور لمدة شهرين (Unpaid Wages - 60 Days)
+            </td>
+<td class="py-3.5 px-4 text-right">
+<span class="inline-flex items-center gap-1 font-mono font-bold text-primary">
+<span class="w-2 h-2 rounded-full bg-primary"></span> 98.7%
+              </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/60 transition-colors">
+<td class="py-3.5 px-4 font-mono text-on-surface-variant">
+<span class="font-bold text-on-surface">14:22:15</span><br/>
+<span class="text-[10px]">Worker (عامل)</span>
+</td>
+<td class="py-3.5 px-4 font-headline text-sm text-on-surface font-semibold">
+              "can SANAD help me file urgent grievance?"
+            </td>
+<td class="py-3.5 px-4">
+<span class="inline-block bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-mono text-[11px]">
+                [ENG] Declarative dispute intent
+              </span>
+</td>
+<td class="py-3.5 px-4 font-medium text-on-surface">
+              طلب قيد دعوى عمالية مستعجلة (Urgent Labor Claim)
+            </td>
+<td class="py-3.5 px-4 text-right">
+<span class="inline-flex items-center gap-1 font-mono font-bold text-primary">
+<span class="w-2 h-2 rounded-full bg-primary"></span> 99.8%
+              </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Legal Disclaimer Note -->
+<div class="pt-2 flex items-center justify-between text-xs text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary">info</span>
+<span>Original voice recordings are stored securely in tamper-evident audio vaults for worker protection.</span>
+</div>
+<a class="font-bold text-primary hover:underline" href="#">Download Certified Translation Affidavit</a>
+</div>
+</div>
+</div>
+<!-- Inline Micro-interactions Script -->
+<script>
+  (function initVoiceModule() {
+    const micBtn = document.getElementById('micToggleBtn');
+    const statusLabel = document.getElementById('activeStatusLabel');
+    const listeningPill = document.getElementById('listeningPill');
+    const inputField = document.getElementById('multilingualInput');
+    let isRecording = false;
+
+    if (micBtn && statusLabel) {
+      micBtn.addEventListener('click', function() {
+        isRecording = !isRecording;
+        if (isRecording) {
+          listeningPill.classList.remove('bg-primary');
+          listeningPill.classList.add('bg-error');
+          statusLabel.textContent = 'Listening Live... / सुन रहा हूँ...';
+          micBtn.classList.add('animate-pulse');
+        } else {
+          listeningPill.classList.remove('bg-error');
+          listeningPill.classList.add('bg-primary');
+          statusLabel.textContent = 'Processing / समझ रहा है / يستمع';
+          micBtn.classList.remove('animate-pulse');
+          setTimeout(() => {
+            statusLabel.textContent = 'Understood / समझ लिया / تم الفهم';
+          }, 1200);
+        }
+      });
+    }
+  })();
+</script></main></div></body></html>
