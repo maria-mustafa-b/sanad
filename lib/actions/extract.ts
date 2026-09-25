@@ -73,8 +73,9 @@ Analyze the situation and extract the intent, key facts, missing information, an
         });
 
         return { success: true, data: object };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("AI Extraction Error:", error);
-        return { success: false, error: error.message || "Failed to extract facts." };
+        const msg = error instanceof Error ? error.message : "Failed to extract facts.";
+        return { success: false, error: msg };
     }
 }

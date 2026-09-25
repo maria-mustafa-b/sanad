@@ -135,7 +135,7 @@ async function extractText(doc: Row, bytes: Buffer) {
   if (doc.mime_type === "text/plain")
     return bytes.toString("utf8").slice(0, 15000);
   if (doc.mime_type === "application/pdf") {
-    // @ts-ignore
+    // @ts-expect-error pdfjs-dist does not ship types for this path
     const { getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
     const pdf = await getDocument({
       data: new Uint8Array(bytes),
@@ -147,6 +147,7 @@ async function extractText(doc: Row, bytes: Buffer) {
       const p = await pdf.getPage(page);
       const items = await p.getTextContent();
       text +=
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         items.items.map((item: any) => ("str" in item ? item.str : "")).join(" ") +
         "\n";
     }

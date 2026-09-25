@@ -9,7 +9,8 @@ export function SituationDraft() {
   const [message, setMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [aiData, setAiData] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [aiData, setAiData] = useState<Record<string, any>>(null as unknown as Record<string, any>);
   const [editableFacts, setEditableFacts] = useState<string[]>([]);
   const [replyText, setReplyText] = useState("");
 
@@ -37,6 +38,7 @@ export function SituationDraft() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
 
@@ -67,6 +69,7 @@ export function SituationDraft() {
   };
 
   const [isRecordingReply, setIsRecordingReply] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const replyRecognitionRef = useRef<any>(null);
 
   const toggleRecordingReply = () => {
@@ -76,7 +79,8 @@ export function SituationDraft() {
       setMessage("Reply recording stopped.");
       return;
     }
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SpeechRecognition = (window as unknown as Record<string, unknown>).SpeechRecognition || (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert("Speech recognition is not supported in this browser. Please use Chrome.");
       return;
@@ -85,6 +89,7 @@ export function SituationDraft() {
     recognition.continuous = true;
     recognition.interimResults = true;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onresult = (event: any) => {
       let finalTranscript = "";
       for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -109,9 +114,10 @@ export function SituationDraft() {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
+      (window as unknown as Record<string, unknown>).SpeechRecognition ||
+      (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
       alert("Speech recognition is not supported in this browser. Please use Chrome.");
@@ -122,6 +128,7 @@ export function SituationDraft() {
     recognition.continuous = true;
     recognition.interimResults = true;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onresult = (event: any) => {
       let finalTranscript = "";
       for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -301,7 +308,7 @@ export function SituationDraft() {
 
             <div className="p-3 bg-secondary/20 rounded-md border border-secondary/50">
               <span className="font-medium text-sm text-primary">AI Clarification Response:</span>
-              <p className="italic mt-1">"{aiData.clarificationMessage}"</p>
+              <p className="italic mt-1">&ldquo;{aiData.clarificationMessage}&rdquo;</p>
               <Button
                 variant="ghost"
                 className="mt-2"
