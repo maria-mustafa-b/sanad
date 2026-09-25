@@ -10,6 +10,7 @@ export function SituationDraft() {
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [aiData, setAiData] = useState<any>(null);
+  const [editableFacts, setEditableFacts] = useState<string[]>([]);
   const [replyText, setReplyText] = useState("");
 
   const handleReply = async () => {
@@ -24,6 +25,7 @@ export function SituationDraft() {
     setIsLoading(false);
     if (result.success && result.data) {
       setAiData(result.data);
+      if (result.data.facts) setEditableFacts(result.data.facts);
       setReplyText("");
       setMessage("Follow-up analysis complete.");
 
@@ -161,6 +163,7 @@ export function SituationDraft() {
     setIsLoading(false);
     if (result.success && result.data) {
       setAiData(result.data);
+      if (result.data.facts) setEditableFacts(result.data.facts);
       setMessage("Analysis complete. See extracted facts below.");
 
       // Automatic Text-To-Speech for the AI response matching the language they used
@@ -238,7 +241,23 @@ export function SituationDraft() {
 
       {aiData && (
         <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
-          <h3 className="font-semibold text-lg mb-2">AI Extraction Results</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-semibold text-lg">AI Extraction Results</h3>
+            {aiData.confidence && (
+              <div className="text-sm font-medium px-3 py-1 bg-white border rounded-full shadow-sm flex items-center gap-2">
+                Confidence:
+                <span className={
+                  aiData.confidence >= 90 ? "text-green-600" :
+                    aiData.confidence >= 70 ? "text-yellow-600" : "text-red-600"
+                }>
+                  {aiData.confidence}%
+                </span>
+                {aiData.confidence < 70 && (
+                  <span className="text-xs text-muted-foreground ml-1">(Needs clarity)</span>
+                )}
+              </div>
+            )}
+          </div>
 
           <div className="space-y-4">
             <div>
@@ -246,11 +265,27 @@ export function SituationDraft() {
               <p>{aiData.intent}</p>
             </div>
 
-            <div>
-              <span className="font-medium text-sm text-primary">Extracted Facts:</span>
-              <ul className="list-disc pl-5">
-                {aiData.facts.map((fact: string, idx: number) => (
-                  <li key={idx}>{fact}</li>
+            <div className="bg-white p-3 rounded-md border">
+              <span className="font-medium text-sm text-primary flex items-center justify-between">
+                Extracted Facts:
+                <span className="text-xs font-normal text-muted-foreground">Click to edit if incorrect</span>
+              </span>
+              <ul className="mt-2 space-y-2">
+                {editableFacts.map((fact: string, idx: number) => (
+                  <li key={idx} className="flex">
+                    <input
+                      type="text"
+                      value={fact}
+                      onChange={(e) => {
+                        const newFacts = [...editableFacts];
+                        newFacts[idx] = e.target.value;
+                        setEditableFacts(newFacts);
+                        // Also update underlying aiData for follow-ups
+                        setAiData({ ...aiData, facts: newFacts });
+                      }}
+                      className="w-full text-sm p-1.5 border-b border-transparent focus:border-teal-500 focus:outline-none hover:bg-stone-50 transition-colors"
+                    />
+                  </li>
                 ))}
               </ul>
             </div>
