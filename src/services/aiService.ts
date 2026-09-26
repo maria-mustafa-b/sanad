@@ -26,7 +26,7 @@ export const structureWorkerNarrative = async (
     const apiRes = await fetch('/api/claims/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transcript: rawText }),
+      body: JSON.stringify({ text: rawText, transcript: rawText }),
     });
 
     if (apiRes.ok) {

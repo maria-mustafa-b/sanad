@@ -16,9 +16,11 @@ export function rateLimit(key: string, max = 120) {
 export function sameOrigin(request: Request) {
   if (["GET", "HEAD", "OPTIONS"].includes(request.method)) return;
   const origin = request.headers.get("origin");
-  const expected = new URL(process.env.NEXT_PUBLIC_APP_URL || request.url)
-    .origin;
-  if (origin && origin !== expected)
+  const requestOrigin = new URL(request.url).origin;
+  const expected = process.env.NEXT_PUBLIC_APP_URL
+    ? new URL(process.env.NEXT_PUBLIC_APP_URL).origin
+    : requestOrigin;
+  if (origin && origin !== expected && origin !== requestOrigin)
     throw new AppError("ORIGIN_REJECTED", "Cross-site request rejected.", 403);
   if (request.headers.get("sec-fetch-site") === "cross-site")
     throw new AppError("ORIGIN_REJECTED", "Cross-site request rejected.", 403);
