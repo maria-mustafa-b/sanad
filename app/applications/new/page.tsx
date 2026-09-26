@@ -50,7 +50,7 @@ export default function ApplicationSubmissionPage() {
       {/* Stepper */}
       <div className="flex items-center justify-between mb-12 relative">
         <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 bg-gray-100 -z-10 rounded-full">
-          <div className="h-full bg-teal-600 rounded-full transition-all duration-500" style={{ width: \`\${((step - 1) / 3) * 100}%\` }} />
+          <div className="h-full bg-teal-600 rounded-full transition-all duration-500" style={{ width: `${((step - 1) / 3) * 100}%` }} />
         </div>
         
         {steps.map((s) => {

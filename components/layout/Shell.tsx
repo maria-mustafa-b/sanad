@@ -68,7 +68,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-100 flex flex-col transition-transform duration-300 md:translate-x-0 md:static md:shrink-0
         ${isMobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}
       `}>
-        <div className="p-6 hidden md:flex items-center gap-3 mb-4">
+        <Link href="/" className="p-6 hidden md:flex items-center gap-3 mb-4 hover:opacity-80 transition-opacity">
           <img src="/sanad-logo.png" alt="SANAD Logo" className="w-8 h-8 object-contain" />
           <span className="font-extrabold text-2xl text-gray-900 tracking-tight">SANAD</span>
         </div>

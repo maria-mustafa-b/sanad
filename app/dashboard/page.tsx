@@ -132,7 +132,7 @@ export default function DashboardPage() {
             { title: "Employment Support Assistance", relevance: "High Relevance", color: "emerald" },
             { title: "Financial Assistance Program", relevance: "Medium Relevance", color: "amber" }
           ].map((svc, i) => (
-            <div key={i} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:border-teal-200 transition-colors cursor-pointer group flex flex-col justify-between">
+            <div key={i} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:border-teal-200 transition-colors group flex flex-col justify-between">
               <div>
                 <span className={`inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider mb-3 ${
                   svc.color === 'emerald' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
