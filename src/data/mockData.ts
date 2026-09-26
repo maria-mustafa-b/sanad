@@ -1,3 +1,4 @@
+﻿ 
 import { 
   DossierClaim, 
   VerifiableCredential, 
@@ -28,7 +29,7 @@ export const preloadedDossier: DossierClaim = {
   incidentPeriod: 'August 2026 (42-day non-remittance)',
   claimedAmount: 'AED 4,850',
   narrativeSummary: 'Worker was employed for 18 months at Al-Noor Contracting LLC. Employment was concluded in August 2026. The final monthly wage of AED 4,850 and statutory end-of-service gratuity remain unpaid past 42 days. Furthermore, the company HR has retained the original passport and has not provided return repatriation ticketing.',
-  verbatimTranscript: '“Mera kafeel passport return nahi kar raha hai aur 2 months ki salary pending hai, can SANAD help me file urgent grievance?”',
+  verbatimTranscript: 'â€œMera kafeel passport return nahi kar raha hai aur 2 months ki salary pending hai, can SANAD help me file urgent grievance?â€',
   detectedLanguages: ['Hindi', 'Arabic (Kafeel loan)', 'English legal intent'],
   facts: [
     { key: 'employment_status', label: 'Employment Status', value: 'Recently ended', isAiExtracted: true, confidence: 0.98 },
@@ -91,7 +92,7 @@ export const preloadedCredential: VerifiableCredential = {
 export const supportOrganizations: SupportOrganization[] = [
   {
     id: 'org_migrant_legal',
-    name: 'Migrant Justice Legal Clinic (مركز العدالة العمالية)',
+    name: 'Migrant Justice Legal Clinic (Ù…Ø±ÙƒØ² Ø§Ù„Ø¹Ø¯Ø§Ù„Ø© Ø§Ù„Ø¹Ù…Ø§Ù„ÙŠØ©)',
     type: 'legal_aid',
     supportedCategories: ['unpaid_wages', 'contract_violation', 'passport_withholding'],
     languages: ['en', 'ar', 'hi', 'ur', 'bn'],
@@ -103,7 +104,7 @@ export const supportOrganizations: SupportOrganization[] = [
   },
   {
     id: 'org_worker_shelter',
-    name: 'Dignity Worker Shelter & Human Sanctuary (مأوى الكرامة الآمن)',
+    name: 'Dignity Worker Shelter & Human Sanctuary (Ù…Ø£ÙˆÙ‰ Ø§Ù„ÙƒØ±Ø§Ù…Ø© Ø§Ù„Ø¢Ù…Ù†)',
     type: 'shelter',
     supportedCategories: ['passport_withholding', 'general_grievance', 'medical_denial'],
     languages: ['en', 'ar', 'hi', 'ur', 'bn'],
@@ -115,7 +116,7 @@ export const supportOrganizations: SupportOrganization[] = [
   },
   {
     id: 'org_consulate_liaison',
-    name: 'South Asian Bilateral Worker Mission (بعثة رعاية العمالة)',
+    name: 'South Asian Bilateral Worker Mission (Ø¨Ø¹Ø«Ø© Ø±Ø¹Ø§ÙŠØ© Ø§Ù„Ø¹Ù…Ø§Ù„Ø©)',
     type: 'consulate',
     supportedCategories: ['passport_withholding', 'unpaid_wages', 'work_permit_issue'],
     languages: ['hi', 'ur', 'bn', 'en'],
@@ -223,7 +224,7 @@ export const rightsArticles: RightsArticle[] = [
     category: 'Wages & Severance',
     title: 'Delayed Salaries & End-of-Service Gratuity (EOSB)',
     summary: 'Everything you need to know about the Wage Protection System (WPS), penalties for late payment, and calculating severance pay.',
-    arabicTitle: 'الأجور المتأخرة وحساب مكافأة نهاية الخدمة',
+    arabicTitle: 'Ø§Ù„Ø£Ø¬ÙˆØ± Ø§Ù„Ù…ØªØ£Ø®Ø±Ø© ÙˆØ­Ø³Ø§Ø¨ Ù…ÙƒØ§ÙØ£Ø© Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø®Ø¯Ù…Ø©',
     keyPoints: [
       'Employers must pay wages within 10 days of the due date through certified digital payroll (WPS).',
       'After 15 days of delay, employer permits are suspended; after 30 days, legal proceedings commence without court fees.',
@@ -247,10 +248,10 @@ export const rightsArticles: RightsArticle[] = [
     category: 'Personal Freedom',
     title: 'Passport Retention & Travel Document Freedom',
     summary: 'Your passport is personal property. It is strictly unlawful for sponsors, employers, or recruiters to withhold your passport.',
-    arabicTitle: 'حظر حجز جواز السفر والوثائق الرسمية',
+    arabicTitle: 'Ø­Ø¸Ø± Ø­Ø¬Ø² Ø¬ÙˆØ§Ø² Ø§Ù„Ø³ÙØ± ÙˆØ§Ù„ÙˆØ«Ø§Ø¦Ù‚ Ø§Ù„Ø±Ø³Ù…ÙŠØ©',
     keyPoints: [
       'Employers cannot legally confiscate or hold your passport for "safekeeping" without your explicit written request.',
-      'Retaining a worker’s passport carries heavy financial penalties and criminal referral for the offending employer.',
+      'Retaining a workerâ€™s passport carries heavy financial penalties and criminal referral for the offending employer.',
       'You are entitled to keep your passport, national ID card, and health insurance card at all times.',
       'If your passport is withheld, SANAD can connect you to emergency consular and police dispatch for immediate retrieval.'
     ],
@@ -271,7 +272,7 @@ export const rightsArticles: RightsArticle[] = [
     category: 'Workplace Safety',
     title: 'Heat Stress Protection & Safe Working Conditions',
     summary: 'Statutory protections against summer heat, dehydration, and unsafe construction or domestic conditions.',
-    arabicTitle: 'حظر العمل وقت الظهيرة والوقاية من الإجهاد الحراري',
+    arabicTitle: 'Ø­Ø¸Ø± Ø§Ù„Ø¹Ù…Ù„ ÙˆÙ‚Øª Ø§Ù„Ø¸Ù‡ÙŠØ±Ø© ÙˆØ§Ù„ÙˆÙ‚Ø§ÙŠØ© Ù…Ù† Ø§Ù„Ø¥Ø¬Ù‡Ø§Ø¯ Ø§Ù„Ø­Ø±Ø§Ø±ÙŠ',
     keyPoints: [
       'Mandatory midday work ban between 12:30 PM and 3:00 PM during peak summer months for all outdoor laborers.',
       'Employers must provide shaded rest stations, clean cold drinking water, electrolyte salts, and first-aid kits on-site.',
@@ -291,7 +292,7 @@ export const rightsArticles: RightsArticle[] = [
     category: 'Contracts & Visas',
     title: 'Job Transfers & Defending Unlawful Absconding Claims',
     summary: 'How to transition to a new job legally and clear malicious runaway/absconding notices filed by bad-faith sponsors.',
-    arabicTitle: 'الانتقال لعمل جديد وإلغاء بلاغات الهروب الكيدية',
+    arabicTitle: 'Ø§Ù„Ø§Ù†ØªÙ‚Ø§Ù„ Ù„Ø¹Ù…Ù„ Ø¬Ø¯ÙŠØ¯ ÙˆØ¥Ù„ØºØ§Ø¡ Ø¨Ù„Ø§ØºØ§Øª Ø§Ù„Ù‡Ø±ÙˆØ¨ Ø§Ù„ÙƒÙŠØ¯ÙŠØ©',
     keyPoints: [
       'Workers can change jobs upon completion of notice period without requiring an NOC (No Objection Certificate) from previous employer.',
       'If wages have been unpaid for over 60 days, workers can transfer immediately without notice or penalty.',
@@ -307,3 +308,4 @@ export const rightsArticles: RightsArticle[] = [
     ]
   }
 ];
+

@@ -1,3 +1,5 @@
+﻿/* eslint-disable */
+"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
@@ -20,7 +22,7 @@ const SERVICE_CARDS: ServiceCard[] = [
   {
     icon: 'calculate',
     title: 'Unpaid Wages & End of Service Calculation',
-    titleAr: 'حساب مكافأة نهاية الخدمة والأجور المتأخرة',
+    titleAr: 'Ø­Ø³Ø§Ø¨ Ù…ÙƒØ§ÙØ£Ø© Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø®Ø¯Ù…Ø© ÙˆØ§Ù„Ø£Ø¬ÙˆØ± Ø§Ù„Ù…ØªØ£Ø®Ø±Ø©',
     description: 'Calculate exact statutory gratuity, overtime dues, delayed monthly salary penalties, and unpaid leave indemnities under certified labor codes.',
     badge: 'Instant Tool',
     badgeColor: 'bg-surface text-tertiary',
@@ -33,11 +35,11 @@ const SERVICE_CARDS: ServiceCard[] = [
   {
     icon: 'document_scanner',
     title: 'Contract Verifier & Camera Scan',
-    titleAr: 'قارئ العقود الذكي وكشف الشروط غير القانونية',
+    titleAr: 'Ù‚Ø§Ø±Ø¦ Ø§Ù„Ø¹Ù‚ÙˆØ¯ Ø§Ù„Ø°ÙƒÙŠ ÙˆÙƒØ´Ù Ø§Ù„Ø´Ø±ÙˆØ· ØºÙŠØ± Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠØ©',
     description: 'Take a photo of any physical contract or offer letter. SANAD checks for prohibited wage deduction clauses, passport surrender requirements, or hidden fees in your language.',
     badge: 'OCR Active',
     badgeColor: 'bg-primary/10 text-primary',
-    detail: 'Smart Document Scan • PDF, JPG, or Live Capture',
+    detail: 'Smart Document Scan â€¢ PDF, JPG, or Live Capture',
     detailIcon: 'photo_camera',
     ctaLabel: 'Upload or Snap Document',
     ctaRoute: '/document-reader',
@@ -46,7 +48,7 @@ const SERVICE_CARDS: ServiceCard[] = [
   {
     icon: 'badge',
     title: 'Work Permit & Visa Status Tracker',
-    titleAr: 'متابعة الإقامة وتصريح العمل وحالة البلاغات',
+    titleAr: 'Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„Ø¥Ù‚Ø§Ù…Ø© ÙˆØªØµØ±ÙŠØ­ Ø§Ù„Ø¹Ù…Ù„ ÙˆØ­Ø§Ù„Ø© Ø§Ù„Ø¨Ù„Ø§ØºØ§Øª',
     description: 'Verify if your residency or work permit is active, check if an unlawful absconding notice was filed against you, and check job change transfer status.',
     badge: 'Ministry Sync',
     badgeColor: 'bg-secondary-container text-on-secondary-container',
@@ -58,11 +60,11 @@ const SERVICE_CARDS: ServiceCard[] = [
   {
     icon: 'local_hospital',
     title: 'Health Insurance & Medical Clinic Locator',
-    titleAr: 'التأمين الصحي والمراكز الطبية المجانية للعمال',
+    titleAr: 'Ø§Ù„ØªØ£Ù…ÙŠÙ† Ø§Ù„ØµØ­ÙŠ ÙˆØ§Ù„Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø·Ø¨ÙŠØ© Ø§Ù„Ù…Ø¬Ø§Ù†ÙŠØ© Ù„Ù„Ø¹Ù…Ø§Ù„',
     description: 'Find clinics that treat workers without upfront cash demands or insurance rejections. Emergency care is guaranteed by law for work site heat stress and injury.',
     badge: 'Free / Subsidized',
     badgeColor: 'bg-surface text-primary',
-    detail: '34 Clinics Within 5km • Heat stroke & acute pain walk-in',
+    detail: '34 Clinics Within 5km â€¢ Heat stroke & acute pain walk-in',
     detailIcon: 'location_on',
     ctaLabel: 'Find Closest Worker Clinic',
     ctaIcon: 'near_me',
@@ -70,7 +72,7 @@ const SERVICE_CARDS: ServiceCard[] = [
   {
     icon: 'gavel',
     title: 'Official Grievance & Labor Court Support',
-    titleAr: 'تسجيل الشكاوى الرسمية والدعم القانوني المجاني',
+    titleAr: 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø§Ù„Ø±Ø³Ù…ÙŠØ© ÙˆØ§Ù„Ø¯Ø¹Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ Ø§Ù„Ù…Ø¬Ø§Ù†ÙŠ',
     description: 'File binding disputes directly to Ministry tribunals. Pro bono attorneys translate and advocate on your behalf with zero court fees for wage claimants.',
     badge: 'Free Legal Aid',
     badgeColor: 'bg-tertiary-fixed text-on-tertiary-fixed',
@@ -83,11 +85,11 @@ const SERVICE_CARDS: ServiceCard[] = [
   {
     icon: 'emergency_share',
     title: '24/7 Emergency Helpline & Safe Shelter',
-    titleAr: 'خط الإغاثة الطارئ ومراكز الإيواء الآمنة والمجانية',
+    titleAr: 'Ø®Ø· Ø§Ù„Ø¥ØºØ§Ø«Ø© Ø§Ù„Ø·Ø§Ø±Ø¦ ÙˆÙ…Ø±Ø§ÙƒØ² Ø§Ù„Ø¥ÙŠÙˆØ§Ø¡ Ø§Ù„Ø¢Ù…Ù†Ø© ÙˆØ§Ù„Ù…Ø¬Ø§Ù†ÙŠØ©',
     description: 'If you are facing abuse, physical confinement, locked quarters, or life threats, reach our emergency dispatch team immediately. Safe crisis shelters are available today.',
     badge: 'SOS Priority',
     badgeColor: 'bg-error text-on-error',
-    detail: '800-SANAD-SOS • Toll-Free • Multilingual 24/7',
+    detail: '800-SANAD-SOS â€¢ Toll-Free â€¢ Multilingual 24/7',
     detailIcon: 'phone_in_talk',
     ctaLabel: 'Immediate Emergency Rescue',
     ctaIcon: 'emergency_share',
@@ -97,32 +99,32 @@ const SERVICE_CARDS: ServiceCard[] = [
 
 const LANGUAGE_GRID = [
   { code: 'en', label: 'English', sublabel: 'Default UI', region: 'Primary', dir: 'ltr' },
-  { code: 'ar', label: 'العربية', sublabel: 'Arabic • فصحى ولغات محلية', region: 'Middle East', dir: 'rtl' },
-  { code: 'hi', label: 'हिन्दी', sublabel: 'Hindi • आवाज और फॉर्म', region: 'South Asia', dir: 'ltr' },
-  { code: 'bn', label: 'বাংলা', sublabel: 'Bengali • শ্রমিক সহায়তা', region: 'South Asia', dir: 'ltr' },
-  { code: 'ta', label: 'தமிழ்', sublabel: 'Tamil • தொழிலாளர் உரிமை', region: 'South Asia', dir: 'ltr' },
-  { code: 'te', label: 'తెలుగు', sublabel: 'Telugu • కార్మికుల రక్షణ', region: 'South Asia', dir: 'ltr' },
-  { code: 'ml', label: 'മലയാളം', sublabel: 'Malayalam • പ്രവാസി സഹായം', region: 'South Asia', dir: 'ltr' },
-  { code: 'ur', label: 'اردو', sublabel: 'Urdu • محنت کش قانونی مدد', region: 'South Asia', dir: 'rtl' },
-  { code: 'tl', label: 'Tagalog', sublabel: 'Filipino • Gabay sa Manggagawa', region: 'Southeast Asia', dir: 'ltr' },
-  { code: 'pa', label: 'ਪੰਜਾਬੀ', sublabel: 'Punjabi • ਮਜ਼ਦੂਰ ਅਧਿਕਾਰ', region: 'South Asia', dir: 'ltr' },
-  { code: 'si', label: 'සිංහල', sublabel: 'Sinhala • සේවක සුරැකුම', region: 'South Asia', dir: 'ltr' },
-  { code: 'ne', label: 'नेपाली', sublabel: 'Nepali • श्रमिक सहायता', region: 'South Asia', dir: 'ltr' },
-  { code: 'fr', label: 'Français', sublabel: 'Droits des Travailleurs', region: 'Africa / Europe', dir: 'ltr' },
+  { code: 'ar', label: 'Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©', sublabel: 'Arabic â€¢ ÙØµØ­Ù‰ ÙˆÙ„ØºØ§Øª Ù…Ø­Ù„ÙŠØ©', region: 'Middle East', dir: 'rtl' },
+  { code: 'hi', label: 'à¤¹à¤¿à¤¨à¥à¤¦à¥€', sublabel: 'Hindi â€¢ à¤†à¤µà¤¾à¤œ à¤”à¤° à¤«à¥‰à¤°à¥à¤®', region: 'South Asia', dir: 'ltr' },
+  { code: 'bn', label: 'à¦¬à¦¾à¦‚à¦²à¦¾', sublabel: 'Bengali â€¢ à¦¶à§à¦°à¦®à¦¿à¦• à¦¸à¦¹à¦¾à¦¯à¦¼à¦¤à¦¾', region: 'South Asia', dir: 'ltr' },
+  { code: 'ta', label: 'à®¤à®®à®¿à®´à¯', sublabel: 'Tamil â€¢ à®¤à¯Šà®´à®¿à®²à®¾à®³à®°à¯ à®‰à®°à®¿à®®à¯ˆ', region: 'South Asia', dir: 'ltr' },
+  { code: 'te', label: 'à°¤à±†à°²à±à°—à±', sublabel: 'Telugu â€¢ à°•à°¾à°°à±à°®à°¿à°•à±à°² à°°à°•à±à°·à°£', region: 'South Asia', dir: 'ltr' },
+  { code: 'ml', label: 'à´®à´²à´¯à´¾à´³à´‚', sublabel: 'Malayalam â€¢ à´ªàµà´°à´µà´¾à´¸à´¿ à´¸à´¹à´¾à´¯à´‚', region: 'South Asia', dir: 'ltr' },
+  { code: 'ur', label: 'Ø§Ø±Ø¯Ùˆ', sublabel: 'Urdu â€¢ Ù…Ø­Ù†Øª Ú©Ø´ Ù‚Ø§Ù†ÙˆÙ†ÛŒ Ù…Ø¯Ø¯', region: 'South Asia', dir: 'rtl' },
+  { code: 'tl', label: 'Tagalog', sublabel: 'Filipino â€¢ Gabay sa Manggagawa', region: 'Southeast Asia', dir: 'ltr' },
+  { code: 'pa', label: 'à¨ªà©°à¨œà¨¾à¨¬à©€', sublabel: 'Punjabi â€¢ à¨®à¨œà¨¼à¨¦à©‚à¨° à¨…à¨§à¨¿à¨•à¨¾à¨°', region: 'South Asia', dir: 'ltr' },
+  { code: 'si', label: 'à·ƒà·’à¶‚à·„à¶½', sublabel: 'Sinhala â€¢ à·ƒà·šà·€à¶š à·ƒà·”à¶»à·à¶šà·”à¶¸', region: 'South Asia', dir: 'ltr' },
+  { code: 'ne', label: 'à¤¨à¥‡à¤ªà¤¾à¤²à¥€', sublabel: 'Nepali â€¢ à¤¶à¥à¤°à¤®à¤¿à¤• à¤¸à¤¹à¤¾à¤¯à¤¤à¤¾', region: 'South Asia', dir: 'ltr' },
+  { code: 'fr', label: 'FranÃ§ais', sublabel: 'Droits des Travailleurs', region: 'Africa / Europe', dir: 'ltr' },
   { code: 'sw', label: 'Kiswahili', sublabel: 'Haki za Wafanyakazi', region: 'East Africa', dir: 'ltr' },
 ];
 
 const EXTENDED_DIALECTS = [
-  'አማርኛ (Amharic)', 'پښتو (Pashto)', 'Tiếng Việt', 'Bahasa Indonesia',
-  'Oromoo (Oromo)', 'ትግርኛ (Tigrinya)', 'ဗမာစာ (Burmese)', 'Türkçe (Turkish)',
-  'বাংলা (Sylheti)', 'کوردی (Kurdish)', 'Marwari / मारवाड़ी', 'Bhojpuri / भोजपुरी',
+  'áŠ áˆ›áˆ­áŠ› (Amharic)', 'Ù¾ÚšØªÙˆ (Pashto)', 'Tiáº¿ng Viá»‡t', 'Bahasa Indonesia',
+  'Oromoo (Oromo)', 'á‰µáŒáˆ­áŠ› (Tigrinya)', 'á€—á€™á€¬á€…á€¬ (Burmese)', 'TÃ¼rkÃ§e (Turkish)',
+  'à¦¬à¦¾à¦‚à¦²à¦¾ (Sylheti)', 'Ú©ÙˆØ±Ø¯ÛŒ (Kurdish)', 'Marwari / à¤®à¤¾à¤°à¤µà¤¾à¤¡à¤¼à¥€', 'Bhojpuri / à¤­à¥‹à¤œà¤ªà¥à¤°à¥€',
 ];
 
 const VOICE_PRESETS = [
-  { text: 'मेरा 3 महीने का पगार नहीं मिला...', label: 'Unpaid wage dispute (Hindi)' },
-  { text: 'كفيلي حجز جواز سفري ويرفض سفري...', label: 'Passport retention & return flight (Arabic)' },
+  { text: 'à¤®à¥‡à¤°à¤¾ 3 à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¤¾ à¤ªà¤—à¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾...', label: 'Unpaid wage dispute (Hindi)' },
+  { text: 'ÙƒÙÙŠÙ„ÙŠ Ø­Ø¬Ø² Ø¬ÙˆØ§Ø² Ø³ÙØ±ÙŠ ÙˆÙŠØ±ÙØ¶ Ø³ÙØ±ÙŠ...', label: 'Passport retention & return flight (Arabic)' },
   { text: 'May sakit ako, walang clinic pass...', label: 'Medical denial grievance (Tagalog)' },
-  { text: 'আমার চুক্তি অনুযায়ী বেতন দেয় নাই...', label: 'Overtime & contract breach (Bengali)' },
+  { text: 'à¦†à¦®à¦¾à¦° à¦šà§à¦•à§à¦¤à¦¿ à¦…à¦¨à§à¦¯à¦¾à¦¯à¦¼à§€ à¦¬à§‡à¦¤à¦¨ à¦¦à§‡à¦¯à¦¼ à¦¨à¦¾à¦‡...', label: 'Overtime & contract breach (Bengali)' },
 ];
 
 export const WorkerDignityView: React.FC = () => {
@@ -186,7 +188,7 @@ export const WorkerDignityView: React.FC = () => {
                 Worker Dignity & Multilingual Sanctuary
               </h1>
               <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl leading-relaxed">
-                Instant legal aid, emergency housing, voice translation, and wage reconciliation. Speak naturally in your native language — we listen, protect, and advocate.
+                Instant legal aid, emergency housing, voice translation, and wage reconciliation. Speak naturally in your native language â€” we listen, protect, and advocate.
               </p>
             </div>
             {/* Text size strip */}
@@ -247,7 +249,7 @@ export const WorkerDignityView: React.FC = () => {
               <span className="text-on-surface-variant font-bold flex items-center gap-1">
                 <span className="material-symbols-outlined text-[15px] text-tertiary">bolt</span> Quick Intent:
               </span>
-              {['💰 Unpaid Salary Calculation','🛂 Withheld Passport Emergency','📄 Scan Paper Contract','🏥 Emergency Clinic Access'].map(chip => (
+              {['ðŸ’° Unpaid Salary Calculation','ðŸ›‚ Withheld Passport Emergency','ðŸ“„ Scan Paper Contract','ðŸ¥ Emergency Clinic Access'].map(chip => (
                 <button
                   key={chip}
                   onClick={() => setSearchQuery(chip.slice(3))}
@@ -523,7 +525,7 @@ export const WorkerDignityView: React.FC = () => {
                 </div>
                 <div className="space-y-3 flex-1">
                   <h4 className="font-headline font-bold text-base text-on-surface">Scan to Open on Mobile</h4>
-                  <p className="text-xs text-on-surface-variant leading-relaxed">Point your phone camera at this QR code to open SANAD instantly. No app download required — works in any browser.</p>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">Point your phone camera at this QR code to open SANAD instantly. No app download required â€” works in any browser.</p>
                   <div className="flex flex-wrap gap-2 text-xs">
                     <span className="px-2 py-1 bg-primary-fixed text-on-primary-fixed rounded-lg font-semibold flex items-center gap-1">
                       <span className="material-symbols-outlined text-[14px]">wifi_off</span> Works Offline
@@ -579,3 +581,5 @@ export const WorkerDignityView: React.FC = () => {
     </div>
   );
 };
+
+

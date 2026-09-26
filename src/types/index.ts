@@ -1,3 +1,4 @@
+﻿ 
 export type LanguageCode = 'en' | 'ar' | 'hi' | 'ur' | 'bn';
 
 export type TextScale = 'normal' | 'large' | 'xlarge';
@@ -130,3 +131,4 @@ export interface RightsArticle {
   legalReference: string;
   faqs: { question: string; answer: string }[];
 }
+

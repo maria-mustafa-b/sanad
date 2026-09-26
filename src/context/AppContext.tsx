@@ -1,3 +1,5 @@
+﻿ 
+"use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   LanguageCode, 
@@ -251,3 +253,5 @@ export const useApp = () => {
   }
   return context;
 };
+
+

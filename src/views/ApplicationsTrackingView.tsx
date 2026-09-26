@@ -1,3 +1,5 @@
+﻿ 
+"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { StepTracker } from '../components/StepTracker';
@@ -41,7 +43,7 @@ export const ApplicationsTrackingView: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold uppercase tracking-wider mb-2">
             <span className="material-symbols-outlined text-[15px]">timeline</span>
-            <span>Step 06 • Smart Tracking Stream</span>
+            <span>Step 06 â€¢ Smart Tracking Stream</span>
           </div>
           <h1 className="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">
             {t.tracking.title}
@@ -110,7 +112,7 @@ export const ApplicationsTrackingView: React.FC = () => {
                             : 'bg-surface-variant text-on-surface-variant'
                         }`}
                       >
-                        {step.completed ? '✓' : idx + 1}
+                        {step.completed ? 'âœ“' : idx + 1}
                       </span>
                       <div className="flex items-center justify-between text-xs">
                         <span className={`font-bold ${step.current ? 'text-primary' : 'text-on-surface'}`}>
@@ -257,3 +259,5 @@ export const ApplicationsTrackingView: React.FC = () => {
     </div>
   );
 };
+
+

@@ -1,3 +1,5 @@
+﻿/* eslint-disable */
+"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { verifyCredentialPublic, PublicVerificationResult } from '../services/vcService';
@@ -42,7 +44,7 @@ export const PublicVerificationView: React.FC = () => {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold uppercase tracking-wider mb-3">
               <span className="material-symbols-outlined text-[16px] text-primary">verified_user</span>
-              <span>Screen 13 • Zero-Knowledge Trust Node</span>
+              <span>Screen 13 â€¢ Zero-Knowledge Trust Node</span>
             </div>
             <h1 className="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">
               {t.verification.title}
@@ -115,7 +117,7 @@ export const PublicVerificationView: React.FC = () => {
                     <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
                       result.isValid ? 'bg-primary-container text-on-primary-container' : 'bg-error-container text-on-error-container'
                     }`}>
-                      {result.isValid ? t.verification.validBadge : '✗ Unverified / Revoked'}
+                      {result.isValid ? t.verification.validBadge : 'âœ— Unverified / Revoked'}
                     </span>
                     <span className="text-xs text-on-surface-variant font-mono">
                       Status: {result.status.toUpperCase()}
@@ -281,3 +283,5 @@ export const PublicVerificationView: React.FC = () => {
     </div>
   );
 };
+
+

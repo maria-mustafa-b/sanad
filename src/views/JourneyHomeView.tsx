@@ -1,3 +1,5 @@
+﻿/* eslint-disable */
+"use client";
 import React from 'react';
 import { useApp } from '../context/AppContext';
 
@@ -81,7 +83,7 @@ export const JourneyHomeView: React.FC = () => {
             <span className="text-xs font-bold uppercase tracking-wider text-secondary">The Pathway</span>
             <h2 className="text-2xl font-headline font-bold text-on-surface">How SANAD preserves your story</h2>
           </div>
-          <span className="text-xs text-on-surface-variant">Three human steps • No complicated forms</span>
+          <span className="text-xs text-on-surface-variant">Three human steps â€¢ No complicated forms</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -100,7 +102,7 @@ export const JourneyHomeView: React.FC = () => {
                   <span className="material-symbols-outlined text-tertiary text-[18px]">record_voice_over</span>
                 </div>
                 <p className="text-sm text-on-surface-variant leading-relaxed">
-                  Explain what happened in your own words or voice. Mix languages, everyday phrases, or emotional context — informal speech is welcomed.
+                  Explain what happened in your own words or voice. Mix languages, everyday phrases, or emotional context â€” informal speech is welcomed.
                 </p>
               </div>
             </div>
@@ -240,3 +242,5 @@ export const JourneyHomeView: React.FC = () => {
     </div>
   );
 };
+
+

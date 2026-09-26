@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 :root {
   --background: #f8f8f3;
   --foreground: #20332f;
@@ -689,3 +689,90 @@ button:focus-visible {
   margin: 18px 0;
   background: #f6f9f3;
 }
+
+@theme {
+  /* Material Design 3 Color Tokens */
+  --color-primary: #2d6a4f;
+  --color-on-primary: #ffffff;
+  --color-primary-fixed: #b7e4c7;
+  --color-on-primary-fixed: #002114;
+  --color-on-primary-fixed-variant: #1b4332;
+  --color-primary-container: #d8f3dc;
+  --color-on-primary-container: #1b4332;
+
+  --color-secondary: #52796f;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #c3ddd4;
+  --color-on-secondary-container: #0b2b22;
+
+  --color-tertiary: #6b705c;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-fixed: #d4d8c8;
+  --color-on-tertiary-fixed: #1d2012;
+  --color-tertiary-fixed-dim: #b8bcad;
+  --color-tertiary-container: #e8ead9;
+  --color-on-tertiary-container: #262b1b;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #410002;
+
+  --color-surface: #faf6f0;
+  --color-on-surface: #2e3230;
+  --color-on-surface-variant: #5c6761;
+  --color-surface-variant: #dce5db;
+  --color-surface-container: #efeae4;
+  --color-surface-container-low: #f5f0ea;
+  --color-surface-container-high: #e9e4de;
+  --color-surface-container-highest: #e3ded8;
+  --color-surface-container-lowest: #ffffff;
+
+  --color-outline: #74796e;
+  --color-outline-variant: #c4c8bb;
+
+  /* Font families */
+  --font-headline: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-label: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-arabic: 'Cairo', 'Noto Sans Arabic', system-ui, sans-serif;
+}
+
+
+
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #faf6f0;
+    color: #2e3230;
+    line-height: 1.6;
+  }
+
+  /* RTL typography adjustments */
+  [dir="rtl"] {
+    font-family: 'Cairo', 'Noto Sans Arabic', system-ui, sans-serif;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Material symbol baseline align */
+.material-symbols-outlined {
+  user-select: none;
+}
+

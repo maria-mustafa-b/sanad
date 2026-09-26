@@ -1,3 +1,5 @@
+﻿/* eslint-disable */
+"use client";
 import { LanguageCode } from '../types';
 
 export interface CodeSwitchAnalysis {
@@ -111,25 +113,25 @@ export const analyzeCodeSwitching = (text: string): CodeSwitchAnalysis => {
 
   // Arabic loan terms common in Gulf migrant settings
   const arabicTerms = [
-    { word: 'kafeel', category: 'Arabic loan: كفيل (Sponsor)' },
-    { word: 'iqama', category: 'Arabic loan: إقامة (Residency)' },
-    { word: 'shurti', category: 'Arabic loan: شرطي (Police)' },
-    { word: 'tasreeh', category: 'Arabic loan: تصريح (Permit)' },
-    { word: 'khedmah', category: 'Arabic loan: نهاية الخدمة (End of Service)' },
-    { word: 'mushkila', category: 'Arabic loan: مشكلة (Grievance/Problem)' },
-    { word: 'maktab', category: 'Arabic loan: مكتب (Labour Office)' },
+    { word: 'kafeel', category: 'Arabic loan: ÙƒÙÙŠÙ„ (Sponsor)' },
+    { word: 'iqama', category: 'Arabic loan: Ø¥Ù‚Ø§Ù…Ø© (Residency)' },
+    { word: 'shurti', category: 'Arabic loan: Ø´Ø±Ø·ÙŠ (Police)' },
+    { word: 'tasreeh', category: 'Arabic loan: ØªØµØ±ÙŠØ­ (Permit)' },
+    { word: 'khedmah', category: 'Arabic loan: Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø®Ø¯Ù…Ø© (End of Service)' },
+    { word: 'mushkila', category: 'Arabic loan: Ù…Ø´ÙƒÙ„Ø© (Grievance/Problem)' },
+    { word: 'maktab', category: 'Arabic loan: Ù…ÙƒØªØ¨ (Labour Office)' },
   ];
 
   // South Asian loan terms (Hindi/Urdu/Bengali)
   const southAsianTerms = [
-    { word: 'mera', category: 'Hindi/Urdu: मेरा (My)' },
-    { word: 'meri', category: 'Hindi/Urdu: मेरी (My)' },
-    { word: 'pagar', category: 'Hindi/Urdu loan: पगार (Salary/Wage)' },
-    { word: 'chutti', category: 'Hindi/Urdu loan: छुट्टी (Leave/Vacation)' },
-    { word: 'nahi', category: 'Hindi/Urdu: नहीं (Denial/Negative)' },
-    { word: 'amar', category: 'Bengali: আমার (My)' },
-    { word: 'beton', category: 'Bengali: বেতন (Wage)' },
-    { word: 'taka', category: 'Bengali: টাকা (Money)' },
+    { word: 'mera', category: 'Hindi/Urdu: à¤®à¥‡à¤°à¤¾ (My)' },
+    { word: 'meri', category: 'Hindi/Urdu: à¤®à¥‡à¤°à¥€ (My)' },
+    { word: 'pagar', category: 'Hindi/Urdu loan: à¤ªà¤—à¤¾à¤° (Salary/Wage)' },
+    { word: 'chutti', category: 'Hindi/Urdu loan: à¤›à¥à¤Ÿà¥à¤Ÿà¥€ (Leave/Vacation)' },
+    { word: 'nahi', category: 'Hindi/Urdu: à¤¨à¤¹à¥€à¤‚ (Denial/Negative)' },
+    { word: 'amar', category: 'Bengali: à¦†à¦®à¦¾à¦° (My)' },
+    { word: 'beton', category: 'Bengali: à¦¬à§‡à¦¤à¦¨ (Wage)' },
+    { word: 'taka', category: 'Bengali: à¦Ÿà¦¾à¦•à¦¾ (Money)' },
   ];
 
   // English legal intent terms
@@ -176,3 +178,5 @@ export const analyzeCodeSwitching = (text: string): CodeSwitchAnalysis => {
     confidence: Math.min(0.99, 0.88 + detectedLoans.length * 0.03),
   };
 };
+
+

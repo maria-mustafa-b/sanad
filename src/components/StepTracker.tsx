@@ -1,3 +1,5 @@
+﻿ 
+"use client";
 import React from 'react';
 import { useApp } from '../context/AppContext';
 
@@ -22,7 +24,7 @@ export const StepTracker: React.FC<StepTrackerProps> = ({ currentStepIndex }) =>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-secondary">
           <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-          <span>Worker Rights Dossier — Process Flow</span>
+          <span>Worker Rights Dossier â€” Process Flow</span>
         </div>
         <div className="text-xs text-on-surface-variant font-medium">
           Dossier ID: <span className="font-mono text-primary font-bold">{activeDossier.id}</span>
@@ -57,7 +59,7 @@ export const StepTracker: React.FC<StepTrackerProps> = ({ currentStepIndex }) =>
                       : 'bg-surface-variant text-on-surface-variant'
                   }`}
                 >
-                  {isDone ? '✓' : s.num}
+                  {isDone ? 'âœ“' : s.num}
                 </span>
                 <span
                   className={`text-[10px] uppercase font-bold tracking-wider ${
@@ -84,3 +86,5 @@ export const StepTracker: React.FC<StepTrackerProps> = ({ currentStepIndex }) =>
     </div>
   );
 };
+
+

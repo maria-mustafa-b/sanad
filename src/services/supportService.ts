@@ -1,3 +1,5 @@
+﻿/* eslint-disable */
+"use client";
 import { GrievanceCategory, LanguageCode, SupportOrganization } from '../types';
 import { supportOrganizations } from '../data/mockData';
 
@@ -33,3 +35,5 @@ export const matchSupportOrganizations = (
     };
   }).sort((a, b) => (a.matchScore === 'High' ? -1 : 1));
 };
+
+

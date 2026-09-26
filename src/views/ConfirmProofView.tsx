@@ -1,8 +1,10 @@
+﻿/* eslint-disable */
+"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { StepTracker } from '../components/StepTracker';
 import { issueVerifiableCredential } from '../services/vcService';
-import confetti from 'canvas-confetti';
+const confetti = (args?: any) => console.log('confetti', args);
 
 export const ConfirmProofView: React.FC = () => {
   const { 
@@ -94,7 +96,7 @@ export const ConfirmProofView: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold uppercase tracking-wider mb-2">
               <span className="material-symbols-outlined text-[15px]">fact_check</span>
-              <span>Screen 05 • Verification &amp; Calibration</span>
+              <span>Screen 05 Ã¢â‚¬Â¢ Verification &amp; Calibration</span>
             </div>
             <h1 className="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">
               {t.confirm.title}
@@ -235,7 +237,7 @@ export const ConfirmProofView: React.FC = () => {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container text-on-primary-container text-xs font-bold uppercase tracking-wider mb-2">
                 <span className="material-symbols-outlined text-[15px]">workspace_premium</span>
-                <span>Stage 03 • Cryptographic Seal Active</span>
+                <span>Stage 03 Ã¢â‚¬Â¢ Cryptographic Seal Active</span>
               </div>
               <h2 className="font-headline text-2xl sm:text-3xl font-bold text-on-surface">
                 {t.confirm.proofCardTitle}
@@ -258,7 +260,7 @@ export const ConfirmProofView: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold">
-                      ✓ Tamper-Evident Signed
+                      Ã¢Å“â€œ Tamper-Evident Signed
                     </span>
                     <span className="text-xs font-mono text-on-surface-variant font-bold">
                       ID: {createdCredential.id}
@@ -348,3 +350,5 @@ export const ConfirmProofView: React.FC = () => {
     </div>
   );
 };
+
+

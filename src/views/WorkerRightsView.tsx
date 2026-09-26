@@ -1,3 +1,5 @@
+﻿ 
+"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { rightsArticles } from '../data/mockData';
@@ -236,3 +238,5 @@ export const WorkerRightsView: React.FC = () => {
     </div>
   );
 };
+
+

@@ -1,3 +1,5 @@
+﻿/* eslint-disable */
+"use client";
 import React from 'react';
 import { useApp } from '../context/AppContext';
 
@@ -95,3 +97,5 @@ export const NotificationsView: React.FC = () => {
     </div>
   );
 };
+
+

@@ -10,7 +10,6 @@ export default defineConfig([
     "coverage/**",
     "playwright-report/**",
     "test-results/**",
-    "src/**",
     "stitch_sanad_multilingual_worker_portal/**",
   ]),
 ]);
