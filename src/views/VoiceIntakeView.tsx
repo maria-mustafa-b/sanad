@@ -20,8 +20,8 @@ export const VoiceIntakeView: React.FC = () => {
   const [analysis, setAnalysis] = useState<CodeSwitchAnalysis>(() => analyzeCodeSwitching(activeDossier.verbatimTranscript));
   const [isProcessing, setIsProcessing] = useState(false);
   const [empatheticResponse, setEmpatheticResponse] = useState({
-    native: "हमने आपकी शिकायत पूरी तरह समझ ली है: आपका पासपोर्ट वापस दिलाना और 2 महीने का बकाया वेतन। SANAD आपके साथ खड़ा है। क्या हम लेबर कोर्ट और श्रम मंत्रालय में आधिकारिक केस दर्ज करें?",
-    english: "We have identified your dual claims: recovery of withheld passport and recovery of 2 unpaid monthly salaries. SANAD is ready to file formal dispute resolution."
+    native: "SANAD is actively listening to your grievance. Once you finish, we will structure your statement into legal facts.",
+    english: "AI Advocate is actively analyzing your statement for relevant legal claims..."
   });
 
   const recognizerRef = useRef<any>(null);

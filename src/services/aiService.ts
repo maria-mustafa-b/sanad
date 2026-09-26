@@ -21,9 +21,9 @@ export const structureWorkerNarrative = async (
   rawText: string,
   userLanguage: LanguageCode
 ): Promise<StructuringResult> => {
-  // First attempt live Gemini backend extraction via /api/claims/analyze
+  // First attempt live Gemini backend extraction via /api/ai/analyze
   try {
-    const apiRes = await fetch('/api/claims/analyze', {
+    const apiRes = await fetch('/api/ai/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: rawText, transcript: rawText }),
@@ -31,8 +31,8 @@ export const structureWorkerNarrative = async (
 
     if (apiRes.ok) {
       const json = await apiRes.json();
-      if (json && json.data) {
-        const d = json.data;
+      if (json && json.data && json.data.analysis) {
+        const d = json.data.analysis;
         const factsObj = d.facts || {};
         
         let cat: GrievanceCategory = 'general_grievance';
@@ -229,3 +229,5 @@ function getEmpatheticResponse(userLanguage: LanguageCode) {
 
   return responsesByLang[userLanguage] || responsesByLang.en;
 }
+
+

@@ -103,8 +103,14 @@ export const speakText = (text: string, lang: LanguageCode) => {
     // Pick best available voice matching language
     const voices = window.speechSynthesis.getVoices();
     if (voices && voices.length > 0) {
-      const match = voices.find(v => v.lang.startsWith(targetLang.slice(0, 2))) ||
-                    voices.find(v => v.lang.includes(lang));
+      let match;
+      if (lang === 'en') {
+        match = voices.find(v => v.lang === 'en-IN' || v.name.includes('India')) ||
+                voices.find(v => v.lang.startsWith('en'));
+      } else {
+        match = voices.find(v => v.lang.startsWith(targetLang.slice(0, 2))) ||
+                voices.find(v => v.lang.includes(lang));
+      }
       if (match) {
         utterance.voice = match;
       }
