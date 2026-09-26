@@ -1,5 +1,3 @@
-﻿/* eslint-disable */
-"use client";
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { languageMeta, extendedLanguages } from '../locales';
@@ -214,5 +212,3 @@ export const SettingsView: React.FC = () => {
     </div>
   );
 };
-
-

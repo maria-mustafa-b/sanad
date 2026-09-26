@@ -1,5 +1,3 @@
-﻿ 
-"use client";
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
@@ -99,5 +97,3 @@ export const App: React.FC = () => {
 };
 
 export default App;
-
-

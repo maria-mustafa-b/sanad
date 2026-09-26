@@ -1,5 +1,3 @@
-﻿/* eslint-disable */
-"use client";
 import React from 'react';
 import { useApp } from '../context/AppContext';
 
@@ -13,10 +11,10 @@ export const Footer: React.FC = () => {
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline font-bold text-lg">
-                Ø³Ù€
+                سـ
               </div>
               <span className="font-headline font-bold text-xl text-on-surface">
-                SANAD (Ø³ÙŽÙ†ÙŽØ¯)
+                SANAD (سَنَد)
               </span>
             </div>
             <p className="text-xs sm:text-sm text-on-surface-variant max-w-md leading-relaxed">
@@ -35,27 +33,27 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 text-xs text-on-surface-variant">
               <li>
                 <button onClick={() => navigate('/')} className="hover:text-primary transition-colors cursor-pointer">
-                  Services &amp; Claims (Ø§Ù„Ù…Ø·Ø§Ù„Ø¨Ø§Øª)
+                  Services &amp; Claims (المطالبات)
                 </button>
               </li>
               <li>
                 <button onClick={() => navigate('/tell-sanad')} className="hover:text-primary transition-colors cursor-pointer">
-                  Voice Assistant (Ø§Ù„Ù…Ø³Ø§Ø¹Ø¯ Ø§Ù„ØµÙˆØªÙŠ)
+                  Voice Assistant (المساعد الصوتي)
                 </button>
               </li>
               <li>
                 <button onClick={() => navigate('/document-reader')} className="hover:text-primary transition-colors cursor-pointer">
-                  Document Reader (Ù‚Ø§Ø±Ø¦ Ø§Ù„ÙˆØ«Ø§Ø¦Ù‚)
+                  Document Reader (قارئ الوثائق)
                 </button>
               </li>
               <li>
                 <button onClick={() => navigate('/worker-rights')} className="hover:text-primary transition-colors cursor-pointer">
-                  Worker Rights (Ø­Ù‚ÙˆÙ‚ Ø§Ù„Ø¹Ù…Ø§Ù„)
+                  Worker Rights (حقوق العمال)
                 </button>
               </li>
               <li>
                 <button onClick={() => navigate('/verify')} className="hover:text-primary transition-colors cursor-pointer">
-                  Public Verification (Ø§Ù„ØªØ­Ù‚Ù‚ Ø§Ù„Ø¹Ø§Ù…)
+                  Public Verification (التحقق العام)
                 </button>
               </li>
             </ul>
@@ -78,13 +76,13 @@ export const Footer: React.FC = () => {
 
         <div className="pt-8 border-t border-surface-container-high/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-on-surface-variant">
           <div>
-            Â© 2026 SANAD Worker Support &amp; Dignity Platform. Concept Prototype.
+            © 2026 SANAD Worker Support &amp; Dignity Platform. Concept Prototype.
           </div>
           <div className="flex items-center gap-4">
             <span>Confidential &amp; Secure</span>
-            <span>â€¢</span>
+            <span>•</span>
             <span>Zero Data Leakage Guarantee</span>
-            <span>â€¢</span>
+            <span>•</span>
             <span>Universal Mother Tongue Access</span>
           </div>
         </div>
@@ -92,5 +90,3 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
-
-

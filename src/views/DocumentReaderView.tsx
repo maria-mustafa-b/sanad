@@ -1,5 +1,3 @@
-﻿ 
-"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { processDocumentOcr, createDocumentEvidence, OcrResult } from '../services/ocrService';
@@ -224,5 +222,3 @@ export const DocumentReaderView: React.FC = () => {
     </div>
   );
 };
-
-

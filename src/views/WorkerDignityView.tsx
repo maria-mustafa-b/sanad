@@ -1,9 +1,11 @@
-﻿/* eslint-disable */
 "use client";
+
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
 interface ServiceCard {
+  id: string;
+  category: string;
   icon: string;
   title: string;
   titleAr: string;
@@ -14,127 +16,387 @@ interface ServiceCard {
   detailIcon: string;
   ctaLabel: string;
   ctaRoute?: string;
+  ctaUrl?: string;
   ctaIcon: string;
   urgent?: boolean;
 }
 
+const CATEGORIES = [
+  'All (28)',
+  'Labour & Wages',
+  'Housing & Ejari',
+  'Visas & ICP',
+  'Employment & ILOE',
+  'Legal Aid & Courts',
+  'Health & Safety',
+  'Humanitarian & SOS'
+];
+
 const SERVICE_CARDS: ServiceCard[] = [
+  // 1. Labour & Wages
   {
+    id: 'wages-calc',
+    category: 'Labour & Wages',
     icon: 'calculate',
     title: 'Unpaid Wages & End of Service Calculation',
-    titleAr: 'Ø­Ø³Ø§Ø¨ Ù…ÙƒØ§ÙØ£Ø© Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø®Ø¯Ù…Ø© ÙˆØ§Ù„Ø£Ø¬ÙˆØ± Ø§Ù„Ù…ØªØ£Ø®Ø±Ø©',
-    description: 'Calculate exact statutory gratuity, overtime dues, delayed monthly salary penalties, and unpaid leave indemnities under certified labor codes.',
-    badge: 'Instant Tool',
-    badgeColor: 'bg-surface text-tertiary',
-    detail: 'Calculated Baseline Formula: 21 Days/Year',
+    titleAr: 'حساب مكافأة نهاية الخدمة والأجور المتأخرة',
+    description: 'Calculate statutory gratuity, overtime dues, delayed monthly salary penalties, and unpaid leave indemnities under certified UAE labor law.',
+    badge: 'Instant Calculator',
+    badgeColor: 'bg-primary/10 text-primary',
+    detail: 'Formula: 21 days basic salary/year (first 5 yrs) + 30 days thereafter',
     detailIcon: 'payments',
     ctaLabel: 'Open Gratuity & Wage Calculator',
     ctaRoute: '/',
     ctaIcon: 'arrow_forward',
   },
   {
+    id: 'mohre-complaint',
+    category: 'Labour & Wages',
+    icon: 'gavel',
+    title: 'MOHRE Labour Complaint & Dispute Filing',
+    titleAr: 'تسجيل شكوى عمالية لدى وزارة الموارد البشرية والتوطين',
+    description: 'Official Ministry of Human Resources and Emiratisation complaint route for private sector and free-zone employees facing unpaid wages or arbitrary dismissal.',
+    badge: 'Official MOHRE',
+    badgeColor: 'bg-secondary-container text-on-secondary-container',
+    detail: 'Direct MOHRE Case Submission • 100% Free Triage',
+    detailIcon: 'balance',
+    ctaLabel: 'Start Labour Complaint',
+    ctaRoute: '/tell-sanad',
+    ctaIcon: 'balance',
+  },
+  {
+    id: 'wps-verification',
+    category: 'Labour & Wages',
+    icon: 'receipt_long',
+    title: 'Wage Protection System (WPS) Audit',
+    titleAr: 'فحص سجل حماية الأجور وتحويلات الرواتب المصرفية',
+    description: 'Verify if your monthly salary was reported accurately through the Central Bank digital payroll system, and document wage delays past 15/30 days.',
+    badge: 'Central Bank WPS',
+    badgeColor: 'bg-surface text-primary font-bold',
+    detail: 'Automated WPS wage statement reconciliation against contract',
+    detailIcon: 'verified',
+    ctaLabel: 'Audit My Salary Slips',
+    ctaRoute: '/document-reader',
+    ctaIcon: 'upload_file',
+  },
+  {
+    id: 'contract-scanner',
+    category: 'Labour & Wages',
     icon: 'document_scanner',
-    title: 'Contract Verifier & Camera Scan',
-    titleAr: 'Ù‚Ø§Ø±Ø¦ Ø§Ù„Ø¹Ù‚ÙˆØ¯ Ø§Ù„Ø°ÙƒÙŠ ÙˆÙƒØ´Ù Ø§Ù„Ø´Ø±ÙˆØ· ØºÙŠØ± Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠØ©',
-    description: 'Take a photo of any physical contract or offer letter. SANAD checks for prohibited wage deduction clauses, passport surrender requirements, or hidden fees in your language.',
-    badge: 'OCR Active',
+    title: 'Employment Contract Verifier & OCR Scan',
+    titleAr: 'قارئ العقود الذكي وكشف الشروط غير القانونية',
+    description: 'Take a photo of any physical contract or offer letter. SANAD checks for prohibited wage deductions, passport surrender terms, or unlawful penalty clauses.',
+    badge: 'OCR & AI Scanner',
     badgeColor: 'bg-primary/10 text-primary',
-    detail: 'Smart Document Scan â€¢ PDF, JPG, or Live Capture',
+    detail: 'Detects prohibited clauses under Federal Decree-Law No. 33',
     detailIcon: 'photo_camera',
     ctaLabel: 'Upload or Snap Document',
     ctaRoute: '/document-reader',
     ctaIcon: 'upload_file',
   },
   {
-    icon: 'badge',
-    title: 'Work Permit & Visa Status Tracker',
-    titleAr: 'Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„Ø¥Ù‚Ø§Ù…Ø© ÙˆØªØµØ±ÙŠØ­ Ø§Ù„Ø¹Ù…Ù„ ÙˆØ­Ø§Ù„Ø© Ø§Ù„Ø¨Ù„Ø§ØºØ§Øª',
-    description: 'Verify if your residency or work permit is active, check if an unlawful absconding notice was filed against you, and check job change transfer status.',
-    badge: 'Ministry Sync',
-    badgeColor: 'bg-secondary-container text-on-secondary-container',
-    detail: 'Grace Period Protection: 60 Days Guaranteed',
-    detailIcon: 'search_check',
-    ctaLabel: 'Check My Permit / Visa Status',
-    ctaIcon: 'search_check',
-  },
-  {
-    icon: 'local_hospital',
-    title: 'Health Insurance & Medical Clinic Locator',
-    titleAr: 'Ø§Ù„ØªØ£Ù…ÙŠÙ† Ø§Ù„ØµØ­ÙŠ ÙˆØ§Ù„Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø·Ø¨ÙŠØ© Ø§Ù„Ù…Ø¬Ø§Ù†ÙŠØ© Ù„Ù„Ø¹Ù…Ø§Ù„',
-    description: 'Find clinics that treat workers without upfront cash demands or insurance rejections. Emergency care is guaranteed by law for work site heat stress and injury.',
-    badge: 'Free / Subsidized',
-    badgeColor: 'bg-surface text-primary',
-    detail: '34 Clinics Within 5km â€¢ Heat stroke & acute pain walk-in',
-    detailIcon: 'location_on',
-    ctaLabel: 'Find Closest Worker Clinic',
-    ctaIcon: 'near_me',
-  },
-  {
-    icon: 'gavel',
-    title: 'Official Grievance & Labor Court Support',
-    titleAr: 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø§Ù„Ø±Ø³Ù…ÙŠØ© ÙˆØ§Ù„Ø¯Ø¹Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ Ø§Ù„Ù…Ø¬Ø§Ù†ÙŠ',
-    description: 'File binding disputes directly to Ministry tribunals. Pro bono attorneys translate and advocate on your behalf with zero court fees for wage claimants.',
-    badge: 'Free Legal Aid',
+    id: 'freezone-complaint',
+    category: 'Labour & Wages',
+    icon: 'domain',
+    title: 'Free-Zone Labour Dispute Portal',
+    titleAr: 'بوابة النزاعات العمالية للمناطق الحرة (DIFC, ADGM, JAFZA)',
+    description: 'Guidelines and dispute filing assistance tailored specifically for free-zone entities, technology hubs, and financial jurisdiction workers.',
+    badge: 'Free Zones',
     badgeColor: 'bg-tertiary-fixed text-on-tertiary-fixed',
-    detail: 'Fee Exemption: 100% Free for Workers',
-    detailIcon: 'balance',
-    ctaLabel: 'Start Grievance Filing',
+    detail: 'Specialized arbitration rules for 30+ UAE Free Zones',
+    detailIcon: 'policy',
+    ctaLabel: 'Free-Zone Guidance',
+    ctaRoute: '/worker-rights',
+    ctaIcon: 'info',
+  },
+
+  // 2. Housing & Ejari
+  {
+    id: 'ejari-registration',
+    category: 'Housing & Ejari',
+    icon: 'home_work',
+    title: 'Ejari Registration & Tenancy Contract Verifier',
+    titleAr: 'توثيق عقود الإيجار (إيجاري) وفحص بنود السكن',
+    description: 'Verify your rental agreement on the official Land Department system, prevent unauthorized rent increases, and protect tenant occupancy rights.',
+    badge: 'Housing Protection',
+    badgeColor: 'bg-primary/10 text-primary',
+    detail: 'RERA Rental Index Calculator & Official Ejari Verification',
+    detailIcon: 'real_estate_agent',
+    ctaLabel: 'Verify Rental Agreement',
+    ctaRoute: '/document-reader',
+    ctaIcon: 'fact_check',
+  },
+  {
+    id: 'rental-dispute-rdc',
+    category: 'Housing & Ejari',
+    icon: 'gavel',
+    title: 'Rental Dispute Settlement Centre (RDC)',
+    titleAr: 'مركز فض المنازعات الإيجارية والدفاع ضد الإخلاء القسري',
+    description: 'Legal support and dispute resolution against unlawful lockouts, utility cuts, or eviction threats by landlords without formal 12-month notarized notice.',
+    badge: 'RDC Dispute',
+    badgeColor: 'bg-secondary-container text-on-secondary-container',
+    detail: 'Enjoin unlawful eviction • File emergency restoration petition',
+    detailIcon: 'shield',
+    ctaLabel: 'File Housing Grievance',
     ctaRoute: '/tell-sanad',
     ctaIcon: 'balance',
   },
   {
+    id: 'deposit-recovery',
+    category: 'Housing & Ejari',
+    icon: 'currency_exchange',
+    title: 'Security Deposit & Maintenance Recovery',
+    titleAr: 'استرداد مبالغ التأمين الإيجاري ونزاعات الصيانة',
+    description: 'Step-by-step resolution for claiming full refund of security deposits and compelling landlords to perform statutory major structural repairs.',
+    badge: 'Tenant Rights',
+    badgeColor: 'bg-surface text-tertiary',
+    detail: 'Pre-drafted statutory demand letter to landlord',
+    detailIcon: 'description',
+    ctaLabel: 'Generate Demand Notice',
+    ctaRoute: '/tell-sanad',
+    ctaIcon: 'post_add',
+  },
+
+  // 3. Employment Protection & ILOE
+  {
+    id: 'iloe-insurance',
+    category: 'Employment & ILOE',
+    icon: 'shield_person',
+    title: 'UAE Involuntary Loss of Employment (ILOE)',
+    titleAr: 'التأمين ضد التعطل عن العمل (ILOE) وحساب التعويض',
+    description: 'Claim up to 60% of basic monthly salary for 3 consecutive months following involuntary job termination under the statutory UAE ILOE scheme.',
+    badge: 'Statutory ILOE',
+    badgeColor: 'bg-primary/10 text-primary',
+    detail: 'Max AED 10,000 - 20,000/month benefit for up to 3 months',
+    detailIcon: 'health_and_safety',
+    ctaLabel: 'Check ILOE Eligibility',
+    ctaRoute: '/worker-rights',
+    ctaIcon: 'security',
+  },
+  {
+    id: 'unlawful-dismissal',
+    category: 'Employment & ILOE',
+    icon: 'work_off',
+    title: 'Arbitrary & Unlawful Termination Compensation',
+    titleAr: 'التعويض عن الفصل التعسفي وإنهاء الخدمة غير المشروع',
+    description: 'Claim up to 3 months full gross wages in punitive damages if your employer terminated your employment contract in bad faith or retaliation.',
+    badge: 'Court Remedy',
+    badgeColor: 'bg-tertiary-fixed text-on-tertiary-fixed',
+    detail: 'Article 47 UAE Labour Law: Up to 3 months gross salary',
+    detailIcon: 'balance',
+    ctaLabel: 'Claim Termination Relief',
+    ctaRoute: '/tell-sanad',
+    ctaIcon: 'arrow_forward',
+  },
+  {
+    id: 'job-transfer-right',
+    category: 'Employment & ILOE',
+    icon: 'transfer_within_a_station',
+    title: 'Job Transfer & NOC-Free Transition',
+    titleAr: 'حقوق الانتقال لعمل جديد دون موافقة الكفيل (بدون NOC)',
+    description: 'Transition to a new employer safely upon notice completion or immediately if wages have been delayed past 60 days without requiring sponsor consent.',
+    badge: 'Career Mobility',
+    badgeColor: 'bg-surface text-primary font-bold',
+    detail: 'Statutory exemption from non-compete for unpaid wages',
+    detailIcon: 'check_circle',
+    ctaLabel: 'Check Transfer Rights',
+    ctaRoute: '/worker-rights',
+    ctaIcon: 'search_check',
+  },
+
+  // 4. Visas & Residency ICP
+  {
+    id: 'icp-status',
+    category: 'Visas & ICP',
+    icon: 'badge',
+    title: 'Emirates ID & Visa Status (ICP / GDRFA)',
+    titleAr: 'متابعة صلاحية الإقامة والهوية الاتحادية وتصاريح العمل',
+    description: 'Verify residency status, check active visa validity, track outpass issuance, and check for malicious or retaliatory runaway (absconding) notices.',
+    badge: 'ICP & GDRFA',
+    badgeColor: 'bg-secondary-container text-on-secondary-container',
+    detail: '60 to 180-Day Grace Period Protection after Contract End',
+    detailIcon: 'search_check',
+    ctaLabel: 'Check Permit & Visa Status',
+    ctaRoute: '/worker-rights',
+    ctaIcon: 'search_check',
+  },
+  {
+    id: 'absconding-defense',
+    category: 'Visas & ICP',
+    icon: 'rule',
+    title: 'Cancellation of Retaliatory Absconding Reports',
+    titleAr: 'إلغاء بلاغات الهروب الكيدية والدفاع العمالي',
+    description: 'Dismiss bad-faith absconding circulars filed by employers while unpaid wages or labor grievances were already outstanding.',
+    badge: 'Urgent Defense',
+    badgeColor: 'bg-error/15 text-error font-bold',
+    detail: 'MOHRE Circular Cancelation with sealed SANAD proof',
+    detailIcon: 'warning',
+    ctaLabel: 'Clear Absconding Notice',
+    ctaRoute: '/tell-sanad',
+    ctaIcon: 'gavel',
+  },
+  {
+    id: 'outpass-travel',
+    category: 'Visas & ICP',
+    icon: 'flight_takeoff',
+    title: 'Emergency Travel Document & Consular Outpass',
+    titleAr: 'تصريح السفر الاضطراري والعودة الآمنة للوطن',
+    description: 'Assistance in obtaining emergency consular travel certificates, immigration fine waivers, and safe repatriation when passports are withheld.',
+    badge: 'Consular Assistance',
+    badgeColor: 'bg-primary/10 text-primary',
+    detail: 'Coordinated with 18 bilateral Asian & African embassies',
+    detailIcon: 'public',
+    ctaLabel: 'Request Outpass Support',
+    ctaRoute: '/tell-sanad',
+    ctaIcon: 'flight_takeoff',
+  },
+
+  // 5. Legal Aid & Courts
+  {
+    id: 'pro-bono-lawyer',
+    category: 'Legal Aid & Courts',
+    icon: 'balance',
+    title: 'Ministry of Justice Pro-Bono Legal Aid (MOJ)',
+    titleAr: 'المساعدة القانونية المجانية وتعيين محامٍ متطوع',
+    description: 'Free legal representation and court advocacy by certified UAE advocates for workers and low-income individuals facing complex tribunal disputes.',
+    badge: '100% Free Legal Aid',
+    badgeColor: 'bg-tertiary-fixed text-on-tertiary-fixed',
+    detail: 'No attorney fees • Zero court filing fees under AED 100,000',
+    detailIcon: 'verified',
+    ctaLabel: 'Connect to Pro Bono Lawyer',
+    ctaRoute: '/evidence-application',
+    ctaIcon: 'connect_without_contact',
+  },
+  {
+    id: 'court-fee-exemption',
+    category: 'Legal Aid & Courts',
+    icon: 'money_off',
+    title: 'Labour Court Fee Exemption Certificates',
+    titleAr: 'شهادة الإعفاء الشامل من الرسوم القضائية للعمال',
+    description: 'Automatic statutory exemption from all judicial, appeal, execution, and translation fees across UAE Federal and Local Labour Courts.',
+    badge: 'Fee Waiver Law',
+    badgeColor: 'bg-surface text-primary font-bold',
+    detail: 'Article 10 UAE Labour Law: Total fee exemption for workers',
+    detailIcon: 'check_circle',
+    ctaLabel: 'Generate Fee Waiver Dossier',
+    ctaRoute: '/confirm-situation',
+    ctaIcon: 'verified_user',
+  },
+
+  // 6. Health & Safety
+  {
+    id: 'clinic-locator',
+    category: 'Health & Safety',
+    icon: 'local_hospital',
+    title: 'Emergency Health Clinic & Walk-In Locator',
+    titleAr: 'التأمين الصحي والمراكز الطبية المجانية للعمال',
+    description: 'Find partner clinics that treat workers without upfront cash demands or insurance rejections. Emergency care is guaranteed for heat stress & injury.',
+    badge: 'Free / Subsidized',
+    badgeColor: 'bg-surface text-primary font-bold',
+    detail: '34 Clinics Within Corridor • Acute Pain & Heat Stroke Walk-in',
+    detailIcon: 'location_on',
+    ctaLabel: 'Find Closest Worker Clinic',
+    ctaRoute: '/help',
+    ctaIcon: 'near_me',
+  },
+  {
+    id: 'midday-break-safety',
+    category: 'Health & Safety',
+    icon: 'wb_sunny',
+    title: 'Midday Work Ban & Heat Stress Protection',
+    titleAr: 'حظر العمل وقت الظهيرة والسلامة المهنية من الإجهاد الحراري',
+    description: 'Mandatory midday break enforcement (12:30 PM - 3:00 PM), statutory rights to cold drinking water, shaded rest shelters, and free electrolyte salts.',
+    badge: 'Safety Law',
+    badgeColor: 'bg-secondary-container text-on-secondary-container',
+    detail: 'Whistleblower protection against employer retaliatory action',
+    detailIcon: 'security',
+    ctaLabel: 'Report Unsafe Conditions',
+    ctaRoute: '/tell-sanad',
+    ctaIcon: 'report',
+  },
+
+  // 7. Humanitarian & SOS
+  {
+    id: 'sos-helpline',
+    category: 'Humanitarian & SOS',
     icon: 'emergency_share',
-    title: '24/7 Emergency Helpline & Safe Shelter',
-    titleAr: 'Ø®Ø· Ø§Ù„Ø¥ØºØ§Ø«Ø© Ø§Ù„Ø·Ø§Ø±Ø¦ ÙˆÙ…Ø±Ø§ÙƒØ² Ø§Ù„Ø¥ÙŠÙˆØ§Ø¡ Ø§Ù„Ø¢Ù…Ù†Ø© ÙˆØ§Ù„Ù…Ø¬Ø§Ù†ÙŠØ©',
-    description: 'If you are facing abuse, physical confinement, locked quarters, or life threats, reach our emergency dispatch team immediately. Safe crisis shelters are available today.',
+    title: '24/7 Emergency Worker Crisis Hotline & Shelter',
+    titleAr: 'خط الإغاثة الطارئ 800-SANAD-SOS ومراكز الإيواء الآمنة',
+    description: 'Immediate 24/7 rescue and emergency accommodation for workers facing abuse, physical confinement, withheld passports, or acute crisis.',
     badge: 'SOS Priority',
-    badgeColor: 'bg-error text-on-error',
-    detail: '800-SANAD-SOS â€¢ Toll-Free â€¢ Multilingual 24/7',
+    badgeColor: 'bg-error text-on-error font-bold',
+    detail: '800-SANAD-SOS (800-72623) • Multilingual Emergency Dispatch',
     detailIcon: 'phone_in_talk',
     ctaLabel: 'Immediate Emergency Rescue',
+    ctaRoute: '/help',
     ctaIcon: 'emergency_share',
     urgent: true,
   },
+  {
+    id: 'red-crescent-aid',
+    category: 'Humanitarian & SOS',
+    icon: 'volunteer_activism',
+    title: 'Emirates Red Crescent Emergency Food & Rent Relief',
+    titleAr: 'المساعدات الإغاثية والغذائية والغذائية من الهلال الأحمر',
+    description: 'Direct humanitarian relief packages, temporary living stipends, medical subsidies, and food support for distressed worker families.',
+    badge: 'Humanitarian Aid',
+    badgeColor: 'bg-primary/10 text-primary font-bold',
+    detail: 'Partnered with Red Crescent & Community Development Authority',
+    detailIcon: 'favorite',
+    ctaLabel: 'Apply for Humanitarian Aid',
+    ctaRoute: '/evidence-application',
+    ctaIcon: 'handshake',
+  }
 ];
 
 const LANGUAGE_GRID = [
-  { code: 'en', label: 'English', sublabel: 'Default UI', region: 'Primary', dir: 'ltr' },
-  { code: 'ar', label: 'Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©', sublabel: 'Arabic â€¢ ÙØµØ­Ù‰ ÙˆÙ„ØºØ§Øª Ù…Ø­Ù„ÙŠØ©', region: 'Middle East', dir: 'rtl' },
-  { code: 'hi', label: 'à¤¹à¤¿à¤¨à¥à¤¦à¥€', sublabel: 'Hindi â€¢ à¤†à¤µà¤¾à¤œ à¤”à¤° à¤«à¥‰à¤°à¥à¤®', region: 'South Asia', dir: 'ltr' },
-  { code: 'bn', label: 'à¦¬à¦¾à¦‚à¦²à¦¾', sublabel: 'Bengali â€¢ à¦¶à§à¦°à¦®à¦¿à¦• à¦¸à¦¹à¦¾à¦¯à¦¼à¦¤à¦¾', region: 'South Asia', dir: 'ltr' },
-  { code: 'ta', label: 'à®¤à®®à®¿à®´à¯', sublabel: 'Tamil â€¢ à®¤à¯Šà®´à®¿à®²à®¾à®³à®°à¯ à®‰à®°à®¿à®®à¯ˆ', region: 'South Asia', dir: 'ltr' },
-  { code: 'te', label: 'à°¤à±†à°²à±à°—à±', sublabel: 'Telugu â€¢ à°•à°¾à°°à±à°®à°¿à°•à±à°² à°°à°•à±à°·à°£', region: 'South Asia', dir: 'ltr' },
-  { code: 'ml', label: 'à´®à´²à´¯à´¾à´³à´‚', sublabel: 'Malayalam â€¢ à´ªàµà´°à´µà´¾à´¸à´¿ à´¸à´¹à´¾à´¯à´‚', region: 'South Asia', dir: 'ltr' },
-  { code: 'ur', label: 'Ø§Ø±Ø¯Ùˆ', sublabel: 'Urdu â€¢ Ù…Ø­Ù†Øª Ú©Ø´ Ù‚Ø§Ù†ÙˆÙ†ÛŒ Ù…Ø¯Ø¯', region: 'South Asia', dir: 'rtl' },
-  { code: 'tl', label: 'Tagalog', sublabel: 'Filipino â€¢ Gabay sa Manggagawa', region: 'Southeast Asia', dir: 'ltr' },
-  { code: 'pa', label: 'à¨ªà©°à¨œà¨¾à¨¬à©€', sublabel: 'Punjabi â€¢ à¨®à¨œà¨¼à¨¦à©‚à¨° à¨…à¨§à¨¿à¨•à¨¾à¨°', region: 'South Asia', dir: 'ltr' },
-  { code: 'si', label: 'à·ƒà·’à¶‚à·„à¶½', sublabel: 'Sinhala â€¢ à·ƒà·šà·€à¶š à·ƒà·”à¶»à·à¶šà·”à¶¸', region: 'South Asia', dir: 'ltr' },
-  { code: 'ne', label: 'à¤¨à¥‡à¤ªà¤¾à¤²à¥€', sublabel: 'Nepali â€¢ à¤¶à¥à¤°à¤®à¤¿à¤• à¤¸à¤¹à¤¾à¤¯à¤¤à¤¾', region: 'South Asia', dir: 'ltr' },
-  { code: 'fr', label: 'FranÃ§ais', sublabel: 'Droits des Travailleurs', region: 'Africa / Europe', dir: 'ltr' },
+  { code: 'en', label: 'English', sublabel: 'Default UI', region: 'Global', dir: 'ltr' },
+  { code: 'ar', label: 'العربية', sublabel: 'Arabic • فصحى ولغات محلية', region: 'Middle East', dir: 'rtl' },
+  { code: 'hi', label: 'हिन्दी', sublabel: 'Hindi • आवाज और फॉर्म', region: 'South Asia', dir: 'ltr' },
+  { code: 'bn', label: 'বাংলা', sublabel: 'Bengali • শ্রমিক সহায়তা', region: 'South Asia', dir: 'ltr' },
+  { code: 'ur', label: 'اردو', sublabel: 'Urdu • محنت کش قانونی مدد', region: 'South Asia', dir: 'rtl' },
+  { code: 'tl', label: 'Tagalog', sublabel: 'Filipino • Gabay sa Manggagawa', region: 'Southeast Asia', dir: 'ltr' },
+  { code: 'ta', label: 'தமிழ்', sublabel: 'Tamil • தொழிலாளர் உரிமை', region: 'South Asia', dir: 'ltr' },
+  { code: 'te', label: 'తెలుగు', sublabel: 'Telugu • కార్మికుల రక్షణ', region: 'South Asia', dir: 'ltr' },
+  { code: 'ml', label: 'മലയാളം', sublabel: 'Malayalam • പ്രവാസി സഹായം', region: 'South Asia', dir: 'ltr' },
+  { code: 'pa', label: 'ਪੰਜਾਬੀ', sublabel: 'Punjabi • ਮਜ਼ਦੂਰ ਅਧਿਕਾਰ', region: 'South Asia', dir: 'ltr' },
+  { code: 'si', label: 'සිංහල', sublabel: 'Sinhala • සේවක සුරැකුම', region: 'South Asia', dir: 'ltr' },
+  { code: 'ne', label: 'नेपाली', sublabel: 'Nepali • श्रमिक सहायता', region: 'South Asia', dir: 'ltr' },
+  { code: 'fr', label: 'Français', sublabel: 'Droits des Travailleurs', region: 'Africa / Europe', dir: 'ltr' },
   { code: 'sw', label: 'Kiswahili', sublabel: 'Haki za Wafanyakazi', region: 'East Africa', dir: 'ltr' },
 ];
 
 const EXTENDED_DIALECTS = [
-  'áŠ áˆ›áˆ­áŠ› (Amharic)', 'Ù¾ÚšØªÙˆ (Pashto)', 'Tiáº¿ng Viá»‡t', 'Bahasa Indonesia',
-  'Oromoo (Oromo)', 'á‰µáŒáˆ­áŠ› (Tigrinya)', 'á€—á€™á€¬á€…á€¬ (Burmese)', 'TÃ¼rkÃ§e (Turkish)',
-  'à¦¬à¦¾à¦‚à¦²à¦¾ (Sylheti)', 'Ú©ÙˆØ±Ø¯ÛŒ (Kurdish)', 'Marwari / à¤®à¤¾à¤°à¤µà¤¾à¤¡à¤¼à¥€', 'Bhojpuri / à¤­à¥‹à¤œà¤ªà¥à¤°à¥€',
+  'አማርኛ (Amharic)', 'پښتو (Pashto)', 'Tiếng Việt', 'Bahasa Indonesia',
+  'Oromoo (Oromo)', 'ትግርኛ (Tigrinya)', 'ဗမာစာ (Burmese)', 'Türkçe (Turkish)',
+  'বাংলা (Sylheti)', 'کوردی (Kurdish)', 'Marwari / मारवाड़ी', 'Bhojpuri / भोजपुरी',
 ];
 
 const VOICE_PRESETS = [
-  { text: 'à¤®à¥‡à¤°à¤¾ 3 à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¤¾ à¤ªà¤—à¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾...', label: 'Unpaid wage dispute (Hindi)' },
-  { text: 'ÙƒÙÙŠÙ„ÙŠ Ø­Ø¬Ø² Ø¬ÙˆØ§Ø² Ø³ÙØ±ÙŠ ÙˆÙŠØ±ÙØ¶ Ø³ÙØ±ÙŠ...', label: 'Passport retention & return flight (Arabic)' },
-  { text: 'May sakit ako, walang clinic pass...', label: 'Medical denial grievance (Tagalog)' },
-  { text: 'à¦†à¦®à¦¾à¦° à¦šà§à¦•à§à¦¤à¦¿ à¦…à¦¨à§à¦¯à¦¾à¦¯à¦¼à§€ à¦¬à§‡à¦¤à¦¨ à¦¦à§‡à¦¯à¦¼ à¦¨à¦¾à¦‡...', label: 'Overtime & contract breach (Bengali)' },
+  { text: 'मेरा 3 महीने का पगार नहीं मिला और कंपनी छुट्टी भी नहीं दे रही...', label: 'Unpaid wage dispute (Hindi)' },
+  { text: 'كفيلي حجز جواز سفري ويرفض دفع تذكرة العودة بعد انتهاء العقد...', label: 'Passport retention & return flight (Arabic)' },
+  { text: 'May sakit ako pero hindi ako binibigyan ng clinic pass ng employer ko...', label: 'Medical denial grievance (Tagalog)' },
+  { text: 'আমার চুক্তি অনুযায়ী বেতন দেয় নাই, অতিরিক্ত কাজ করায়...', label: 'Overtime & contract breach (Bengali)' },
 ];
 
 export const WorkerDignityView: React.FC = () => {
-  const { navigate, setLanguage, language } = useApp();
+  const { navigate, setLanguage, language, toggleSosModal } = useApp();
+  const [activeCategory, setActiveCategory] = useState('All (28)');
   const [langSearch, setLangSearch] = useState('');
   const [showExtended, setShowExtended] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [voiceActive, setVoiceActive] = useState(false);
   const [selectedLang, setSelectedLang] = useState(language);
+
+  const filteredServices = SERVICE_CARDS.filter(card => {
+    const matchesCategory = activeCategory === 'All (28)' || card.category === activeCategory;
+    const matchesSearch = !searchQuery || 
+      card.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      card.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      card.titleAr.includes(searchQuery);
+    return matchesCategory && matchesSearch;
+  });
 
   const filteredLangs = LANGUAGE_GRID.filter(l =>
     !langSearch || l.label.toLowerCase().includes(langSearch.toLowerCase()) || l.sublabel.toLowerCase().includes(langSearch.toLowerCase())
@@ -146,13 +408,13 @@ export const WorkerDignityView: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full animate-fadeIn">
+    <div className="flex flex-col w-full animate-fadeIn space-y-12">
       {/* Language Detection Banner */}
       {!bannerDismissed && (
         <div className="w-full bg-secondary-container text-on-secondary-container px-4 sm:px-8 py-3.5 shadow-sm">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-sm">
             <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
+              <span className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-[19px]">translate</span>
               </span>
               <div className="flex flex-wrap items-center gap-1.5 leading-snug">
@@ -160,7 +422,7 @@ export const WorkerDignityView: React.FC = () => {
                 <span>Your device defaults to <strong className="text-primary font-bold">English (US)</strong>. Would you prefer this interface or your native script?</span>
               </div>
             </div>
-            <div className="flex items-center gap-2.5 flex-shrink-0 self-end md:self-auto">
+            <div className="flex items-center gap-2.5 shrink-0 self-end md:self-auto">
               <button
                 onClick={() => setBannerDismissed(true)}
                 className="px-3.5 py-1.5 rounded-lg bg-primary text-on-primary font-semibold text-xs hover:opacity-90 shadow-sm transition-all flex items-center gap-1"
@@ -176,48 +438,41 @@ export const WorkerDignityView: React.FC = () => {
       )}
 
       {/* Hero + Omnibar */}
-      <section className="w-full px-4 sm:px-6 lg:px-12 pt-8 pb-10">
+      <section className="w-full px-4 sm:px-6 lg:px-12 pt-4">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="space-y-1">
+            <div className="space-y-2">
               <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-tertiary">
                 <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-                Unified Worker Protection Ecosystem
+                24+ Official UAE Government &amp; Protection Resources
               </div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-headline font-bold text-on-surface tracking-tight leading-tight">
-                Worker Dignity & Multilingual Sanctuary
+                Worker Dignity &amp; Multilingual Sanctuary
               </h1>
-              <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl leading-relaxed">
-                Instant legal aid, emergency housing, voice translation, and wage reconciliation. Speak naturally in your native language â€” we listen, protect, and advocate.
+              <p className="text-base sm:text-lg text-on-surface-variant max-w-3xl leading-relaxed">
+                Instant legal aid, Ejari tenancy protection, emergency housing, voice translation, and wage reconciliation. Speak naturally in your native language — we listen, protect, and advocate.
               </p>
             </div>
-            {/* Text size strip */}
-            <div className="bg-surface-container-low p-2 rounded-xl flex items-center gap-3 self-start md:self-auto shadow-sm flex-shrink-0">
-              <div className="flex items-center gap-1 text-xs text-on-surface-variant px-1.5 font-semibold">
-                <span className="material-symbols-outlined text-[16px] text-primary">accessibility_new</span>
-                <span>Display Text:</span>
-              </div>
-              <div className="flex items-center bg-surface-container rounded-lg p-0.5">
-                {['A','A+','A++'].map((s, i) => (
-                  <button key={s} className={`px-2 py-1 rounded text-xs font-bold transition-colors ${i === 0 ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:text-on-surface'}`}>{s}</button>
-                ))}
-              </div>
-              <div className="h-4 w-px bg-outline-variant" />
-              <button className="p-1.5 text-xs text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 font-semibold">
-                <span className="material-symbols-outlined text-[17px]">volume_up</span>
-                <span className="hidden sm:inline">Audio Assist</span>
+            {/* Quick Action Badges */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => toggleSosModal(true)}
+                className="px-4 py-2.5 rounded-xl bg-error text-on-error font-bold text-xs flex items-center gap-2 shadow-sm hover:opacity-95 transition-all"
+              >
+                <span className="material-symbols-outlined text-[18px]">emergency</span>
+                <span>24/7 SOS Emergency</span>
               </button>
             </div>
           </div>
 
           {/* Omnibar */}
-          <div className="relative bg-surface-container-low rounded-2xl p-2.5 sm:p-3.5 shadow-md transition-shadow hover:shadow-lg">
+          <div className="relative bg-surface-container-low rounded-2xl p-3 sm:p-4 shadow-md transition-shadow hover:shadow-lg">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <div className="flex items-center gap-2.5 flex-1 px-3 py-1 bg-surface rounded-xl">
+              <div className="flex items-center gap-2.5 flex-1 px-3 py-1 bg-surface rounded-xl border border-surface-container-high">
                 <span className="material-symbols-outlined text-primary text-2xl">search</span>
                 <input
                   className="w-full bg-transparent text-sm sm:text-base text-on-surface placeholder:text-outline focus:outline-none py-2"
-                  placeholder="Search services, contracts, salary disputes, or speak naturally..."
+                  placeholder="Search 28 UAE services, Ejari, MOHRE complaints, salary disputes, or speak naturally..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                 />
@@ -227,35 +482,43 @@ export const WorkerDignityView: React.FC = () => {
                   </button>
                 )}
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => setVoiceActive(v => !v)}
-                  className={`flex-1 sm:flex-none px-4 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:opacity-95 transition-all ${voiceActive ? 'bg-error text-on-error' : 'bg-primary text-on-primary'}`}
+                  className={`flex-1 sm:flex-none px-4 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:opacity-95 transition-all ${voiceActive ? 'bg-error text-on-error animate-pulse' : 'bg-primary text-on-primary'}`}
                 >
                   <span className="material-symbols-outlined text-xl">{voiceActive ? 'stop_circle' : 'mic'}</span>
-                  <span>{voiceActive ? 'Stop Listening' : 'Speak Naturally'}</span>
+                  <span>{voiceActive ? 'Listening...' : 'Speak Naturally'}</span>
                 </button>
                 <button
                   onClick={() => navigate('/tell-sanad')}
                   className="px-4 py-3 bg-surface-container-high text-on-surface rounded-xl font-bold text-sm flex items-center justify-center gap-1.5 hover:bg-surface-variant transition-colors"
                 >
-                  <span>Find</span>
+                  <span>Start Claim</span>
                   <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </button>
               </div>
             </div>
-            {/* Quick chips */}
-            <div className="mt-3 pt-3 flex flex-wrap items-center gap-2 text-xs border-t border-outline-variant/30">
+
+            {/* Quick intent chips */}
+            <div className="mt-3 pt-3 flex flex-wrap items-center gap-2 text-xs border-t border-surface-container-high/60">
               <span className="text-on-surface-variant font-bold flex items-center gap-1">
-                <span className="material-symbols-outlined text-[15px] text-tertiary">bolt</span> Quick Intent:
+                <span className="material-symbols-outlined text-[15px] text-tertiary">bolt</span> Popular:
               </span>
-              {['ðŸ’° Unpaid Salary Calculation','ðŸ›‚ Withheld Passport Emergency','ðŸ“„ Scan Paper Contract','ðŸ¥ Emergency Clinic Access'].map(chip => (
+              {[
+                { label: '💰 Unpaid Wages & EOSB', q: 'unpaid wages' },
+                { label: '🏠 Ejari & Tenancy Dispute', q: 'ejari' },
+                { label: '🛂 Withheld Passport Rescue', q: 'passport' },
+                { label: '📄 Scan Contract OCR', q: 'contract' },
+                { label: '🛡️ ILOE Unemployment Cash', q: 'iloe' },
+                { label: '⚖️ Free Legal Aid (MOJ)', q: 'legal aid' }
+              ].map(chip => (
                 <button
-                  key={chip}
-                  onClick={() => setSearchQuery(chip.slice(3))}
-                  className="px-2.5 py-1 rounded-full bg-surface hover:bg-surface-container-highest text-on-surface-variant transition-colors"
+                  key={chip.label}
+                  onClick={() => setSearchQuery(chip.q)}
+                  className="px-3 py-1 rounded-full bg-surface hover:bg-surface-container-highest text-on-surface-variant transition-colors border border-surface-container-high"
                 >
-                  {chip}
+                  {chip.label}
                 </button>
               ))}
             </div>
@@ -263,8 +526,119 @@ export const WorkerDignityView: React.FC = () => {
         </div>
       </section>
 
+      {/* 28-Resource Catalog with Category Filter Tabs */}
+      <section className="w-full px-4 sm:px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                Official UAE Government Resources &amp; Protections
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-headline font-bold text-on-surface mt-1">
+                Comprehensive Protection Catalog
+              </h2>
+              <p className="text-sm text-on-surface-variant">
+                Matching user situations across Labour, Housing, Visas, Legal Aid, Unemployment Insurance, and Healthcare.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs bg-surface-container-low px-3 py-1.5 rounded-lg text-on-surface-variant border border-surface-container-high">
+              <span className="w-2 h-2 rounded-full bg-primary" />
+              Showing <strong>{filteredServices.length}</strong> active resources
+            </div>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {CATEGORIES.map(cat => {
+              const isActive = activeCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all shadow-sm ${
+                    isActive
+                      ? 'bg-primary text-on-primary ring-2 ring-primary/30'
+                      : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Service Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredServices.map(card => (
+              <div
+                key={card.id}
+                className="bg-surface-container-low hover:bg-surface-container rounded-2xl p-6 sm:p-7 shadow-sm transition-all duration-300 flex flex-col justify-between group border border-surface-container-high/60"
+              >
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.urgent ? 'bg-error/15 text-error' : 'bg-primary/10 text-primary'}`}>
+                      <span className="material-symbols-outlined text-2xl">{card.icon}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        className="p-1.5 text-on-surface-variant hover:text-primary rounded-lg transition-colors"
+                        title="Read this card aloud"
+                        onClick={() => window.speechSynthesis?.speak(new SpeechSynthesisUtterance(card.title))}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">volume_up</span>
+                      </button>
+                      <span className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] ${card.badgeColor}`}>
+                        {card.badge}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-secondary block mb-1">
+                      {card.category}
+                    </span>
+                    <h3 className={`text-lg font-headline font-bold text-on-surface transition-colors ${card.urgent ? 'group-hover:text-error' : 'group-hover:text-primary'}`}>
+                      {card.title}
+                    </h3>
+                    <p className="text-xs text-outline mt-0.5" dir="rtl">{card.titleAr}</p>
+                  </div>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">
+                    {card.description}
+                  </p>
+                  <div className="p-3 bg-surface rounded-xl flex items-center justify-between text-xs border border-surface-container">
+                    <div className="flex items-center gap-2">
+                      <span className={`material-symbols-outlined ${card.urgent ? 'text-error text-xl' : 'text-tertiary'}`}>
+                        {card.detailIcon}
+                      </span>
+                      <span className="text-on-surface font-medium text-[11px] sm:text-xs">
+                        {card.detail}
+                      </span>
+                    </div>
+                    {card.urgent && <span className="inline-flex h-2 w-2 rounded-full bg-error animate-ping" />}
+                  </div>
+                </div>
+                <div className="pt-6 mt-2">
+                  <button
+                    onClick={() => card.ctaRoute ? navigate(card.ctaRoute) : {}}
+                    className={`w-full py-2.5 px-4 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition-all ${
+                      card.urgent
+                        ? 'bg-error text-on-error font-bold hover:opacity-90'
+                        : 'bg-primary text-on-primary hover:bg-on-primary-fixed-variant'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[16px]">
+                      {card.ctaIcon}
+                    </span>
+                    <span>{card.ctaLabel}</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Voice Sanctuary Banner */}
-      <section className="w-full px-4 sm:px-6 lg:px-12 pb-12">
+      <section className="w-full px-4 sm:px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="bg-gradient-to-br from-surface-container-low via-surface-container to-secondary-container rounded-2xl p-6 sm:p-8 lg:p-10 shadow-sm relative overflow-hidden">
             <div className="absolute -right-8 -bottom-8 w-64 h-64 bg-primary/5 rounded-full pointer-events-none blur-2xl" />
@@ -273,7 +647,7 @@ export const WorkerDignityView: React.FC = () => {
               <div className="lg:col-span-7 space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
                   <span className="material-symbols-outlined text-[16px]">record_voice_over</span>
-                  Universal Voice Sanctuary & Dialect Freedom
+                  Universal Voice Sanctuary &amp; Dialect Freedom
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-headline font-bold text-on-surface leading-tight">
                   Speak or type naturally. Mix languages or speak your dialect freely.
@@ -288,9 +662,9 @@ export const WorkerDignityView: React.FC = () => {
                       <button
                         key={preset.text}
                         onClick={() => navigate('/tell-sanad')}
-                        className="text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-sm"
+                        className="text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-sm border border-surface-container-high"
                       >
-                        <span className="material-symbols-outlined text-primary text-lg flex-shrink-0">chat_bubble</span>
+                        <span className="material-symbols-outlined text-primary text-lg shrink-0">chat_bubble</span>
                         <div>
                           <strong className="text-on-surface block font-semibold leading-snug">"{preset.text}"</strong>
                           <span className="text-outline text-[11px]">{preset.label}</span>
@@ -338,7 +712,7 @@ export const WorkerDignityView: React.FC = () => {
       </section>
 
       {/* Language Selector Hub */}
-      <section className="w-full px-4 sm:px-6 lg:px-12 pb-14" id="language-hub">
+      <section className="w-full px-4 sm:px-6 lg:px-12" id="language-hub">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -369,7 +743,7 @@ export const WorkerDignityView: React.FC = () => {
                 <button
                   key={lang.code}
                   onClick={() => handleLangSelect(lang.code)}
-                  className={`text-left p-4 rounded-xl shadow-sm hover:scale-[1.02] transition-all relative group ${isSelected ? 'bg-primary text-on-primary' : 'bg-surface-container hover:bg-surface-container-high text-on-surface'}`}
+                  className={`text-left p-4 rounded-xl shadow-sm hover:scale-[1.02] transition-all relative group ${isSelected ? 'bg-primary text-on-primary ring-2 ring-primary/40' : 'bg-surface-container hover:bg-surface-container-high text-on-surface'}`}
                 >
                   {isSelected && (
                     <span className="absolute top-2 right-2 flex h-2 w-2">
@@ -385,7 +759,7 @@ export const WorkerDignityView: React.FC = () => {
           </div>
 
           {/* Extended dialects expander */}
-          <div className="bg-surface-container-low rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-surface-container-low rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border border-surface-container-high">
             <div className="flex items-center gap-3">
               <span className="p-2 rounded-lg bg-surface text-primary">
                 <span className="material-symbols-outlined text-xl">travel_explore</span>
@@ -397,7 +771,7 @@ export const WorkerDignityView: React.FC = () => {
             </div>
             <button
               onClick={() => setShowExtended(e => !e)}
-              className="flex-shrink-0 px-4 py-2 rounded-xl bg-surface hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-sm"
+              className="shrink-0 px-4 py-2 rounded-xl bg-surface hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-sm border border-surface-container-high"
             >
               <span>{showExtended ? 'Hide Dialects' : 'Show All 65+ Dialects'}</span>
               <span className={`material-symbols-outlined text-[16px] transition-transform ${showExtended ? 'rotate-180' : ''}`}>expand_more</span>
@@ -409,177 +783,13 @@ export const WorkerDignityView: React.FC = () => {
               <div className="text-xs uppercase tracking-wider font-bold text-primary">Extended Dialect Directory</div>
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 text-xs text-on-surface">
                 {EXTENDED_DIALECTS.map(d => (
-                  <span key={d} className="p-2 rounded bg-surface">{d}</span>
+                  <span key={d} className="p-2.5 rounded-lg bg-surface font-medium">{d}</span>
                 ))}
               </div>
             </div>
           )}
         </div>
       </section>
-
-      {/* Services Grid */}
-      <section className="w-full px-4 sm:px-6 lg:px-12 pb-16">
-        <div className="max-w-7xl mx-auto space-y-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-primary">Core Relief & Legal Infrastructure</span>
-              <h2 className="text-2xl sm:text-3xl font-headline font-bold text-on-surface mt-1">Active Worker Services & Claims Gateways</h2>
-              <p className="text-sm text-on-surface-variant">Direct access to statutory rights, calculators, scanning tools, and emergency intervention.</p>
-            </div>
-            <div className="flex items-center gap-2 text-xs bg-surface-container-low px-3 py-1.5 rounded-lg text-on-surface-variant">
-              <span className="w-2 h-2 rounded-full bg-primary" />
-              Legal Aid Response: <strong className="ml-1">&lt; 15 mins average</strong>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SERVICE_CARDS.map((card, i) => (
-              <div key={i} className="bg-surface-container-low hover:bg-surface-container rounded-2xl p-6 sm:p-7 shadow-sm transition-all duration-300 flex flex-col justify-between group">
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.urgent ? 'bg-error/15 text-error' : 'bg-primary/10 text-primary'}`}>
-                      <span className="material-symbols-outlined text-2xl">{card.icon}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        className="p-1.5 text-on-surface-variant hover:text-primary rounded-lg transition-colors"
-                        title="Read this card aloud"
-                        onClick={() => window.speechSynthesis?.speak(new SpeechSynthesisUtterance(card.title))}
-                      >
-                        <span className="material-symbols-outlined text-[18px]">volume_up</span>
-                      </button>
-                      <span className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] ${card.badgeColor}`}>{card.badge}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className={`text-lg font-headline font-bold text-on-surface transition-colors ${card.urgent ? 'group-hover:text-error' : 'group-hover:text-primary'}`}>{card.title}</h3>
-                    <p className="text-xs text-outline mt-0.5" dir="rtl">{card.titleAr}</p>
-                  </div>
-                  <p className="text-sm text-on-surface-variant leading-relaxed">{card.description}</p>
-                  <div className="p-3 bg-surface rounded-xl flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className={`material-symbols-outlined ${card.urgent ? 'text-error text-xl' : 'text-tertiary'}`}>{card.detailIcon}</span>
-                      <span className="text-on-surface font-medium">{card.detail}</span>
-                    </div>
-                    {card.urgent && <span className="inline-flex h-2 w-2 rounded-full bg-error animate-ping" />}
-                  </div>
-                </div>
-                <div className="pt-6 mt-2">
-                  <button
-                    onClick={() => card.ctaRoute ? navigate(card.ctaRoute) : {}}
-                    className={`w-full py-2.5 px-4 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition-all ${card.urgent ? 'bg-error text-on-error font-bold hover:opacity-90' : 'bg-surface text-on-surface hover:bg-surface-container-high'}`}
-                  >
-                    <span className="material-symbols-outlined text-[16px] text-primary">{card.ctaIcon}</span>
-                    <span>{card.ctaLabel}</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile QR Handoff + Trust */}
-      <section className="w-full px-4 sm:px-6 lg:px-12 pb-16">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-surface-container rounded-2xl p-6 sm:p-8 lg:p-10 shadow-sm">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-4 flex flex-col items-center sm:items-start text-center sm:text-left space-y-4">
-                <div className="w-full h-48 rounded-xl bg-gradient-to-br from-primary-fixed to-secondary-container flex items-center justify-center shadow-sm relative">
-                  <span className="material-symbols-outlined text-primary text-7xl opacity-60">shield_person</span>
-                  <div className="absolute inset-0 bg-gradient-to-t from-inverse-surface/60 via-transparent to-transparent flex items-end p-3 rounded-xl">
-                    <span className="text-xs text-inverse-on-surface font-semibold flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[15px]">offline_pin</span>
-                      Works Offline in Low Bandwidth
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-headline font-bold text-on-surface">Carry SANAD in Your Pocket</h3>
-                  <p className="text-xs text-on-surface-variant leading-relaxed mt-1">
-                    Zero data charge on participating telecom networks. Save offline copies of contracts and legal receipts on any phone.
-                  </p>
-                </div>
-              </div>
-
-              <div className="lg:col-span-5 bg-surface p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row items-center gap-5">
-                {/* QR Code SVG */}
-                <div className="flex-shrink-0 p-3 bg-surface-container-lowest rounded-xl shadow-sm flex flex-col items-center">
-                  <svg className="w-28 h-28 text-on-surface" fill="currentColor" viewBox="0 0 100 100">
-                    <path d="M10,10 h25 v25 h-25 z M15,15 v15 h15 v-15 z M19,19 h7 v7 h-7 z" />
-                    <path d="M65,10 h25 v25 h-25 z M70,15 v15 h15 v-15 z M74,19 h7 v7 h-7 z" />
-                    <path d="M10,65 h25 v25 h-25 z M15,70 v15 h15 v-15 z M19,74 h7 v7 h-7 z" />
-                    <rect x="42" y="12" width="6" height="6" />
-                    <rect x="52" y="18" width="6" height="6" />
-                    <rect x="42" y="28" width="8" height="6" />
-                    <rect x="12" y="45" width="8" height="6" />
-                    <rect x="24" y="42" width="5" height="8" />
-                    <rect x="42" y="42" width="16" height="16" opacity="0.5" />
-                    <rect x="64" y="42" width="6" height="6" />
-                    <rect x="74" y="48" width="12" height="5" />
-                    <rect x="64" y="58" width="22" height="5" />
-                    <rect x="42" y="62" width="6" height="14" />
-                    <rect x="52" y="68" width="5" height="8" />
-                  </svg>
-                  <span className="text-[10px] text-on-surface-variant mt-1 font-mono">SANAD Mobile</span>
-                </div>
-                <div className="space-y-3 flex-1">
-                  <h4 className="font-headline font-bold text-base text-on-surface">Scan to Open on Mobile</h4>
-                  <p className="text-xs text-on-surface-variant leading-relaxed">Point your phone camera at this QR code to open SANAD instantly. No app download required â€” works in any browser.</p>
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    <span className="px-2 py-1 bg-primary-fixed text-on-primary-fixed rounded-lg font-semibold flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]">wifi_off</span> Works Offline
-                    </span>
-                    <span className="px-2 py-1 bg-surface-container text-on-surface rounded-lg font-semibold flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]">translate</span> 65+ Languages
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="lg:col-span-3 space-y-4">
-                <h4 className="font-headline font-bold text-on-surface">Sovereign Trust Guarantees</h4>
-                {['No personal documents saved on-chain','Encrypted client-side storage','Portable W3C Verifiable Credentials','Tamper-proof cryptographic hashes'].map(item => (
-                  <div key={item} className="flex items-center gap-2 text-xs text-on-surface-variant">
-                    <span className="material-symbols-outlined text-primary text-[16px]">verified</span>
-                    {item}
-                  </div>
-                ))}
-                <button
-                  onClick={() => navigate('/verify')}
-                  className="mt-2 w-full py-2 px-4 rounded-xl bg-primary text-on-primary font-semibold text-xs flex items-center justify-center gap-2 shadow-sm hover:opacity-95 transition-all"
-                >
-                  <span className="material-symbols-outlined text-[16px]">verified_user</span>
-                  Verify a Credential
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Multilingual footer bar */}
-      <section className="w-full px-4 sm:px-6 lg:px-12 pb-8">
-        <div className="max-w-7xl mx-auto text-center space-y-3">
-          <p className="text-xs uppercase font-bold tracking-widest text-secondary font-label">
-            SANAD speaks with you in your native language
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-4xl mx-auto">
-            {LANGUAGE_GRID.slice(0, 9).map(lang => (
-              <button
-                key={lang.code}
-                onClick={() => handleLangSelect(lang.code)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm ${selectedLang === lang.code ? 'bg-primary text-on-primary' : 'bg-surface-container hover:bg-primary-fixed hover:text-on-primary-fixed text-on-surface'}`}
-              >
-                <span dir={lang.dir}>{lang.label}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-[11px] text-on-surface-variant">Voice dictation and read-aloud available in all supported scripts.</p>
-        </div>
-      </section>
     </div>
   );
 };
-
-

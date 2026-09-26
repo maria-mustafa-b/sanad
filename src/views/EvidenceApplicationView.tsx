@@ -1,5 +1,3 @@
-﻿/* eslint-disable */
-"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { StepTracker } from '../components/StepTracker';
@@ -251,7 +249,7 @@ export const EvidenceApplicationView: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-xs text-on-surface-variant">
-                      File Size: {doc.fileSize} â€¢ Uploaded: {doc.uploadDate}
+                      File Size: {doc.fileSize} • Uploaded: {doc.uploadDate}
                     </p>
                     <p className="text-[11px] text-secondary font-mono">
                       Digest: {doc.sha256}
@@ -357,7 +355,7 @@ export const EvidenceApplicationView: React.FC = () => {
                 <span>1. Verified Situation</span>
               </div>
               <p className="text-base font-bold text-on-surface">{activeDossier.categoryLabel}</p>
-              <p className="text-xs text-on-surface-variant">{activeDossier.incidentPeriod} â€¢ Employer: {activeDossier.employerName}</p>
+              <p className="text-xs text-on-surface-variant">{activeDossier.incidentPeriod} • Employer: {activeDossier.employerName}</p>
             </div>
 
             <div className="space-y-2 bg-surface-container p-4 rounded-xl">
@@ -428,5 +426,3 @@ export const EvidenceApplicationView: React.FC = () => {
     </div>
   );
 };
-
-

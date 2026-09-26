@@ -1,5 +1,3 @@
-﻿ 
-"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { LanguageCode } from '../types';
@@ -50,7 +48,7 @@ export const Header: React.FC = () => {
             <span className="material-symbols-outlined text-[16px] text-primary">verified</span>
             <span className="hidden sm:inline">{t.certifiedBadge}</span>
           </span>
-          <span className="hidden sm:inline text-secondary-fixed-dim">â€¢</span>
+          <span className="hidden sm:inline text-secondary-fixed-dim">•</span>
           <span className="flex items-center gap-1 text-[11px] sm:text-xs truncate">
             <span className="material-symbols-outlined text-[15px] text-primary">call</span>
             <span>{t.hotline247}</span>
@@ -82,12 +80,12 @@ export const Header: React.FC = () => {
               className="flex items-center gap-3 text-left cursor-pointer group"
             >
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary font-headline font-bold text-xl shadow-sm tracking-tight group-hover:bg-on-primary-fixed-variant transition-colors">
-                Ø³Ù€
+                سـ
               </div>
               <div className="flex flex-col min-w-0">
                 <div className="flex items-baseline gap-2">
                   <span className="font-headline font-bold text-lg text-primary tracking-tight">SANAD</span>
-                  <span className="font-headline text-base text-tertiary font-semibold">Ø³ÙŽÙ†ÙŽØ¯</span>
+                  <span className="font-headline text-base text-tertiary font-semibold">سَنَد</span>
                   {isDemoMode && (
                     <span 
                       onClick={(e) => { e.stopPropagation(); resetToDemo(); }}
@@ -247,5 +245,3 @@ export const Header: React.FC = () => {
     </header>
   );
 };
-
-

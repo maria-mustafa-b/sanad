@@ -1,5 +1,3 @@
-﻿/* eslint-disable */
-"use client";
 import { LanguageCode, UserProfile } from '../types';
 import { mockUser } from '../data/mockData';
 
@@ -76,5 +74,3 @@ export const signInWorker = async (
     },
   };
 };
-
-

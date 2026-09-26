@@ -1,5 +1,3 @@
-﻿ 
-"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { languageMeta } from '../locales';
@@ -240,5 +238,3 @@ export const HelpSupportView: React.FC = () => {
     </div>
   );
 };
-
-

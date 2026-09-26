@@ -1,5 +1,3 @@
-﻿/* eslint-disable */
-"use client";
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 
@@ -14,7 +12,7 @@ interface ProcessingStep {
 export const NarrativeProcessingView: React.FC = () => {
   const { navigate, t, activeDossier } = useApp();
   const [steps, setSteps] = useState<ProcessingStep[]>([
-    { id: 1, label: 'Listening to what you told us', sublabel: 'Speech raw stream verified â€¢ Audio integrity sealed', status: 'done' },
+    { id: 1, label: 'Listening to what you told us', sublabel: 'Speech raw stream verified • Audio integrity sealed', status: 'done' },
     { id: 2, label: 'Understanding your message', sublabel: 'Colloquial Hindi + English dialect recognized smoothly', status: 'done' },
     { id: 3, label: 'Identifying reported facts', sublabel: '', tags: ['Unpaid Wages (August)', 'Employment Termination'], status: 'active' },
     { id: 4, label: 'Preparing situation summary', sublabel: 'Personal details remain securely on your device', status: 'pending' },
@@ -57,7 +55,7 @@ export const NarrativeProcessingView: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-secondary">
             <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
-            Worker Rights Dossier â€” Process Flow
+            Worker Rights Dossier — Process Flow
           </div>
           <div className="text-xs text-on-surface-variant font-medium">
             Dossier ID: <span className="font-mono text-primary font-semibold">SND-2024-8842-DXB</span>
@@ -83,13 +81,13 @@ export const NarrativeProcessingView: React.FC = () => {
       <div className="mb-10 max-w-3xl">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold mb-3">
           <span className="material-symbols-outlined text-[15px] text-tertiary">mic_none</span>
-          Natural Conversational Intake â€¢ Screen 02â€“04
+          Natural Conversational Intake • Screen 02–04
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-headline font-bold text-on-surface tracking-tight leading-tight">
           Tell SANAD what happened
         </h1>
         <p className="text-base sm:text-lg text-on-surface-variant mt-3 leading-relaxed">
-          You can speak or type in any language, dialect, or combination. Don't worry about using formal legal terms â€” just share your experience in your own words.
+          You can speak or type in any language, dialect, or combination. Don't worry about using formal legal terms — just share your experience in your own words.
         </p>
       </div>
 
@@ -122,7 +120,7 @@ export const NarrativeProcessingView: React.FC = () => {
                   <span className="material-symbols-outlined text-[15px] text-primary">hearing</span>
                   Audio Waveform Signature
                 </span>
-                <span className="font-mono text-[11px] text-secondary">44.1 kHz â€¢ PCM Lossless</span>
+                <span className="font-mono text-[11px] text-secondary">44.1 kHz • PCM Lossless</span>
               </div>
               <div className="w-full h-16 flex items-center justify-between gap-1 sm:gap-1.5 px-2">
                 {waveHeights.map((h, i) => (
@@ -135,7 +133,7 @@ export const NarrativeProcessingView: React.FC = () => {
               </div>
               <div className="flex items-center justify-between pt-3 mt-1 text-[11px] text-on-surface-variant font-mono">
                 <span>0:00</span>
-                <span className="text-primary font-bold">â— Transcribing in real time</span>
+                <span className="text-primary font-bold">● Transcribing in real time</span>
                 <span>0:42</span>
               </div>
             </div>
@@ -282,7 +280,7 @@ export const NarrativeProcessingView: React.FC = () => {
             {isReady && (
               <div className="mt-4 p-3 bg-primary-fixed/30 rounded-xl text-xs text-primary font-semibold flex items-center gap-2 animate-fadeIn">
                 <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                Analysis complete â€” ready to confirm
+                Analysis complete — ready to confirm
               </div>
             )}
           </div>
@@ -375,5 +373,3 @@ export const NarrativeProcessingView: React.FC = () => {
     </div>
   );
 };
-
-

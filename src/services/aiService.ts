@@ -1,5 +1,3 @@
-﻿/* eslint-disable */
-"use client";
 import { DossierClaim, ExtractedFact, GrievanceCategory, LanguageCode } from '../types';
 import { analyzeCodeSwitching } from './speechService';
 
@@ -33,19 +31,19 @@ export const structureWorkerNarrative = async (
   let category: GrievanceCategory = 'general_grievance';
   let categoryLabel = 'General Labor Grievance';
 
-  if (lower.includes('salary') || lower.includes('pagar') || lower.includes('à¤ªà¤—à¤¾à¤°') || lower.includes('à¦¬à§‡à¦¤à¦¨') || lower.includes('Ø£Ø¬Ø±') || lower.includes('Ø±Ø§ØªØ¨') || lower.includes('wages')) {
+  if (lower.includes('salary') || lower.includes('pagar') || lower.includes('पगार') || lower.includes('বেতন') || lower.includes('أجر') || lower.includes('راتب') || lower.includes('wages')) {
     category = 'unpaid_wages';
     categoryLabel = 'Unpaid Wages & Withheld Compensation';
-  } else if (lower.includes('passport') || lower.includes('Ø¬ÙˆØ§Ø²') || lower.includes('à¤ªà¤¾à¤¸à¤ªà¥‹à¤°à¥à¤Ÿ') || lower.includes('à¦ªà¦¾à¦¸à¦ªà§‹à¦°à§à¦Ÿ')) {
+  } else if (lower.includes('passport') || lower.includes('جواز') || lower.includes('पासपोर्ट') || lower.includes('পাসপোর্ট')) {
     category = 'passport_withholding';
     categoryLabel = 'Passport Confiscation & Identity Retention';
-  } else if (lower.includes('contract') || lower.includes('Ø¹Ù‚Ø¯') || lower.includes('à¤…à¤¨à¥à¤¬à¤‚à¤§') || lower.includes('à¦šà§à¦•à§à¦¤à¦¿')) {
+  } else if (lower.includes('contract') || lower.includes('عقد') || lower.includes('अनुबंध') || lower.includes('চুক্তি')) {
     category = 'contract_violation';
     categoryLabel = 'Breach of Employment Contract';
-  } else if (lower.includes('clinic') || lower.includes('hospital') || lower.includes('sick') || lower.includes('Ø·Ø¨ÙŠØ¨') || lower.includes('Ø¹Ù„Ø§Ø¬')) {
+  } else if (lower.includes('clinic') || lower.includes('hospital') || lower.includes('sick') || lower.includes('طبيب') || lower.includes('علاج')) {
     category = 'medical_denial';
     categoryLabel = 'Denial of Medical Care & Health Insurance';
-  } else if (lower.includes('visa') || lower.includes('iqama') || lower.includes('Ø¥Ù‚Ø§Ù…Ø©') || lower.includes('absconding')) {
+  } else if (lower.includes('visa') || lower.includes('iqama') || lower.includes('إقامة') || lower.includes('absconding')) {
     category = 'work_permit_issue';
     categoryLabel = 'Residency Permit & Absconding Notice Dispute';
   }
@@ -54,7 +52,7 @@ export const structureWorkerNarrative = async (
   let employerName = 'Not Provided by Worker';
   if (lower.includes('al-noor') || lower.includes('al noor')) {
     employerName = 'Al-Noor Contracting LLC';
-  } else if (lower.includes('company') || lower.includes('Ø´Ø±ÙƒØ©') || lower.includes('à¤•à¤‚à¤ªà¤¨à¥€') || lower.includes('à¦•à§‹à¦®à§à¦ªà¦¾à¦¨à¦¿')) {
+  } else if (lower.includes('company') || lower.includes('شركة') || lower.includes('कंपनी') || lower.includes('কোম্পানি')) {
     // Attempt simple extraction or label as reported
     const words = rawText.split(' ');
     const compIdx = words.findIndex(w => w.toLowerCase().includes('company'));
@@ -67,15 +65,15 @@ export const structureWorkerNarrative = async (
 
   // Extract Period
   let incidentPeriod = 'Recent Months (Specific dates not provided)';
-  if (lower.includes('august') || lower.includes('Ø£ØºØ³Ø·Ø³') || lower.includes('à¤…à¤—à¤¸à¥à¤¤') || lower.includes('à¦†à¦—à¦¸à§à¦Ÿ')) {
+  if (lower.includes('august') || lower.includes('أغسطس') || lower.includes('अगस्त') || lower.includes('আগস্ট')) {
     incidentPeriod = 'August 2026 (Reported delay)';
-  } else if (lower.includes('2 months') || lower.includes('3 months') || lower.includes('à¤¦à¥‹ à¤®à¤¹à¥€à¤¨à¥‡') || lower.includes('à§© à¦®à¦¾à¦¸') || lower.includes('Ø´Ù‡Ø±ÙŠÙ†')) {
+  } else if (lower.includes('2 months') || lower.includes('3 months') || lower.includes('दो महीने') || lower.includes('৩ মাস') || lower.includes('شهرين')) {
     incidentPeriod = 'Consecutive 2-3 months non-remittance';
   }
 
   // Extract Amount if specified
   let claimedAmount = 'Calculation Pending (Not explicitly stated)';
-  const amountMatch = rawText.match(/(\d+[\d,]*)\s*(aed|dirham|rs|rupees|à¦Ÿà¦¾à¦•à¦¾|Ø¯Ø±Ù‡Ù…)?/i);
+  const amountMatch = rawText.match(/(\d+[\d,]*)\s*(aed|dirham|rs|rupees|টাকা|درهم)?/i);
   if (amountMatch) {
     claimedAmount = `AED ${amountMatch[1]}`;
   } else if (category === 'unpaid_wages') {
@@ -84,7 +82,7 @@ export const structureWorkerNarrative = async (
 
   // Employment Status
   let employmentStatus = 'Active / Dispute in service';
-  if (lower.includes('left') || lower.includes('ended') || lower.includes('terminated') || lower.includes('chhod') || lower.includes('Ù†Ù‡Ø§ÙŠØ©') || lower.includes('Ú†Ú¾ÙˆÚ‘')) {
+  if (lower.includes('left') || lower.includes('ended') || lower.includes('terminated') || lower.includes('chhod') || lower.includes('نهاية') || lower.includes('چھوڑ')) {
     employmentStatus = 'Recently ended / Terminated';
   }
 
@@ -127,7 +125,7 @@ export const structureWorkerNarrative = async (
     }
   ];
 
-  if (category === 'passport_withholding' || lower.includes('passport') || lower.includes('Ø¬ÙˆØ§Ø²')) {
+  if (category === 'passport_withholding' || lower.includes('passport') || lower.includes('جواز')) {
     facts.push({
       key: 'document_withheld',
       label: 'Document Confiscation',
@@ -144,19 +142,19 @@ export const structureWorkerNarrative = async (
       englishSynopsis: "Identified claim: Unpaid salary and passport retention. Prepared for formal triage with certified legal advocates."
     },
     ar: {
-      nativeText: "Ø§Ø³ØªÙ…Ø¹Ù†Ø§ Ø¨Ø§Ù‡ØªÙ…Ø§Ù… ÙƒØ§Ù…Ù„ Ù„Ø±ÙˆØ§ÙŠØªÙƒ. Ù„Ù‚Ø¯ ØªÙ… ØªÙˆØ«ÙŠÙ‚ Ù…Ø·Ø§Ù„Ø¨ØªÙƒ Ø¨Ø´Ø£Ù† Ø§Ù„Ø£Ø¬ÙˆØ± Ø§Ù„Ù…ØªØ£Ø®Ø±Ø© ÙˆØ­Ø¬Ø² Ø§Ù„ÙˆØ«Ø§Ø¦Ù‚ ÙÙŠ Ø³Ø¬Ù„ Ø±Ø³Ù…ÙŠ Ù…ÙˆØ«Ù‚. Ø³ÙŽÙ†ÙŽØ¯ ÙŠÙ‚Ù Ù…Ø¹Ùƒ Ù„Ø¶Ù…Ø§Ù† Ø­Ù‚ÙˆÙ‚Ùƒ Ø¯ÙˆÙ† Ø£ÙŠ Ø®ÙˆÙ.",
+      nativeText: "استمعنا باهتمام كامل لروايتك. لقد تم توثيق مطالبتك بشأن الأجور المتأخرة وحجز الوثائق في سجل رسمي موثق. سَنَد يقف معك لضمان حقوقك دون أي خوف.",
       englishSynopsis: "Identified claim: Delayed salary and withheld passport. Prepared for confidential mediation and labour tribunal referral."
     },
     hi: {
-      nativeText: "à¤¹à¤®à¤¨à¥‡ à¤†à¤ªà¤•à¥€ à¤¶à¤¿à¤•à¤¾à¤¯à¤¤ à¤ªà¥‚à¤°à¥€ à¤¤à¤°à¤¹ à¤¸à¤®à¤ à¤²à¥€ à¤¹à¥ˆ: à¤†à¤ªà¤•à¤¾ à¤¬à¤•à¤¾à¤¯à¤¾ à¤µà¥‡à¤¤à¤¨ à¤”à¤° à¤ªà¤¾à¤¸à¤ªà¥‹à¤°à¥à¤Ÿ à¤µà¤¾à¤ªà¤¸ à¤¦à¤¿à¤²à¤¾à¤¨à¤¾à¥¤ SANAD à¤†à¤ªà¤•à¥‡ à¤¸à¤¾à¤¥ à¤–à¤¡à¤¼à¤¾ à¤¹à¥ˆà¥¤ à¤•à¥à¤¯à¤¾ à¤¹à¤® à¤†à¤§à¤¿à¤•à¤¾à¤°à¤¿à¤• à¤•à¥‡à¤¸ à¤¦à¤°à¥à¤œ à¤•à¤°à¥‡à¤‚?",
+      nativeText: "हमने आपकी शिकायत पूरी तरह समझ ली है: आपका बकाया वेतन और पासपोर्ट वापस दिलाना। SANAD आपके साथ खड़ा है। क्या हम आधिकारिक केस दर्ज करें?",
       englishSynopsis: "Identified claims: Unpaid monthly wages and passport recovery. Ready for dispute resolution with volunteer advocates."
     },
     ur: {
-      nativeText: "ÛÙ… Ù†Û’ Ø¢Ù¾ Ú©Ø§ Ø¨ÛŒØ§Ù† ØºÙˆØ± Ø³Û’ Ø³Ù…Ø¬Ú¾ Ù„ÛŒØ§ ÛÛ’: Ø¢Ù¾ Ú©ÛŒ Ø¨Ù‚Ø§ÛŒØ§ ØªÙ†Ø®ÙˆØ§Û Ø§ÙˆØ± Ù¾Ø§Ø³Ù¾ÙˆØ±Ù¹ Ú©ÛŒ ÙÙˆØ±ÛŒ ÙˆØ§Ù¾Ø³ÛŒÛ” Ø³Ù†Ø¯ Ø¢Ù¾ Ú©Û’ Ø­Ù‚ÙˆÙ‚ Ú©Û’ ØªØ­ÙØ¸ Ú©Û’ Ù„ÛŒÛ’ Ù…Ú©Ù…Ù„ Ø·ÙˆØ± Ù¾Ø± Ø³Ø§ØªÚ¾ ÛÛ’Û”",
+      nativeText: "ہم نے آپ کا بیان غور سے سمجھ لیا ہے: آپ کی بقایا تنخواہ اور پاسپورٹ کی فوری واپسی۔ سند آپ کے حقوق کے تحفظ کے لیے مکمل طور پر ساتھ ہے۔",
       englishSynopsis: "Identified claims: Unpaid wage dispute and passport retention. Ready for independent support intake."
     },
     bn: {
-      nativeText: "à¦†à¦®à¦°à¦¾ à¦†à¦ªà¦¨à¦¾à¦° à¦¬à¦•à§à¦¤à¦¬à§à¦¯ à¦—à§à¦°à§à¦¤à§à¦¬à§‡à¦° à¦¸à¦¾à¦¥à§‡ à¦¶à§à¦¨à§‡à¦›à¦¿: à¦†à¦ªà¦¨à¦¾à¦° à¦¬à¦•à§‡à¦¯à¦¼à¦¾ à¦¬à§‡à¦¤à¦¨ à¦à¦¬à¦‚ à¦†à¦Ÿà¦•à§‡ à¦°à¦¾à¦–à¦¾ à¦ªà¦¾à¦¸à¦ªà§‹à¦°à§à¦Ÿ à¦«à§‡à¦°à¦¤ à¦ªà¦¾à¦“à¦¯à¦¼à¦¾à¥¤ à¦†à¦ªà¦¨à¦¾à¦° à¦…à¦§à¦¿à¦•à¦¾à¦° à¦°à¦•à§à¦·à¦¾à¦¯à¦¼ à¦¸à¦¨à¦¦ à¦¸à¦¬à¦¸à¦®à¦¯à¦¼ à¦†à¦ªà¦¨à¦¾à¦° à¦ªà¦¾à¦¶à§‡ à¦†à¦›à§‡à¥¤",
+      nativeText: "আমরা আপনার বক্তব্য গুরুত্বের সাথে শুনেছি: আপনার বকেয়া বেতন এবং আটকে রাখা পাসপোর্ট ফেরত পাওয়া। আপনার অধিকার রক্ষায় সনদ সবসময় আপনার পাশে আছে।",
       englishSynopsis: "Identified claims: Overdue wage non-payment and passport retention. Prepared for pro bono legal review."
     }
   };
@@ -178,5 +176,3 @@ export const structureWorkerNarrative = async (
     empatheticResponse,
   };
 };
-
-

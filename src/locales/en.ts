@@ -1,9 +1,8 @@
-﻿ 
 export const en = {
   // Global & Framing
-  bannerPrototype: "SANAD Concept Prototype â€¢ Interactive Demonstration â€¢ Not an Official Government Integration",
+  bannerPrototype: "SANAD Concept Prototype • Interactive Demonstration • Not an Official Government Integration",
   brandName: "SANAD",
-  brandArabic: "Ø³ÙŽÙ†ÙŽØ¯",
+  brandArabic: "سَنَد",
   brandSlogan: "Support you can find. Proof you can trust. | Independent worker support",
   hotline247: "24/7 Multilingual Hotline: 800-SANAD-SOS",
   sosButton: "SOS Urgent Relief",
@@ -32,15 +31,15 @@ export const en = {
   landing: {
     heroOverline: "Unified Worker Protection Ecosystem",
     heroTitle: "Worker Dignity & Multilingual Sanctuary",
-    heroSubtitle: "Instant legal aid, emergency housing, voice translation, and wage reconciliation. Speak naturally in your native languageâ€”we listen, protect, and advocate.",
+    heroSubtitle: "Instant legal aid, emergency housing, voice translation, and wage reconciliation. Speak naturally in your native language—we listen, protect, and advocate.",
     speakNaturally: "Speak Naturally",
     find: "Find",
     searchPlaceholder: "Search services, contracts, salary disputes, or speak naturally...",
     quickIntent: "Quick Intent:",
-    unpaidSalaryCalc: "ðŸ’° Unpaid Salary Calculation",
-    passportEmergency: "ðŸ›‚ Withheld Passport Emergency",
-    scanContract: "ðŸ“„ Scan Paper Contract",
-    clinicAccess: "ðŸ¥ Emergency Clinic Access",
+    unpaidSalaryCalc: "💰 Unpaid Salary Calculation",
+    passportEmergency: "🛂 Withheld Passport Emergency",
+    scanContract: "📄 Scan Paper Contract",
+    clinicAccess: "🏥 Emergency Clinic Access",
     voiceBannerTitle: "Universal Voice Sanctuary & Dialect Freedom",
     voiceBannerDesc: "No need to struggle with official English or legal jargon. Speak Hindi mixed with Punjabi, Egyptian Arabic, Taglish, Bengali, or Swahili. SANAD interprets context, emotional urgency, and labor rights principles instantly.",
     trySaying: "Try saying or tapping one:",
@@ -73,7 +72,7 @@ export const en = {
   // Tell SANAD Intake
   intake: {
     title: "Tell SANAD what happened",
-    subtitle: "You can speak or type in any language, dialect, or combination. Don't worry about using formal legal terms â€” just share your experience in your own words.",
+    subtitle: "You can speak or type in any language, dialect, or combination. Don't worry about using formal legal terms — just share your experience in your own words.",
     micStatusActive: "Microphone Active",
     micStatusIdle: "Tap to Speak",
     recordingTime: "recorded",
@@ -137,14 +136,14 @@ export const en = {
   // Public Verification
   verification: {
     title: "Verify a SANAD Credential",
-    subtitle: "Independent verification portal for caseworkers and advocates. Only attestation proofs are revealed â€” no raw personal identity records or conversation audio are ever exposed.",
+    subtitle: "Independent verification portal for caseworkers and advocates. Only attestation proofs are revealed — no raw personal identity records or conversation audio are ever exposed.",
     inputPlaceholder: "Enter Credential Hash or ID (e.g. SANAD-VC-00124)",
     verifyBtn: "Verify Credential",
     scanQrBtn: "Scan QR Code",
     certTitle: "SANAD Independent Verification Certificate",
     auditSlip: "Audit Slip",
     copyLink: "Public Proof Link",
-    validBadge: "âœ“ Credential Valid",
+    validBadge: "✓ Credential Valid",
     revocationActive: "Revocation Check: Active / Non-Revoked",
     privacyGuardTitle: "Strict Privacy Guard Active",
     privacyGuardDesc: "No raw identity cards, passport copies, salary amounts, employer phone numbers, or private audio files are hosted or accessible through this public verification ledger. Only the cryptographic proof of claims processed via SANAD Sovereign Node is validated.",
@@ -190,7 +189,7 @@ export const en = {
     modalSubtitle: "If you are in immediate physical danger, locked in accommodation, or facing violence, take action now.",
     callHotline: "Call 800-SANAD-SOS Now",
     shelterFinder: "Find Nearest Safe Shelter",
-    embassyContact: "Contact Your Embassy Labor AttachÃ©",
+    embassyContact: "Contact Your Embassy Labor Attaché",
     close: "Dismiss SOS Screen",
   },
 
@@ -223,4 +222,3 @@ export const en = {
     signOut: "Sign Out",
   }
 };
-

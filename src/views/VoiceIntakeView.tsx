@@ -1,5 +1,3 @@
-﻿/* eslint-disable */
-"use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { StepTracker } from '../components/StepTracker';
@@ -22,7 +20,7 @@ export const VoiceIntakeView: React.FC = () => {
   const [analysis, setAnalysis] = useState<CodeSwitchAnalysis>(() => analyzeCodeSwitching(activeDossier.verbatimTranscript));
   const [isProcessing, setIsProcessing] = useState(false);
   const [empatheticResponse, setEmpatheticResponse] = useState({
-    native: "à¤¹à¤®à¤¨à¥‡ à¤†à¤ªà¤•à¥€ à¤¶à¤¿à¤•à¤¾à¤¯à¤¤ à¤ªà¥‚à¤°à¥€ à¤¤à¤°à¤¹ à¤¸à¤®à¤ à¤²à¥€ à¤¹à¥ˆ: à¤†à¤ªà¤•à¤¾ à¤ªà¤¾à¤¸à¤ªà¥‹à¤°à¥à¤Ÿ à¤µà¤¾à¤ªà¤¸ à¤¦à¤¿à¤²à¤¾à¤¨à¤¾ à¤”à¤° 2 à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¤¾ à¤¬à¤•à¤¾à¤¯à¤¾ à¤µà¥‡à¤¤à¤¨à¥¤ SANAD à¤†à¤ªà¤•à¥‡ à¤¸à¤¾à¤¥ à¤–à¤¡à¤¼à¤¾ à¤¹à¥ˆà¥¤ à¤•à¥à¤¯à¤¾ à¤¹à¤® à¤²à¥‡à¤¬à¤° à¤•à¥‹à¤°à¥à¤Ÿ à¤”à¤° à¤¶à¥à¤°à¤® à¤®à¤‚à¤¤à¥à¤°à¤¾à¤²à¤¯ à¤®à¥‡à¤‚ à¤†à¤§à¤¿à¤•à¤¾à¤°à¤¿à¤• à¤•à¥‡à¤¸ à¤¦à¤°à¥à¤œ à¤•à¤°à¥‡à¤‚?",
+    native: "हमने आपकी शिकायत पूरी तरह समझ ली है: आपका पासपोर्ट वापस दिलाना और 2 महीने का बकाया वेतन। SANAD आपके साथ खड़ा है। क्या हम लेबर कोर्ट और श्रम मंत्रालय में आधिकारिक केस दर्ज करें?",
     english: "We have identified your dual claims: recovery of withheld passport and recovery of 2 unpaid monthly salaries. SANAD is ready to file formal dispute resolution."
   });
 
@@ -151,7 +149,7 @@ export const VoiceIntakeView: React.FC = () => {
       <div className="max-w-3xl">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold mb-3">
           <span className="material-symbols-outlined text-[15px] text-tertiary">mic_none</span>
-          <span>Natural Conversational Intake â€¢ Screen 02-04</span>
+          <span>Natural Conversational Intake • Screen 02-04</span>
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-headline font-bold text-on-surface tracking-tight leading-tight">
           {t.intake.title}
@@ -195,7 +193,7 @@ export const VoiceIntakeView: React.FC = () => {
                   <span>{t.intake.waveformTitle}</span>
                 </span>
                 <span className="font-mono text-[11px] text-secondary">
-                  48.0 kHz â€¢ Live Multi-Token Stream
+                  48.0 kHz • Live Multi-Token Stream
                 </span>
               </div>
 
@@ -265,7 +263,7 @@ export const VoiceIntakeView: React.FC = () => {
                 </div>
                 <div className="space-y-2 flex-1">
                   <p className="font-headline text-lg text-on-surface leading-relaxed">
-                    â€œ{transcriptText}â€
+                    “{transcriptText}”
                   </p>
 
                   {/* Code-switching tags */}
@@ -336,7 +334,7 @@ export const VoiceIntakeView: React.FC = () => {
                     className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container text-on-surface text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-primary text-[18px]">volume_up</span>
-                    <span>ðŸ”Š Listen Audio</span>
+                    <span>🔊 Listen Audio</span>
                   </button>
                 </div>
               </div>
@@ -418,7 +416,7 @@ export const VoiceIntakeView: React.FC = () => {
               </button>
 
               <button
-                onClick={() => handleUsePreset("ÙƒÙÙŠÙ„ÙŠ Ø±ÙØ¶ Ø¯ÙØ¹ ØªØ°ÙƒØ±Ø© Ø§Ù„Ø¹ÙˆØ¯Ø© ÙˆÙ…ÙƒØ§ÙØ£Ø© Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø®Ø¯Ù…Ø© Ø¨Ø¹Ø¯ Ø§Ù†ØªÙ‡Ø§Ø¡ Ø¹Ù‚Ø¯ÙŠ Ø§Ù„Ø±Ø³Ù…ÙŠ")}
+                onClick={() => handleUsePreset("كفيلي رفض دفع تذكرة العودة ومكافأة نهاية الخدمة بعد انتهاء عقدي الرسمي")}
                 className="w-full text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-xs cursor-pointer"
               >
                 <span className="material-symbols-outlined text-primary text-base mt-0.5">chat</span>
@@ -429,7 +427,7 @@ export const VoiceIntakeView: React.FC = () => {
               </button>
 
               <button
-                onClick={() => handleUsePreset("à¦†à¦®à¦¾à¦° à¦•à§‹à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¸à¦¾à¦¥à§‡ à§¨ à¦¬à¦›à¦°à§‡à¦° à¦šà§à¦•à§à¦¤à¦¿ à¦¶à§‡à¦· à¦¹à§Ÿà§‡à¦›à§‡ à¦•à¦¿à¦¨à§à¦¤à§ à¦¤à¦¾à¦°à¦¾ à¦ªà¦¾à¦¸à¦ªà§‹à¦°à§à¦Ÿ à¦¦à¦¿à¦šà§à¦›à§‡ à¦¨à¦¾")}
+                onClick={() => handleUsePreset("আমার কোম্পানির সাথে ২ বছরের চুক্তি শেষ হয়েছে কিন্তু তারা পাসপোর্ট দিচ্ছে না")}
                 className="w-full text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-xs cursor-pointer"
               >
                 <span className="material-symbols-outlined text-primary text-base mt-0.5">chat</span>
@@ -461,5 +459,3 @@ export const VoiceIntakeView: React.FC = () => {
     </div>
   );
 };
-
-
