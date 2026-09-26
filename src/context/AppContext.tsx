@@ -1,5 +1,5 @@
-﻿ 
 "use client";
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   LanguageCode, 
@@ -59,16 +59,27 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Load saved language or default to English
   const [language, setLanguageState] = useState<LanguageCode>(() => {
-    const saved = localStorage.getItem('sanad_lang') as LanguageCode;
-    return (saved && translations[saved]) ? saved : 'en';
+    if (typeof window === 'undefined') return 'en';
+    try {
+      const saved = localStorage.getItem('sanad_lang') as LanguageCode;
+      return (saved && translations[saved]) ? saved : 'en';
+    } catch {
+      return 'en';
+    }
   });
 
   const [textScale, setTextScaleState] = useState<TextScale>(() => {
-    const saved = localStorage.getItem('sanad_text_scale') as TextScale;
-    return (saved && ['normal', 'large', 'xlarge'].includes(saved)) ? saved : 'normal';
+    if (typeof window === 'undefined') return 'normal';
+    try {
+      const saved = localStorage.getItem('sanad_text_scale') as TextScale;
+      return (saved && ['normal', 'large', 'xlarge'].includes(saved)) ? saved : 'normal';
+    } catch {
+      return 'normal';
+    }
   });
 
   const [currentRoute, setCurrentRoute] = useState<string>(() => {
+    if (typeof window === 'undefined') return '/';
     return window.location.pathname.length > 1 ? window.location.pathname : '/';
   });
 
@@ -87,13 +98,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Sync direction and font-scaling to document root
   useEffect(() => {
+    if (typeof document === 'undefined') return;
     document.documentElement.dir = direction;
     document.documentElement.lang = language;
-    localStorage.setItem('sanad_lang', language);
+    try {
+      localStorage.setItem('sanad_lang', language);
+    } catch {
+      // ignore
+    }
   }, [language, direction]);
 
   useEffect(() => {
-    localStorage.setItem('sanad_text_scale', textScale);
+    if (typeof document === 'undefined') return;
+    try {
+      localStorage.setItem('sanad_text_scale', textScale);
+    } catch {
+      // ignore
+    }
     const root = document.documentElement;
     if (textScale === 'normal') {
       root.style.fontSize = '16px';
@@ -114,11 +135,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const navigate = (route: string) => {
     setCurrentRoute(route);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    try {
-      window.history.pushState({}, '', route);
-    } catch {
-      // browser environment fallback
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      try {
+        window.history.pushState({}, '', route);
+      } catch {
+        // browser environment fallback
+      }
     }
   };
 
@@ -253,5 +276,3 @@ export const useApp = () => {
   }
   return context;
 };
-
-
