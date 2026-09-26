@@ -28,8 +28,14 @@ export const EvidenceApplicationView: React.FC = () => {
     setActiveStep(4);
   }, [setActiveStep]);
 
-  const matches = matchSupportOrganizations(activeDossier.category, language);
-  const primaryMatch = matches[0]?.organization || matches[0];
+  const [matches, setMatches] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    setActiveStep(4);
+    matchSupportOrganizations(activeDossier.category, language).then(res => setMatches(res));
+  }, [setActiveStep, activeDossier.category, language]);
+
+  const primaryMatch = matches[0]?.organization || null;
   const linkedVc = credentials[0] || { id: 'SANAD-VC-00124' };
 
   const handleSimulateFileUpload = async () => {

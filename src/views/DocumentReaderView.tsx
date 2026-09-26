@@ -59,7 +59,15 @@ export const DocumentReaderView: React.FC = () => {
               Choose Document to Inspect
             </span>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="p-4 rounded-xl bg-surface hover:bg-surface-container-high transition-all border border-dashed border-primary/40 text-center cursor-pointer relative flex flex-col justify-between">
+                <input type="file" accept=".pdf,image/png,image/jpeg" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                <span className="material-symbols-outlined text-2xl mb-2 text-primary">cloud_upload</span>
+                <div>
+                  <strong className="text-xs block font-bold text-on-surface">Upload Real File</strong>
+                  <span className="text-[10px] text-on-surface-variant">PDF, PNG, JPG (Uses Gemini Vision)</span>
+                </div>
+              </div>
               <button
                 onClick={() => handleRunOcr('contract')}
                 className={`p-4 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between ${

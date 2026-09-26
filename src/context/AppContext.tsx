@@ -83,6 +83,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const direction = languageMeta[language]?.dir || 'ltr';
   const t = translations[language] || translations.en;
 
+
+  useEffect(() => {
+    // Silently start a backend demo session to get the auth cookie
+    // This allows real backend APIs like Document Upload and Blockchain VC to work
+    fetch('/api/auth/demo', { method: 'POST' }).catch(console.error);
+  }, []);
+
   // Sync direction and font-scaling to document root
   useEffect(() => {
     document.documentElement.dir = direction;
@@ -251,3 +258,4 @@ export const useApp = () => {
   }
   return context;
 };
+
