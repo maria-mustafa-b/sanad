@@ -400,48 +400,6 @@ export const VoiceIntakeView: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Preset Scenarios */}
-          <div className="p-6 rounded-2xl bg-surface-container-low space-y-4 shadow-sm">
-            <span className="text-xs uppercase tracking-wider text-outline font-bold block">
-              Sample Voice Scenarios:
-            </span>
-
-            <div className="space-y-2 text-xs">
-              <button
-                onClick={() => handleUsePreset("Mera kafeel passport return nahi kar raha hai aur 2 months ki salary pending hai, can SANAD help me file urgent grievance?")}
-                className="w-full text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-xs cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-primary text-base mt-0.5">chat</span>
-                <div>
-                  <strong className="text-on-surface block font-semibold">Unpaid Wages + Passport Confiscation</strong>
-                  <span className="text-[11px] text-outline">Hindi/Arabic/English code-switch (August case)</span>
-                </div>
-              </button>
-
-              <button
-                onClick={() => handleUsePreset("كفيلي رفض دفع تذكرة العودة ومكافأة نهاية الخدمة بعد انتهاء عقدي الرسمي")}
-                className="w-full text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-xs cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-primary text-base mt-0.5">chat</span>
-                <div>
-                  <strong className="text-on-surface block font-semibold">End-of-Service &amp; Repatriation Ticket</strong>
-                  <span className="text-[11px] text-outline">Arabic labour dispute statement</span>
-                </div>
-              </button>
-
-              <button
-                onClick={() => handleUsePreset("আমার কোম্পানির সাথে ২ বছরের চুক্তি শেষ হয়েছে কিন্তু তারা পাসপোর্ট দিচ্ছে না")}
-                className="w-full text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-xs cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-primary text-base mt-0.5">chat</span>
-                <div>
-                  <strong className="text-on-surface block font-semibold">Contract Completion &amp; Passport Retrieval</strong>
-                  <span className="text-[11px] text-outline">Bengali dialect grievance</span>
-                </div>
-              </button>
-            </div>
-          </div>
-
           {/* Next Step Action Button */}
           <div className="p-4 rounded-xl bg-primary-fixed/40 space-y-2">
             <span className="text-xs font-bold text-primary block">Ready to confirm your story?</span>
@@ -462,4 +420,5 @@ export const VoiceIntakeView: React.FC = () => {
     </div>
   );
 };
+
 
