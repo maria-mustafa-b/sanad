@@ -28,7 +28,7 @@ export const preloadedDossier: DossierClaim = {
   incidentPeriod: 'August 2026 (42-day non-remittance)',
   claimedAmount: 'AED 4,850',
   narrativeSummary: 'Worker was employed for 18 months at Al-Noor Contracting LLC. Employment was concluded in August 2026. The final monthly wage of AED 4,850 and statutory end-of-service gratuity remain unpaid past 42 days. Furthermore, the company HR has retained the original passport and has not provided return repatriation ticketing.',
-  verbatimTranscript: '“Mera kafeel passport return nahi kar raha hai aur 2 months ki salary pending hai, can SANAD help me file urgent grievance?”',
+  verbatimTranscript: '',
   detectedLanguages: ['Hindi', '', 'English legal intent'],
   facts: [
     { key: 'employment_status', label: 'Employment Status', value: 'Recently ended', isAiExtracted: true, confidence: 0.98 },
