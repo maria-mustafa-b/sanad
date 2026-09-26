@@ -21,7 +21,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Force solid if not on the home page
   const isSolid = !isHome || scrolled;
 
   return (
@@ -44,8 +43,9 @@ export function Navbar() {
         
         <nav className={`hidden md:flex items-center gap-6 font-medium text-sm transition-colors ${isSolid ? "text-gray-600" : "text-gray-100 drop-shadow-sm"}`}>
           <Link href="/" className={`hover:text-emerald-500 transition`}>Home</Link>
-          <Link href="/#how-it-works" className={`hover:text-emerald-500 transition`}>How it works</Link>
+          <Link href="/services" className={`hover:text-emerald-500 transition`}>Services</Link>
           <Link href="/dashboard" className={`hover:text-emerald-500 transition`}>Dashboard</Link>
+          <Link href="/documents" className={`hover:text-emerald-500 transition`}>Documents</Link>
           <Link href="/chat" className={`hover:text-emerald-500 transition`}>Get Help</Link>
           <Link href="/verify" className={`hover:text-emerald-500 transition`}>Verify Credential</Link>
         </nav>
