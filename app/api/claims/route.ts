@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getServiceRoleClient } from '@/lib/supabase';
 
 export async function GET() {
   try {
     // In a real app with Auth, we would verify the user session here
     // For now, we return all claims (or mock a user ID if auth isn't fully wired)
-    const { data: claims, error } = await supabase
+    const { data: claims, error } = await getServiceRoleClient()
       .from('claims')
       .select('*')
       .order('created_at', { ascending: false });
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const { data: newClaim, error } = await supabase
+    const { data: newClaim, error } = await getServiceRoleClient()
       .from('claims')
       .insert([
         { 
