@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { AppShell } from '../layouts/AppShell';
 import { Card, CardHeader } from '../components/ui/Card';
@@ -8,6 +8,7 @@ import { Badge } from '../components/ui/Badge';
 import { HumanHelpCard } from '../components/HumanHelpCard';
 import { getSituationBulletsFromDossier } from '../services/aiService';
 import { ExtractedFact } from '../types';
+import { confirmClaim, createClaimFromText, isUuid } from '../services/sanadApi';
 
 /**
  * AI Extracted → User Confirmed. No credential yet — next step is consent.
@@ -19,23 +20,65 @@ export const SituationPage: React.FC = () => {
     [activeDossier]
   );
   const [bullets, setBullets] = useState(initialBullets);
-  const [facts, setFacts] = useState<ExtractedFact[]>(
-    activeDossier.facts.map((f) => ({ ...f }))
-  );
+  const [facts, setFacts] = useState<ExtractedFact[]>(activeDossier.facts.map((f) => ({ ...f })));
   const [confirmed, setConfirmed] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [note, setNote] = useState('');
 
-  const confirmAndContinue = () => {
-    updateDossier({
+  useEffect(() => {
+    setBullets(getSituationBulletsFromDossier(activeDossier));
+    setFacts(activeDossier.facts.map((f) => ({ ...f })));
+  }, [activeDossier]);
+
+  const confirmAndContinue = async () => {
+    setSaving(true);
+    setNote('');
+    const patch = {
       facts: facts.map((f) => ({ ...f, isAiExtracted: false })),
       narrativeSummary: bullets.join('. ') + '.',
-      employmentStatus: facts.find((f) => f.key === 'employment_status')?.value || activeDossier.employmentStatus,
-      categoryLabel: facts.find((f) => f.key === 'primary_issue')?.value || activeDossier.categoryLabel,
-      incidentPeriod: facts.find((f) => f.key === 'period')?.value || activeDossier.incidentPeriod,
-      employerName: facts.find((f) => f.key === 'employer')?.value || activeDossier.employerName,
-      status: 'confirmed',
-    });
-    navigate('/consent');
+      employmentStatus:
+        facts.find((f) => f.key === 'employment_status')?.value || activeDossier.employmentStatus,
+      categoryLabel:
+        facts.find((f) => f.key === 'primary_issue')?.value ||
+        facts.find((f) => f.key === 'issue')?.value ||
+        activeDossier.categoryLabel,
+      incidentPeriod:
+        facts.find((f) => f.key === 'period')?.value ||
+        facts.find((f) => f.key === 'salary_period' || f.key === 'unpaid_wages_period')?.value ||
+        activeDossier.incidentPeriod,
+      employerName:
+        facts.find((f) => f.key === 'employer' || f.key === 'employer_name')?.value ||
+        activeDossier.employerName,
+      status: 'confirmed' as const,
+    };
+
+    try {
+      let claimId = activeDossier.id;
+      if (!isUuid(claimId) && activeDossier.verbatimTranscript) {
+        try {
+          const claim = await createClaimFromText(activeDossier.verbatimTranscript);
+          claimId = claim.id;
+        } catch {
+          /* guest / unauthenticated — local confirm is enough */
+        }
+      }
+      if (isUuid(claimId)) {
+        try {
+          await confirmClaim(claimId);
+          setNote('Confirmed on SANAD server.');
+        } catch {
+          setNote('Saved on this device. Sign in to sync confirmation.');
+        }
+      }
+      updateDossier({ ...patch, ...(isUuid(claimId) ? { id: claimId } : {}) });
+      navigate('/consent');
+    } catch {
+      updateDossier(patch);
+      navigate('/consent');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -58,9 +101,7 @@ export const SituationPage: React.FC = () => {
             <div className="text-xs font-semibold text-ink-muted uppercase tracking-wide mb-2">
               Your words
             </div>
-            <p className="text-ink leading-relaxed italic">
-              “{activeDossier.verbatimTranscript}”
-            </p>
+            <p className="text-ink leading-relaxed italic">“{activeDossier.verbatimTranscript}”</p>
           </Card>
         )}
 
@@ -143,11 +184,19 @@ export const SituationPage: React.FC = () => {
             </span>
           </label>
 
+          {note && <p className="mt-3 text-xs text-ink-muted">{note}</p>}
+
           <div className="mt-6 flex flex-col sm:flex-row gap-2">
-            <Button variant="outline" fullWidth onClick={() => navigate('/chat')}>
+            <Button variant="outline" fullWidth onClick={() => navigate('/chat')} disabled={saving}>
               Speak again
             </Button>
-            <Button fullWidth disabled={!confirmed} onClick={confirmAndContinue} rightIcon="arrow_forward">
+            <Button
+              fullWidth
+              disabled={!confirmed || saving}
+              loading={saving}
+              onClick={() => void confirmAndContinue()}
+              rightIcon="arrow_forward"
+            >
               Continue to consent
             </Button>
           </div>

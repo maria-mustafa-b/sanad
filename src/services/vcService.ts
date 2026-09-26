@@ -129,31 +129,16 @@ export const verifyCredentialPublic = (
     };
   }
 
-  // Simulated valid result if formatting matches SANAD-VC-XXXXX
-  if (query.startsWith('SANAD-VC-')) {
-    return {
-      isValid: true,
-      status: 'valid',
-      credentialId: query,
-      issueDate: '25 Sep 2026',
-      claimCategory: 'Unpaid wages & recently ended employment',
-      subjectPseudonym: 'did:sanad:worker:ae82...994f',
-      trustNode: 'SANAD Independent Sovereign Trust Root Node',
-      merkleHash: '0x9e12bf4097f519c288d30e386ab7210e7ccb0a',
-      standard: 'W3C Verifiable Credential v2.0',
-      strictPrivacyGuard: true,
-    };
-  }
-
+  // Never invent a valid result for unknown IDs
   return {
     isValid: false,
     status: 'not_found',
     credentialId: query,
     issueDate: 'N/A',
-    claimCategory: 'Unknown or unverified hash',
+    claimCategory: 'Unknown or unverified',
     subjectPseudonym: 'N/A',
-    trustNode: 'SANAD Independent Sovereign Trust Root Node',
-    merkleHash: '0x00000000000000000000',
+    trustNode: 'SANAD',
+    merkleHash: '',
     standard: 'W3C Verifiable Credential v2.0',
     strictPrivacyGuard: true,
   };

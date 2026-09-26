@@ -1,23 +1,24 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  LanguageCode, 
-  TextScale, 
-  UserProfile, 
-  DossierClaim, 
-  VerifiableCredential, 
-  ApplicationCase, 
-  DocumentEvidence, 
-  NotificationItem 
+import {
+  LanguageCode,
+  TextScale,
+  UserProfile,
+  DossierClaim,
+  VerifiableCredential,
+  ApplicationCase,
+  DocumentEvidence,
+  NotificationItem,
 } from '../types';
-import { 
-  mockUser, 
-  preloadedDossier, 
-  preloadedCredential, 
-  preloadedApplication, 
-  preloadedDocuments, 
-  preloadedNotifications 
-} from '../data/mockData';
+import {
+  emptyUser,
+  emptyDossier,
+  emptyCredentials,
+  emptyApplications,
+  emptyDocuments,
+  emptyNotifications,
+} from '../data/emptyState';
 import { translations, languageMeta } from '../locales';
+import { getAuthMe, logoutApi } from '../services/sanadApi';
 
 interface AppContextType {
   language: LanguageCode;
@@ -25,7 +26,7 @@ interface AppContextType {
   textScale: TextScale;
   t: typeof translations['en'];
   currentUser: UserProfile;
-  isDemoMode: boolean;
+  isAuthenticated: boolean;
   currentRoute: string;
   activeDossier: DossierClaim;
   credentials: VerifiableCredential[];
@@ -40,50 +41,52 @@ interface AppContextType {
   setTextScale: (scale: TextScale) => void;
   navigate: (route: string) => void;
   updateDossier: (updates: Partial<DossierClaim>) => void;
+  setCredentials: (creds: VerifiableCredential[]) => void;
   addCredential: (credential: VerifiableCredential) => void;
   addApplication: (application: ApplicationCase) => void;
+  setApplications: (apps: ApplicationCase[]) => void;
   addDocument: (doc: DocumentEvidence) => void;
+  setDocuments: (docs: DocumentEvidence[]) => void;
+  setNotifications: (items: NotificationItem[]) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   toggleSosModal: (open?: boolean) => void;
   setActiveStep: (step: number) => void;
-  resetToDemo: () => void;
   loginUser: (user: UserProfile) => void;
   logoutUser: () => void;
+  refreshSession: () => Promise<boolean>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Load saved language or default to English
   const [language, setLanguageState] = useState<LanguageCode>(() => {
     const saved = localStorage.getItem('sanad_lang') as LanguageCode;
-    return (saved && translations[saved]) ? saved : 'en';
+    return saved && translations[saved] ? saved : 'en';
   });
 
   const [textScale, setTextScaleState] = useState<TextScale>(() => {
     const saved = localStorage.getItem('sanad_text_scale') as TextScale;
-    return (saved && ['normal', 'large', 'xlarge'].includes(saved)) ? saved : 'normal';
+    return saved && ['normal', 'large', 'xlarge'].includes(saved) ? saved : 'normal';
   });
 
-  const [currentRoute, setCurrentRoute] = useState<string>(() => {
-    return window.location.pathname.length > 1 ? window.location.pathname : '/';
-  });
+  const [currentRoute, setCurrentRoute] = useState<string>(() =>
+    window.location.pathname.length > 1 ? window.location.pathname : '/'
+  );
 
-  const [currentUser, setCurrentUser] = useState<UserProfile>(mockUser);
-  const [isDemoMode, setIsDemoMode] = useState<boolean>(true);
-  const [activeDossier, setActiveDossier] = useState<DossierClaim>(preloadedDossier);
-  const [credentials, setCredentials] = useState<VerifiableCredential[]>([preloadedCredential]);
-  const [applications, setApplications] = useState<ApplicationCase[]>([preloadedApplication]);
-  const [documents, setDocuments] = useState<DocumentEvidence[]>(preloadedDocuments);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(preloadedNotifications);
-  const [isSosModalOpen, setIsSosModalOpen] = useState<boolean>(false);
-  const [activeStep, setActiveStep] = useState<number>(2);
+  const [currentUser, setCurrentUser] = useState<UserProfile>(emptyUser);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeDossier, setActiveDossier] = useState<DossierClaim>(emptyDossier);
+  const [credentials, setCredentials] = useState<VerifiableCredential[]>(emptyCredentials);
+  const [applications, setApplications] = useState<ApplicationCase[]>(emptyApplications);
+  const [documents, setDocuments] = useState<DocumentEvidence[]>(emptyDocuments);
+  const [notifications, setNotifications] = useState<NotificationItem[]>(emptyNotifications);
+  const [isSosModalOpen, setIsSosModalOpen] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
 
   const direction = languageMeta[language]?.dir || 'ltr';
   const t = translations[language] || translations.en;
 
-  // Sync direction and font-scaling to document root
   useEffect(() => {
     document.documentElement.dir = direction;
     document.documentElement.lang = language;
@@ -93,31 +96,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem('sanad_text_scale', textScale);
     const root = document.documentElement;
-    if (textScale === 'normal') {
-      root.style.fontSize = '16px';
-    } else if (textScale === 'large') {
-      root.style.fontSize = '18px';
-    } else if (textScale === 'xlarge') {
-      root.style.fontSize = '20px';
-    }
+    if (textScale === 'normal') root.style.fontSize = '16px';
+    else if (textScale === 'large') root.style.fontSize = '18px';
+    else if (textScale === 'xlarge') root.style.fontSize = '20px';
   }, [textScale]);
 
-  const setLanguage = (lang: LanguageCode) => {
-    setLanguageState(lang);
+  const refreshSession = async () => {
+    try {
+      const me = await getAuthMe();
+      setIsAuthenticated(true);
+      setCurrentUser({
+        id: me.id,
+        name: me.email?.split('@')[0] || 'Worker',
+        phone: '',
+        preferredLanguage: language,
+        isGuest: false,
+      });
+      return true;
+    } catch {
+      setIsAuthenticated(false);
+      return false;
+    }
   };
 
-  const setTextScale = (scale: TextScale) => {
-    setTextScaleState(scale);
-  };
+  useEffect(() => {
+    void refreshSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Alias → canonical path (one path per screen)
+  const setLanguage = (lang: LanguageCode) => setLanguageState(lang);
+  const setTextScale = (scale: TextScale) => setTextScaleState(scale);
+
   const canonicalizeRoute = (path: string): string => {
     const aliases: Record<string, string> = {
       '/home': '/dashboard',
       '/journey': '/dashboard',
       '/tell-sanad': '/chat',
       '/confirm-situation': '/situation',
-      '/consent': '/consent',
       '/my-proof': '/credentials',
       '/document-reader': '/documents',
       '/evidence-application': '/applications/submit',
@@ -128,6 +143,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       '/auth/welcome': '/auth/signin',
       '/auth/register': '/auth/signup',
       '/settings': '/settings/accessibility',
+      '/clarify': '/clarify',
     };
     return aliases[path] || path;
   };
@@ -139,116 +155,78 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       window.history.pushState({}, '', canonical);
     } catch {
-      // browser environment fallback
+      /* ignore */
     }
   };
 
-  // Sync React view when browser/phone back-forward changes the URL
   useEffect(() => {
     const onPopState = () => {
-      const path = window.location.pathname.length > 1
-        ? window.location.pathname
-        : '/';
+      const path = window.location.pathname.length > 1 ? window.location.pathname : '/';
       const canonical = canonicalizeRoute(path);
       setCurrentRoute(canonical);
       if (canonical !== path) {
         try {
           window.history.replaceState({}, '', canonical);
         } catch {
-          // ignore
+          /* ignore */
         }
       }
     };
-
     window.addEventListener('popstate', onPopState);
-    // Normalize initial URL if it used an alias
     onPopState();
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
   const updateDossier = (updates: Partial<DossierClaim>) => {
-    setActiveDossier(prev => ({
+    setActiveDossier((prev) => ({
       ...prev,
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     }));
   };
 
   const addCredential = (credential: VerifiableCredential) => {
-    setCredentials(prev => [credential, ...prev.filter(c => c.id !== credential.id)]);
-    setNotifications(prev => [
-      {
-        id: `notif_${Date.now()}`,
-        title: `Verifiable Proof ${credential.id} Sealed`,
-        message: 'Your tamper-evident proof is ready to present to legal aid or embassies.',
-        category: 'security',
-        timestamp: 'Just now',
-        read: false,
-        relatedRoute: '/my-proof'
-      },
-      ...prev
-    ]);
+    setCredentials((prev) => [credential, ...prev.filter((c) => c.id !== credential.id)]);
   };
 
   const addApplication = (app: ApplicationCase) => {
-    setApplications(prev => [app, ...prev]);
-    setNotifications(prev => [
-      {
-        id: `notif_${Date.now()}`,
-        title: `Application Submitted to ${app.orgName}`,
-        message: `Your grievance has been safely transferred under proof ${app.credentialId}.`,
-        category: 'case_update',
-        timestamp: 'Just now',
-        read: false,
-        relatedRoute: '/applications'
-      },
-      ...prev
-    ]);
+    setApplications((prev) => [app, ...prev.filter((a) => a.id !== app.id)]);
   };
 
   const addDocument = (doc: DocumentEvidence) => {
-    setDocuments(prev => [doc, ...prev]);
+    setDocuments((prev) => [doc, ...prev.filter((d) => d.id !== doc.id)]);
   };
 
   const markNotificationRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
   const markAllNotificationsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   const toggleSosModal = (open?: boolean) => {
-    setIsSosModalOpen(prev => open !== undefined ? open : !prev);
-  };
-
-  const resetToDemo = () => {
-    setActiveDossier(preloadedDossier);
-    setCredentials([preloadedCredential]);
-    setApplications([preloadedApplication]);
-    setDocuments(preloadedDocuments);
-    setCurrentUser(mockUser);
-    setIsDemoMode(true);
-    setActiveStep(2);
-    navigate('/dashboard');
+    setIsSosModalOpen((prev) => (open !== undefined ? open : !prev));
   };
 
   const loginUser = (user: UserProfile) => {
     setCurrentUser(user);
-    setIsDemoMode(false);
+    setIsAuthenticated(!user.isGuest && Boolean(user.id));
   };
 
   const logoutUser = () => {
-    setCurrentUser({
-      ...mockUser,
-      isGuest: true,
-      name: 'Guest Worker'
-    });
-    setIsDemoMode(true);
+    void logoutApi();
+    setCurrentUser(emptyUser);
+    setIsAuthenticated(false);
+    setActiveDossier(emptyDossier);
+    setCredentials(emptyCredentials);
+    setApplications(emptyApplications);
+    setDocuments(emptyDocuments);
+    setNotifications(emptyNotifications);
     navigate('/');
   };
 
-  const unreadNotificationsCount = notifications.filter(n => !n.read).length;
+  const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
 
   return (
     <AppContext.Provider
@@ -258,7 +236,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         textScale,
         t,
         currentUser,
-        isDemoMode,
+        isAuthenticated,
         currentRoute,
         activeDossier,
         credentials,
@@ -268,21 +246,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isSosModalOpen,
         activeStep,
         unreadNotificationsCount,
-
         setLanguage,
         setTextScale,
         navigate,
         updateDossier,
+        setCredentials,
         addCredential,
         addApplication,
+        setApplications,
         addDocument,
+        setDocuments,
+        setNotifications,
         markNotificationRead,
         markAllNotificationsRead,
         toggleSosModal,
         setActiveStep,
-        resetToDemo,
         loginUser,
         logoutUser,
+        refreshSession,
       }}
     >
       {children}
@@ -292,8 +273,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 export const useApp = () => {
   const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useApp must be used within an AppProvider');
-  }
+  if (!context) throw new Error('useApp must be used within an AppProvider');
   return context;
 };

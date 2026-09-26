@@ -4,6 +4,13 @@ import { Logo } from '../components/ui/Logo';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
+import {
+  ApiError,
+  getAuthMe,
+  loginWithPassword,
+  registerWithPassword,
+} from '../services/sanadApi';
+import { LanguageCode } from '../types';
 
 export const AuthPage: React.FC<{ mode?: 'signin' | 'signup' }> = ({ mode: initial = 'signin' }) => {
   const { navigate, loginUser } = useApp();
@@ -12,21 +19,75 @@ export const AuthPage: React.FC<{ mode?: 'signin' | 'signup' }> = ({ mode: initi
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    window.setTimeout(() => {
+  const applySessionUser = async (fallbackName: string) => {
+    try {
+      const me = await getAuthMe();
+      loginUser({
+        id: me.id,
+        name: fallbackName || me.email?.split('@')[0] || 'Worker',
+        phone: '',
+        preferredLanguage: 'en' as LanguageCode,
+        isGuest: Boolean(me.demo),
+      });
+    } catch {
       loginUser({
         id: 'user_local',
-        name: name || email.split('@')[0] || 'Worker',
-        phone: '+971500000000',
+        name: fallbackName || email.split('@')[0] || 'Worker',
+        phone: '',
         preferredLanguage: 'en',
         isGuest: false,
       });
+    }
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setInfo('');
+    if (password.length < 10) {
+      setError('Password must be at least 10 characters (backend requirement).');
+      return;
+    }
+    setLoading(true);
+    try {
+      if (mode === 'signup') {
+        const result = await registerWithPassword(email.trim(), password);
+        if (result && typeof result === 'object' && 'confirmationRequired' in result && result.confirmationRequired) {
+          setInfo('Account created. Check your email to confirm, then sign in.');
+          setMode('signin');
+          setLoading(false);
+          return;
+        }
+        await applySessionUser(name || email.split('@')[0] || 'Worker');
+        navigate('/onboarding');
+      } else {
+        await loginWithPassword(email.trim(), password);
+        await applySessionUser(name || email.split('@')[0] || 'Worker');
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : 'Could not sign in. Check your email and password.'
+      );
+    } finally {
       setLoading(false);
-      navigate(mode === 'signup' ? '/onboarding' : '/dashboard');
-    }, 600);
+    }
+  };
+
+  const continueGuest = () => {
+    loginUser({
+      id: 'guest',
+      name: 'Guest Worker',
+      phone: '',
+      preferredLanguage: 'en',
+      isGuest: true,
+    });
+    navigate('/dashboard');
   };
 
   return (
@@ -41,7 +102,12 @@ export const AuthPage: React.FC<{ mode?: 'signin' | 'signup' }> = ({ mode: initi
             {(['signin', 'signup'] as const).map((m) => (
               <button
                 key={m}
-                onClick={() => setMode(m)}
+                type="button"
+                onClick={() => {
+                  setMode(m);
+                  setError('');
+                  setInfo('');
+                }}
                 className={`flex-1 py-2.5 rounded-md text-[13px] font-semibold transition-all duration-200 cursor-pointer ${
                   mode === m ? 'bg-white text-brand-dark shadow-card' : 'text-ink-muted hover:text-ink'
                 }`}
@@ -56,11 +122,11 @@ export const AuthPage: React.FC<{ mode?: 'signin' | 'signup' }> = ({ mode: initi
           </h1>
           <p className="text-[14px] text-ink-secondary mb-7 leading-relaxed">
             {mode === 'signin'
-              ? 'Sign in to continue your support journey.'
-              : 'Set up a protected worker account on this device.'}
+              ? 'Sign in to sync claims, documents, and Digital Proofs.'
+              : 'Create an account to save your case on the SANAD server.'}
           </p>
 
-          <form onSubmit={submit} className="space-y-4">
+          <form onSubmit={(e) => void submit(e)} className="space-y-4">
             {mode === 'signup' && (
               <Input
                 label="Full name"
@@ -85,75 +151,25 @@ export const AuthPage: React.FC<{ mode?: 'signin' | 'signup' }> = ({ mode: initi
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="At least 10 characters"
               leftIcon="lock"
               autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
               required
+              hint="Minimum 10 characters"
             />
+            {error && <p className="text-sm text-danger-fg">{error}</p>}
+            {info && <p className="text-sm text-success-fg">{info}</p>}
             <Button type="submit" fullWidth loading={loading} size="lg">
               {mode === 'signin' ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
 
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-card px-2 text-ink-muted">Or continue with</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                loginUser({
-                  id: 'google_user',
-                  name: 'Demo Worker',
-                  phone: '',
-                  preferredLanguage: 'en',
-                  isGuest: false,
-                });
-                navigate('/dashboard');
-              }}
-            >
-              Google
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                loginUser({
-                  id: 'ms_user',
-                  name: 'Demo Worker',
-                  phone: '',
-                  preferredLanguage: 'en',
-                  isGuest: false,
-                });
-                navigate('/dashboard');
-              }}
-            >
-              Microsoft
-            </Button>
-          </div>
-
           <button
             type="button"
-            onClick={() => {
-              loginUser({
-                id: 'guest',
-                name: 'Guest Worker',
-                phone: '',
-                preferredLanguage: 'en',
-                isGuest: true,
-              });
-              navigate('/dashboard');
-            }}
+            onClick={continueGuest}
             className="mt-5 w-full text-center text-sm font-medium text-brand hover:underline cursor-pointer min-h-touch"
           >
-            Continue as guest (demo)
+            Continue as guest (device-only demo)
           </button>
         </Card>
       </div>

@@ -7,6 +7,15 @@ import { Button } from '../components/ui/Button';
 import { Tabs } from '../components/ui/ChatBubble';
 import { HumanHelpCard } from '../components/HumanHelpCard';
 import { getSituationBulletsFromDossier } from '../services/aiService';
+import {
+  ApiError,
+  backendCredentialToLocal,
+  confirmClaim,
+  createClaimFromText,
+  fetchBlockchainHealth,
+  isUuid,
+  issueCredential,
+} from '../services/sanadApi';
 
 const TRUST_STEPS = [
   { label: 'User reported', done: true },
@@ -16,31 +25,66 @@ const TRUST_STEPS = [
 ];
 
 export const CredentialCreatePage: React.FC = () => {
-  const { navigate, activeDossier, addCredential, updateDossier } = useApp();
+  const { navigate, activeDossier, addCredential, updateDossier, isAuthenticated } = useApp();
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [showTech, setShowTech] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [techHash, setTechHash] = useState('');
+  const [chainNote, setChainNote] = useState('');
   const bullets = getSituationBulletsFromDossier(activeDossier);
 
-  const issue = () => {
-    const id = `SANAD-VC-${String(Date.now()).slice(-5)}`;
-    addCredential({
-      id,
-      dossierId: activeDossier.id,
-      subjectPseudonym: 'did:sanad:worker:ae82…994f',
-      issuanceDate: new Date().toISOString(),
-      status: 'valid',
-      claimSummary: activeDossier.categoryLabel,
-      merkleHash: '0x' + Math.random().toString(16).slice(2, 18),
-      digitalSignature: 'sig_' + Math.random().toString(36).slice(2, 10),
-      zkAttestation: {
-        trustNode: 'SANAD Independent Sovereign Trust Root Node',
-        standard: 'W3C VC Data Model 2.0',
-        verifiedProperties: ['category', 'period', 'employer_hash'],
-        piiProtected: true,
-      },
-    });
-    updateDossier({ status: 'proof_generated' });
-    setCreatedId(id);
+  React.useEffect(() => {
+    void fetchBlockchainHealth()
+      .then((h) => {
+        if (h.mode !== 'real') {
+          setChainNote(
+            `Server blockchain mode is "${h.mode}". Configure BLOCKCHAIN_MODE=real and Polygon credentials for production chain issuance.`
+          );
+        }
+      })
+      .catch(() => undefined);
+  }, []);
+
+  const issue = async () => {
+    setLoading(true);
+    setError('');
+    if (!isAuthenticated) {
+      setError('Sign in required to issue a SANAD Digital Proof.');
+      setLoading(false);
+      return;
+    }
+    try {
+      let claimId = activeDossier.id;
+      if (!isUuid(claimId)) {
+        const claim = await createClaimFromText(
+          activeDossier.verbatimTranscript || activeDossier.narrativeSummary || activeDossier.categoryLabel
+        );
+        claimId = claim.id;
+        updateDossier({ id: claim.id });
+      }
+      try {
+        await confirmClaim(claimId);
+      } catch (e) {
+        if (!(e instanceof ApiError && e.code === 'INVALID_TRANSITION')) {
+          /* continue — issue may still work if already confirmed */
+        }
+      }
+      const cred = await issueCredential(claimId);
+      const local = backendCredentialToLocal(cred, activeDossier.categoryLabel);
+      addCredential(local);
+      updateDossier({ id: claimId, status: 'proof_generated' });
+      setCreatedId(local.id);
+      setTechHash(local.merkleHash || '');
+    } catch (e) {
+      setError(
+        e instanceof ApiError
+          ? e.message
+          : 'Credential issuance failed. Your claim has not been issued.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (createdId) {
@@ -57,12 +101,17 @@ export const CredentialCreatePage: React.FC = () => {
             <p className="text-sm text-ink-secondary">
               Portable proof of the information you confirmed. You choose who sees it.
             </p>
+            {chainNote && (
+              <p className="text-xs text-warning-fg max-w-md mx-auto" role="status">
+                {chainNote}
+              </p>
+            )}
           </div>
 
           <Card tone="elevated" className="border-brand/20">
             <div className="flex items-start justify-between gap-3 mb-4">
               <Badge tone="success">Valid</Badge>
-              <span className="font-mono text-xs text-ink-muted">{createdId}</span>
+              <span className="font-mono text-xs text-ink-muted break-all text-right">{createdId}</span>
             </div>
             <h2 className="font-semibold text-ink text-lg mb-3">{activeDossier.categoryLabel}</h2>
             <ul className="space-y-2 mb-6">
@@ -106,12 +155,14 @@ export const CredentialCreatePage: React.FC = () => {
               <dl className="text-xs space-y-2 text-ink-muted font-mono mb-4">
                 <div className="flex justify-between gap-2">
                   <dt>ID</dt>
-                  <dd>{createdId}</dd>
+                  <dd className="break-all text-right">{createdId}</dd>
                 </div>
-                <div className="flex justify-between gap-2">
-                  <dt>Standard</dt>
-                  <dd>W3C VC (demo)</dd>
-                </div>
+                {techHash && (
+                  <div className="flex justify-between gap-2">
+                    <dt>Hash</dt>
+                    <dd className="break-all text-right">{techHash}</dd>
+                  </div>
+                )}
               </dl>
             )}
 
@@ -157,11 +208,12 @@ export const CredentialCreatePage: React.FC = () => {
               </li>
             ))}
           </ul>
+          {error && <p className="text-sm text-warning-fg mb-4">{error}</p>}
           <div className="flex gap-2">
-            <Button variant="outline" fullWidth onClick={() => navigate('/consent')}>
+            <Button variant="outline" fullWidth onClick={() => navigate('/consent')} disabled={loading}>
               Cancel
             </Button>
-            <Button fullWidth leftIcon="verified_user" onClick={issue}>
+            <Button fullWidth leftIcon="verified_user" loading={loading} onClick={() => void issue()}>
               Issue Digital Proof
             </Button>
           </div>
@@ -213,7 +265,7 @@ export const CredentialWalletPage: React.FC = () => {
                 <Badge tone={c.status === 'valid' ? 'success' : c.status === 'revoked' ? 'danger' : 'warning'}>
                   {c.status}
                 </Badge>
-                <span className="text-xs text-ink-muted font-mono">{c.id}</span>
+                <span className="text-xs text-ink-muted font-mono break-all text-right max-w-[55%]">{c.id}</span>
               </div>
               <h3 className="font-semibold text-ink">{c.claimSummary}</h3>
               <p className="text-xs text-ink-muted mt-1">
@@ -230,9 +282,7 @@ export const CredentialWalletPage: React.FC = () => {
             </Card>
           ))}
           {filtered.length === 0 && (
-            <Card className="sm:col-span-2 text-center py-10 text-ink-muted">
-              No Digital Proofs yet.
-            </Card>
+            <Card className="sm:col-span-2 text-center py-10 text-ink-muted">No Digital Proofs yet.</Card>
           )}
         </div>
       </div>
@@ -275,7 +325,7 @@ export const CredentialDetailPage: React.FC = () => {
           </h1>
           <Badge tone="success">Valid</Badge>
         </div>
-        <p className="text-sm text-ink-muted font-mono">{c.id}</p>
+        <p className="text-sm text-ink-muted font-mono break-all">{c.id}</p>
 
         <Tabs
           tabs={[
@@ -309,7 +359,7 @@ export const CredentialDetailPage: React.FC = () => {
                 {showTech ? 'Hide' : 'Show'} technical details
               </button>
               {showTech && (
-                <div className="font-mono text-xs text-ink-muted space-y-1">
+                <div className="font-mono text-xs text-ink-muted space-y-1 break-all">
                   <div>Subject: {c.subjectPseudonym}</div>
                   <div>Hash: {c.merkleHash}</div>
                 </div>

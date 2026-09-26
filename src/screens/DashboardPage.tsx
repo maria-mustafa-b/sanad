@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { AppShell } from '../layouts/AppShell';
 import { Card, IconWell } from '../components/ui/Card';
@@ -6,12 +6,69 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { HumanHelpCard } from '../components/HumanHelpCard';
 import { getSituationBulletsFromDossier } from '../services/aiService';
+import {
+  BackendClaim,
+  claimToDossier,
+  fetchClaims,
+  fetchCredentials,
+  backendCredentialToLocal,
+} from '../services/sanadApi';
 
 export const DashboardPage: React.FC = () => {
-  const { navigate, currentUser, credentials, applications, activeDossier } = useApp();
+  const {
+    navigate,
+    currentUser,
+    credentials,
+    applications,
+    activeDossier,
+    updateDossier,
+    addCredential,
+  } = useApp();
+  const [remoteClaims, setRemoteClaims] = useState<BackendClaim[]>([]);
+  const [syncNote, setSyncNote] = useState('');
+  const [syncing, setSyncing] = useState(false);
+
   const proof = credentials.find((c) => c.status === 'valid') || credentials[0];
   const app = applications[0];
   const bullets = getSituationBulletsFromDossier(activeDossier);
+
+  useEffect(() => {
+    if (currentUser.isGuest) {
+      setSyncNote('Guest mode — data stays on this device. Sign in to sync.');
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      setSyncing(true);
+      try {
+        const [claims, creds] = await Promise.all([fetchClaims(), fetchCredentials().catch(() => [])]);
+        if (cancelled) return;
+        setRemoteClaims(claims);
+        if (claims[0]) {
+          updateDossier(claimToDossier(claims[0]));
+        }
+        for (const c of creds) {
+          if (!credentials.some((x) => x.id === c.id)) {
+            addCredential(
+              backendCredentialToLocal(
+                c,
+                claims.find((cl) => cl.id === c.claim_id)?.intent || 'SANAD proof'
+              )
+            );
+          }
+        }
+        setSyncNote(claims.length ? `Synced ${claims.length} claim(s) from SANAD.` : 'Signed in — no remote claims yet.');
+      } catch {
+        if (!cancelled) setSyncNote('Could not sync remote claims. Showing this device.');
+      } finally {
+        if (!cancelled) setSyncing(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser.id, currentUser.isGuest]);
 
   const statusLabel: Record<string, string> = {
     draft: 'Needs confirmation',
@@ -28,7 +85,7 @@ export const DashboardPage: React.FC = () => {
       return { label: 'Create Digital Proof', path: '/consent', icon: 'verified_user' as const };
     }
     if (!app) {
-      return { label: 'Open Wage Dispute support', path: '/services', icon: 'payments' as const };
+      return { label: 'Open matched support', path: '/services', icon: 'payments' as const };
     }
     return { label: 'Check application status', path: '/applications', icon: 'timeline' as const };
   })();
@@ -44,9 +101,11 @@ export const DashboardPage: React.FC = () => {
             Hello, {currentUser.name.split(' ')[0]}
           </h1>
           <p className="text-ink-secondary">One place for your situation, proof, and next step.</p>
+          {(syncNote || syncing) && (
+            <p className="text-xs text-ink-muted">{syncing ? 'Syncing…' : syncNote}</p>
+          )}
         </div>
 
-        {/* Active case — main focus */}
         <Card tone="elevated" className="border-brand/20">
           <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
             <div>
@@ -67,6 +126,20 @@ export const DashboardPage: React.FC = () => {
             Next: {nextAction.label}
           </Button>
         </Card>
+
+        {remoteClaims.length > 0 && (
+          <Card tone="flat" padding="md">
+            <div className="text-label mb-2">Remote claims</div>
+            <ul className="space-y-2">
+              {remoteClaims.slice(0, 3).map((c) => (
+                <li key={c.id} className="text-sm flex justify-between gap-2">
+                  <span className="text-ink font-medium truncate">{c.intent || 'Claim'}</span>
+                  <span className="text-xs text-ink-muted shrink-0">{c.status}</span>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card tone="flat" padding="md" hover onClick={() => navigate('/credentials')}>
@@ -117,9 +190,7 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <Card tone="soft" padding="lg" className="bg-brand-dark border-0">
-          <h3 className="text-lg font-semibold tracking-[-0.02em] !text-white mb-1">
-            Speak to SANAD
-          </h3>
+          <h3 className="text-lg font-semibold tracking-[-0.02em] !text-white mb-1">Speak to SANAD</h3>
           <p className="text-sm text-white/70 mb-4">Voice-first — in your own words</p>
           <Button variant="inverse" leftIcon="mic" onClick={() => navigate('/chat')}>
             Start voice intake

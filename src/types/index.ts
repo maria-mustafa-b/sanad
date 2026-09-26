@@ -40,6 +40,8 @@ export interface DossierClaim {
   verbatimTranscript: string;
   detectedLanguages: string[];
   facts: ExtractedFact[];
+  missingInformation: string[];
+  aiConfidence: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { AppShell } from '../layouts/AppShell';
 import { Card, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { HumanHelpCard } from '../components/HumanHelpCard';
+import { ApiError, analyzeDocument, uploadDocument } from '../services/sanadApi';
 
 const CHECKLIST = [
   { id: 'slip', label: 'Salary slip or bank screenshot', hint: 'August or any unpaid month' },
@@ -14,20 +15,73 @@ const CHECKLIST = [
 ];
 
 export const DocumentsPage: React.FC = () => {
-  const { navigate, documents, credentials } = useApp();
+  const { navigate, documents, credentials, addDocument } = useApp();
+  const fileRef = useRef<HTMLInputElement>(null);
   const [checked, setChecked] = useState<Record<string, boolean>>({
     proof: Boolean(credentials[0]),
   });
-  const [analyzing, setAnalyzing] = useState(false);
-  const [done, setDone] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [extracted, setExtracted] = useState<{ label: string; value: string }[] | null>(null);
+  const [notice, setNotice] = useState('');
 
-  const simulate = () => {
-    setAnalyzing(true);
-    window.setTimeout(() => {
-      setAnalyzing(false);
-      setDone(true);
+  const handleFile = async (file: File | null) => {
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    setNotice('');
+    setExtracted(null);
+    try {
+      const uploaded = await uploadDocument(file);
+      const analysis = await analyzeDocument(uploaded.id);
+      const ext = analysis.extraction || {};
+      const rows = [
+        { label: 'Type', value: ext.document_type || analysis.documentType || file.type || 'Document' },
+        { label: 'Date', value: ext.date || 'Not found' },
+        { label: 'Employer', value: ext.employer_name || 'Not found' },
+        { label: 'Period', value: ext.salary_period || 'Not found' },
+      ];
+      setExtracted(rows);
       setChecked((c) => ({ ...c, slip: true }));
-    }, 1200);
+      addDocument({
+        id: uploaded.id,
+        name: uploaded.file_name || uploaded.name || file.name,
+        type: 'salary_slip',
+        sha256: uploaded.id,
+        uploadDate: new Date().toISOString(),
+        fileSize: `${Math.round(file.size / 1024)} KB`,
+        ocrExtractedData: Object.fromEntries(rows.map((r) => [r.label, r.value])),
+        status: 'verified',
+      });
+      setNotice('Document uploaded and analysed.');
+    } catch (e) {
+      const msg =
+        e instanceof ApiError
+          ? e.code === 'UNAUTHORIZED'
+            ? 'Sign in to upload documents to the server. Showing a local preview instead.'
+            : e.message
+          : 'Upload failed.';
+      setError(msg);
+      // Local preview so the journey never dead-ends
+      setExtracted([
+        { label: 'File', value: file.name },
+        { label: 'Size', value: `${Math.round(file.size / 1024)} KB` },
+        { label: 'Status', value: 'Stored on this device only (sign in for cloud OCR)' },
+      ]);
+      setChecked((c) => ({ ...c, slip: true }));
+      addDocument({
+        id: `local-${Date.now()}`,
+        name: file.name,
+        type: 'other',
+        sha256: 'local',
+        uploadDate: new Date().toISOString(),
+        fileSize: `${Math.round(file.size / 1024)} KB`,
+        status: 'unverified',
+      });
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
   };
 
   return (
@@ -51,9 +105,7 @@ export const DocumentsPage: React.FC = () => {
                     type="checkbox"
                     className="mt-1 w-5 h-5 accent-brand"
                     checked={Boolean(checked[item.id])}
-                    onChange={() =>
-                      setChecked((c) => ({ ...c, [item.id]: !c[item.id] }))
-                    }
+                    onChange={() => setChecked((c) => ({ ...c, [item.id]: !c[item.id] }))}
                   />
                   <span>
                     <span className="block text-sm font-semibold text-ink">{item.label}</span>
@@ -66,30 +118,38 @@ export const DocumentsPage: React.FC = () => {
         </Card>
 
         <Card className="border-dashed border-2 border-border-strong bg-surface text-center py-10">
-          <button type="button" onClick={simulate} className="w-full cursor-pointer">
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png,image/*,application/pdf"
+            className="hidden"
+            onChange={(e) => void handleFile(e.target.files?.[0] || null)}
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="w-full cursor-pointer"
+            disabled={uploading}
+          >
             <span className="material-symbols-outlined text-4xl text-brand mb-3">cloud_upload</span>
             <div className="font-semibold text-ink">Add a photo or file</div>
             <p className="text-sm text-ink-muted mt-1">PDF, JPG, PNG — tap to browse</p>
           </button>
-          <Button className="mt-5" loading={analyzing} onClick={simulate}>
-            {analyzing ? 'Reading…' : 'Select file'}
+          <Button className="mt-5" loading={uploading} onClick={() => fileRef.current?.click()}>
+            {uploading ? 'Uploading & reading…' : 'Select file'}
           </Button>
+          {notice && <p className="mt-3 text-sm text-success-fg">{notice}</p>}
+          {error && <p className="mt-3 text-sm text-warning-fg px-4">{error}</p>}
         </Card>
 
-        {(done || documents.length > 0) && (
+        {(extracted || documents.length > 0) && (
           <Card>
-            <CardHeader
-              title="What we found on the page"
-              action={<Badge tone="success">Ready</Badge>}
-            />
+            <CardHeader title="What we found" action={<Badge tone="success">Ready</Badge>} />
             <p className="text-sm text-ink-secondary mb-4">
               You can correct this later. Nothing is shared until you apply.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                { label: 'Type', value: 'Salary / payment record' },
-                { label: 'Period', value: 'August' },
-              ].map((row) => (
+              {(extracted || []).map((row) => (
                 <div key={row.label} className="rounded-lg bg-surface p-3">
                   <div className="text-xs text-ink-muted font-medium">{row.label}</div>
                   <div className="text-sm font-semibold text-ink mt-0.5">{row.value}</div>
