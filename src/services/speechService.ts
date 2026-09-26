@@ -1,5 +1,9 @@
 import { LanguageCode } from '../types';
 
+/** Hackathon demo fallback when browser speech recognition is unavailable */
+export const DEMO_HINGLISH_TRANSCRIPT =
+  'Meri job chali gayi hai aur August ka salary nahi mila.';
+
 export interface CodeSwitchAnalysis {
   primarySyntax: string;
   detectedLoans: { word: string; category: string }[];
@@ -127,6 +131,9 @@ export const analyzeCodeSwitching = (text: string): CodeSwitchAnalysis => {
     { word: 'pagar', category: 'Hindi/Urdu loan: पगार (Salary/Wage)' },
     { word: 'chutti', category: 'Hindi/Urdu loan: छुट्टी (Leave/Vacation)' },
     { word: 'nahi', category: 'Hindi/Urdu: नहीं (Denial/Negative)' },
+    { word: 'nahi mila', category: 'Hindi/Urdu: नहीं मिला (Did not receive)' },
+    { word: 'chali gayi', category: 'Hindi/Urdu: चली गई (Gone / ended)' },
+    { word: 'job', category: 'English loan in Hinglish: job' },
     { word: 'amar', category: 'Bengali: আমার (My)' },
     { word: 'beton', category: 'Bengali: বেতন (Wage)' },
     { word: 'taka', category: 'Bengali: টাকা (Money)' },
@@ -134,7 +141,7 @@ export const analyzeCodeSwitching = (text: string): CodeSwitchAnalysis => {
 
   // English legal intent terms
   const englishIntentTerms = [
-    'salary', 'passport', 'months', 'company', 'grievance', 'help', 'urgent', 'contract', 'court', 'visa'
+    'salary', 'passport', 'months', 'company', 'grievance', 'help', 'urgent', 'contract', 'court', 'visa', 'august', 'job'
   ];
 
   for (const item of arabicTerms) {

@@ -1,99 +1,107 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { BottomNav } from './components/BottomNav';
-import { SOSModal } from './components/SOSModal';
 
-// Views
-import { LandingHubView } from './views/LandingHubView';
-import { JourneyHomeView } from './views/JourneyHomeView';
-import { VoiceIntakeView } from './views/VoiceIntakeView';
-import { ConfirmProofView } from './views/ConfirmProofView';
-import { EvidenceApplicationView } from './views/EvidenceApplicationView';
-import { ApplicationsTrackingView } from './views/ApplicationsTrackingView';
-import { MyProofVaultView } from './views/MyProofVaultView';
-import { PublicVerificationView } from './views/PublicVerificationView';
-import { DocumentReaderView } from './views/DocumentReaderView';
-import { WorkerRightsView } from './views/WorkerRightsView';
-import { HelpSupportView } from './views/HelpSupportView';
-import { SettingsView } from './views/SettingsView';
-import { NotificationsView } from './views/NotificationsView';
-import { AuthView } from './views/AuthView';
-import { NarrativeProcessingView } from './views/NarrativeProcessingView';
-import { WorkerDignityView } from './views/WorkerDignityView';
+import { LandingPage } from './screens/LandingPage';
+import { AuthPage } from './screens/AuthPage';
+import { OnboardingPage } from './screens/OnboardingPage';
+import { DashboardPage } from './screens/DashboardPage';
+import { ChatPage } from './screens/ChatPage';
+import { VoicePage } from './screens/VoicePage';
+import { DocumentsPage } from './screens/DocumentsPage';
+import { SituationPage } from './screens/SituationPage';
+import { ConsentPage } from './screens/ConsentPage';
+import { ServicesPage, ServiceDetailPage } from './screens/ServicesPage';
+import {
+  CredentialCreatePage,
+  CredentialWalletPage,
+  CredentialDetailPage,
+} from './screens/CredentialsPages';
+import { ApplicationSubmitPage, ApplicationTrackingPage } from './screens/ApplicationsPages';
+import { NotificationsPage } from './screens/NotificationsPage';
+import { VerifyPage } from './screens/VerifyPage';
+import { AccessibilityPage } from './screens/AccessibilityPage';
+import { AdminDashboardPage } from './screens/AdminDashboardPage';
 
 const AppContent: React.FC = () => {
   const { currentRoute, direction } = useApp();
 
-  const renderCurrentView = () => {
+  const render = () => {
     switch (currentRoute) {
       case '/':
-        return <LandingHubView />;
+        return <LandingPage />;
+      case '/auth/signin':
+      case '/auth/welcome':
+        return <AuthPage mode="signin" />;
+      case '/auth/signup':
+      case '/auth/register':
+        return <AuthPage mode="signup" />;
+      case '/onboarding':
+        return <OnboardingPage />;
+      case '/dashboard':
       case '/journey':
       case '/home':
-        return <JourneyHomeView />;
+        return <DashboardPage />;
+      case '/chat':
       case '/tell-sanad':
-        return <VoiceIntakeView />;
-      case '/confirm-situation':
-        return <ConfirmProofView />;
-      case '/evidence-application':
-        return <EvidenceApplicationView />;
-      case '/applications':
-        return <ApplicationsTrackingView />;
-      case '/my-proof':
-        return <MyProofVaultView />;
-      case '/verify':
-      case '/public-verification':
-        return <PublicVerificationView />;
+        return <ChatPage />;
+      case '/voice':
+        return <VoicePage />;
+      case '/documents':
       case '/document-reader':
-        return <DocumentReaderView />;
-      case '/worker-rights':
-        return <WorkerRightsView />;
-      case '/help':
-        return <HelpSupportView />;
-      case '/settings':
-        return <SettingsView />;
-      case '/notifications':
-        return <NotificationsView />;
-      case '/auth/register':
-        return <AuthView initialMode="register" />;
-      case '/auth/otp':
-        return <AuthView initialMode="otp" />;
-      case '/auth/signin':
-        return <AuthView initialMode="signin" />;
-      case '/auth/welcome':
-        return <AuthView initialMode="welcome" />;
-      case '/processing':
-      case '/narrative-processing':
-        return <NarrativeProcessingView />;
+        return <DocumentsPage />;
+      case '/situation':
+      case '/confirm-situation':
+        return <SituationPage />;
+      case '/consent':
+        return <ConsentPage />;
       case '/services':
       case '/worker-dignity':
-        return <WorkerDignityView />;
+        return <ServicesPage />;
+      case '/services/detail':
+        return <ServiceDetailPage />;
+      case '/credentials/create':
+      case '/processing':
+        return <CredentialCreatePage />;
+      case '/credentials':
+      case '/my-proof':
+        return <CredentialWalletPage />;
+      case '/credentials/detail':
+        return <CredentialDetailPage />;
+      case '/applications/submit':
+      case '/evidence-application':
+        return <ApplicationSubmitPage />;
+      case '/applications':
+        return <ApplicationTrackingPage />;
+      case '/notifications':
+        return <NotificationsPage />;
+      case '/verify':
+      case '/public-verification':
+        return <VerifyPage />;
+      case '/settings':
+      case '/settings/accessibility':
+        return <AccessibilityPage />;
+      case '/admin':
+      case '/admin/users':
+      case '/admin/applications':
+      case '/admin/credentials':
+      case '/admin/escalations':
+        return <AdminDashboardPage />;
       default:
-        return <LandingHubView />;
+        return <LandingPage />;
     }
   };
 
   return (
-    <div className={`min-h-screen bg-surface font-body text-on-surface antialiased flex flex-col ${direction === 'rtl' ? 'font-arabic' : ''}`}>
-      <Header />
-      <main className="flex-1 w-full pt-28 pb-16">
-        {renderCurrentView()}
-      </main>
-      <Footer />
-      <BottomNav />
-      <SOSModal />
+    <div className={direction === 'rtl' ? 'font-arabic' : 'font-sans'}>
+      {render()}
     </div>
   );
 };
 
-export const App: React.FC = () => {
-  return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
-  );
-};
+export const App: React.FC = () => (
+  <AppProvider>
+    <AppContent />
+  </AppProvider>
+);
 
 export default App;

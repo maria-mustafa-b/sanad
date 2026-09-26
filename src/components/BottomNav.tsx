@@ -2,29 +2,33 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export const BottomNav: React.FC = () => {
-  const { currentRoute, navigate, unreadNotificationsCount, toggleSosModal } = useApp();
+  const { currentRoute, navigate, toggleSosModal, t } = useApp();
 
   const items = [
-    { label: 'Services', icon: 'apps', path: '/services' },
-    { label: 'My Proof', icon: 'verified_user', path: '/my-proof' },
-    { label: 'Tell SANAD', icon: 'mic', path: '/tell-sanad', isPrimary: true },
-    { label: 'Alerts', icon: 'notifications', path: '/notifications', badge: unreadNotificationsCount },
-    { label: 'SOS', icon: 'emergency', action: () => toggleSosModal(true), isDanger: true },
+    { label: t.nav.home, icon: 'home', path: '/', ariaLabel: 'Home' },
+    { label: t.nav.myProof, icon: 'verified_user', path: '/my-proof', ariaLabel: 'My Proof' },
+    { label: t.nav.tellSanad, icon: 'mic', path: '/tell-sanad', isPrimary: true, ariaLabel: 'Tell SANAD — speak' },
+    { label: t.nav.applications, icon: 'assignment', path: '/applications', ariaLabel: 'Applications' },
+    { label: 'SOS', icon: 'emergency', action: () => toggleSosModal(true), isDanger: true, ariaLabel: 'Emergency SOS' },
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-lg border-t border-surface-container-high py-1 px-2 shadow-lg">
-      <div className="flex items-center justify-around">
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-lg border-t border-surface-container-high py-2 px-1 shadow-soft"
+      aria-label="Main navigation"
+    >
+      <div className="flex items-end justify-around max-w-lg mx-auto">
         {items.map((item, idx) => {
           if (item.isPrimary) {
             return (
               <button
                 key={idx}
                 onClick={() => navigate(item.path!)}
-                className="flex flex-col items-center justify-center -mt-5 bg-primary text-on-primary w-14 h-14 rounded-full shadow-lg border-4 border-surface transition-transform active:scale-95 cursor-pointer"
-                title="Speak to SANAD"
+                className="flex flex-col items-center justify-center -mt-6 bg-primary text-on-primary w-16 h-16 rounded-full shadow-lg border-4 border-surface transition-transform active:scale-95 cursor-pointer animate-softPulse"
+                title={item.ariaLabel}
+                aria-label={item.ariaLabel}
               >
-                <span className="material-symbols-outlined text-2xl">mic</span>
+                <span className="material-symbols-outlined text-3xl filled">mic</span>
               </button>
             );
           }
@@ -33,28 +37,29 @@ export const BottomNav: React.FC = () => {
           return (
             <button
               key={idx}
-              onClick={() => item.action ? item.action() : navigate(item.path!)}
-              className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl text-xs font-semibold relative transition-colors cursor-pointer ${
+              onClick={() => (item.action ? item.action() : navigate(item.path!))}
+              aria-label={item.ariaLabel}
+              aria-current={isActive ? 'page' : undefined}
+              className={`flex flex-col items-center justify-center py-1.5 px-2 min-w-[4.25rem] min-h-[3.5rem] rounded-xl relative transition-colors cursor-pointer ${
                 item.isDanger
                   ? 'text-error hover:bg-error-container/30'
                   : isActive
-                  ? 'text-primary font-bold'
-                  : 'text-on-surface-variant hover:text-on-surface'
+                  ? 'text-primary'
+                  : 'text-on-surface-variant hover:text-navy'
               }`}
             >
-              <span className={`material-symbols-outlined text-[20px] ${item.isDanger ? 'animate-pulse' : ''}`}>
+              <span
+                className={`material-symbols-outlined text-[28px] ${item.isDanger ? 'animate-pulse' : ''} ${
+                  isActive ? 'filled' : ''
+                }`}
+              >
                 {item.icon}
               </span>
-              <span className="text-[10px] mt-0.5">{item.label}</span>
-              {Boolean(item.badge && item.badge > 0) && (
-                <span className="absolute top-1 right-2 w-4 h-4 rounded-full bg-error text-on-error text-[9px] font-bold flex items-center justify-center">
-                  {item.badge}
-                </span>
-              )}
+              <span className="text-xs font-bold mt-0.5 leading-tight">{item.label}</span>
             </button>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 };
