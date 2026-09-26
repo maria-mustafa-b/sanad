@@ -1,3 +1,4 @@
+﻿"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { languageMeta } from '../locales';
@@ -108,7 +109,7 @@ export const AuthView: React.FC<{ initialMode?: 'welcome' | 'register' | 'otp' |
         {/* Brand Header */}
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center font-headline font-bold text-2xl mx-auto shadow-sm">
-            سـ
+            Ø³Ù€
           </div>
           <h2 className="text-2xl font-headline font-bold text-on-surface">
             {t.auth.welcomeTitle}
@@ -242,7 +243,7 @@ export const AuthView: React.FC<{ initialMode?: 'welcome' | 'register' | 'otp' |
                   maxLength={4}
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
-                  placeholder="••••"
+                  placeholder="â€¢â€¢â€¢â€¢"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-surface text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary font-mono text-center tracking-widest"
                 />
               </div>
@@ -346,7 +347,7 @@ export const AuthView: React.FC<{ initialMode?: 'welcome' | 'register' | 'otp' |
                 maxLength={4}
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
-                placeholder="••••"
+                placeholder="â€¢â€¢â€¢â€¢"
                 className="w-full px-3.5 py-2.5 rounded-xl bg-surface text-on-surface border border-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary font-mono text-center tracking-widest"
               />
             </div>

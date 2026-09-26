@@ -1,3 +1,4 @@
+﻿"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { VerifiableCredential } from '../types';
@@ -25,7 +26,7 @@ export const MyProofVaultView: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold uppercase tracking-wider mb-2">
               <span className="material-symbols-outlined text-[16px] text-tertiary">dashboard</span>
-              <span>Screen 14 • Sovereign Worker Vault</span>
+              <span>Screen 14 â€¢ Sovereign Worker Vault</span>
             </div>
             <h1 className="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">
               My Proof &amp; Sovereign Vault
@@ -64,7 +65,7 @@ export const MyProofVaultView: React.FC = () => {
                 {activeDossier.categoryLabel}
               </h3>
               <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">
-                {activeDossier.incidentPeriod} • Employer: {activeDossier.employerName}.
+                {activeDossier.incidentPeriod} â€¢ Employer: {activeDossier.employerName}.
               </p>
             </div>
             <div className="pt-6 mt-4 border-t border-surface-container-highest/70 flex items-center justify-between text-xs">

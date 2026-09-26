@@ -1,53 +1,23 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+﻿import type { Metadata } from "next";
 import "./globals.css";
+
 export const metadata: Metadata = {
-  title: {
-    default: "SANAD — Support starts with understanding",
-    template: "%s | SANAD",
-  },
-  description:
-    "Understand your situation. Prove what matters. Find the support you need.",
+  title: "SANAD — Support starts with understanding",
+  description: "Understand your situation. Prove what matters. Find the support you need.",
 };
+
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body>
-        <a className="skip-link" href="#main">
-          Skip to content
-        </a>
-        <header className="site-header">
-          <Link href="/" className="brand" aria-label="SANAD home">
-            <ShieldCheck aria-hidden="true" size={30} />
-            <span>
-              SANAD{" "}
-              <span lang="ar" dir="rtl">
-                سند
-              </span>
-            </span>
-          </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/">Overview</Link>
-            <Link href="/dashboard">Dashboard</Link>
-            <Link href="/understand">Your situation</Link>
-            <Link href="/services">Services</Link>
-            <Link href="/documents">Documents</Link>
-            <Link href="/verify">Verification</Link>
-            <Link href="/onboarding">Get started</Link>
-          </nav>
-          <span className="phase-badge">Independent prototype</span>
-        </header>
-        {children}
-        <footer>
-          <span>SANAD · Understand. Confirm. Move forward.</span>
-          <span>
-            An independent hackathon prototype. Not a government service.
-          </span>
-        </footer>
-      </body>
+      <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=optional" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cairo:wght@400;600;700&display=optional" />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

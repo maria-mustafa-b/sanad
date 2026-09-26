@@ -1,3 +1,4 @@
+﻿"use client";
 import { DossierClaim, VerifiableCredential } from '../types';
 
 // Simple deterministic hash generator (SHA-256 equivalent simulation for browser-standard cryptography)

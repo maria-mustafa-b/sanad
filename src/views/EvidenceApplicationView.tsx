@@ -1,3 +1,4 @@
+﻿"use client";
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { StepTracker } from '../components/StepTracker';
@@ -28,14 +29,8 @@ export const EvidenceApplicationView: React.FC = () => {
     setActiveStep(4);
   }, [setActiveStep]);
 
-  const [matches, setMatches] = useState<any[]>([]);
-
-  React.useEffect(() => {
-    setActiveStep(4);
-    matchSupportOrganizations(activeDossier.category, language).then(res => setMatches(res));
-  }, [setActiveStep, activeDossier.category, language]);
-
-  const primaryMatch = matches[0]?.organization || null;
+  const matches = matchSupportOrganizations(activeDossier.category, language);
+  const primaryMatch = matches[0]?.organization || matches[0];
   const linkedVc = credentials[0] || { id: 'SANAD-VC-00124' };
 
   const handleSimulateFileUpload = async () => {
@@ -53,57 +48,30 @@ export const EvidenceApplicationView: React.FC = () => {
 
   const handleSubmitApplication = async () => {
     setIsSubmitting(true);
-    
-    try {
-      // 1. Create a Draft Application on the Real Backend
-      const createRes = await fetch('/api/applications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: selectedOrgId,
-          // Backend expects a UUID, mock ones usually start with VC-
-          credential_id: (linkedVc.id && linkedVc.id.length > 30) ? linkedVc.id : undefined
-        })
-      });
-      
-      if (!createRes.ok) throw new Error('Failed to create application on backend');
-      const createJson = await createRes.json();
-      const backendAppId = createJson.data?.id || createJson.id;
-      
-      // 2. Submit the Draft Application
-      if (backendAppId) {
-        await fetch(`/api/applications/${backendAppId}/submit`, { method: 'POST' });
-      }
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Add to frontend state for UI continuation
-      const orgName = matches.find(m => m.organization.id === selectedOrgId)?.organization.name || 'Support Organization';
-      const newApp: ApplicationCase = {
-        id: backendAppId || `APP-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-        dossierId: activeDossier.id,
-        credentialId: linkedVc.id,
-        orgId: selectedOrgId,
-        orgName,
-        title: `${activeDossier.categoryLabel} Support Request`,
-        category: activeDossier.category,
-        status: 'submitted',
-        submittedDate: new Date().toISOString(),
-        lastUpdated: new Date().toISOString(),
-        notes: 'Initial dossier submitted with verified W3C proof. Case assigned to queue.',
-        timeline: [
-          { title: 'Application Submitted with Verifiable Proof', date: 'Just now', completed: true, current: true, description: `Proof verified and attached.` },
-          { title: 'Triage & Case Review Meeting', date: 'Estimated: 24h', completed: false, description: 'Neutral consultation to evaluate employer mediation.' },
-          { title: 'Formal Dispute Notice to Employer', date: 'Upcoming', completed: false, description: 'Statutory demand for delayed wages and passport retrieval.' }
-        ]
-      };
-  
-      addApplication(newApp);
-      setSubmissionSuccess(true);
-    } catch (e) {
-      console.error(e);
-      alert('Failed to submit application to the backend. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    const newApp: ApplicationCase = {
+      id: `APP-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      dossierId: activeDossier.id,
+      credentialId: linkedVc.id,
+      orgId: selectedOrgId,
+      orgName: matches.find(m => m.organization.id === selectedOrgId)?.organization.name || 'Migrant Justice Legal Clinic',
+      title: `${activeDossier.categoryLabel} Dispute Triage`,
+      category: activeDossier.category,
+      status: 'submitted',
+      submittedDate: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
+      notes: 'Initial dossier submitted with verified W3C proof. Case assigned to pro bono paralegal queue.',
+      timeline: [
+        { title: 'Application Submitted with Verifiable Proof', date: 'Just now', completed: true, current: true, description: `Proof ${linkedVc.id} verified and attached.` },
+        { title: 'Triage & Case Review Meeting', date: 'Estimated: 24h', completed: false, description: 'Neutral consultation to evaluate employer mediation.' },
+        { title: 'Formal Dispute Notice to Employer', date: 'Upcoming', completed: false, description: 'Statutory demand for delayed wages and passport retrieval.' }
+      ]
+    };
+
+    addApplication(newApp);
+    setIsSubmitting(false);
+    setSubmissionSuccess(true);
   };
 
   return (
@@ -282,7 +250,7 @@ export const EvidenceApplicationView: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-xs text-on-surface-variant">
-                      File Size: {doc.fileSize} • Uploaded: {doc.uploadDate}
+                      File Size: {doc.fileSize} â€¢ Uploaded: {doc.uploadDate}
                     </p>
                     <p className="text-[11px] text-secondary font-mono">
                       Digest: {doc.sha256}
@@ -388,7 +356,7 @@ export const EvidenceApplicationView: React.FC = () => {
                 <span>1. Verified Situation</span>
               </div>
               <p className="text-base font-bold text-on-surface">{activeDossier.categoryLabel}</p>
-              <p className="text-xs text-on-surface-variant">{activeDossier.incidentPeriod} • Employer: {activeDossier.employerName}</p>
+              <p className="text-xs text-on-surface-variant">{activeDossier.incidentPeriod} â€¢ Employer: {activeDossier.employerName}</p>
             </div>
 
             <div className="space-y-2 bg-surface-container p-4 rounded-xl">

@@ -230,3 +230,4 @@ function getEmpatheticResponse(userLanguage: LanguageCode) {
   // @ts-ignore
   return responsesByLang[userLanguage] || responsesByLang.en;
 }
+export const getSituationBulletsFromDossier = (dossier: any): string[] => { return [dossier.employmentStatus, dossier.category, dossier.incidentPeriod, dossier.employerName, dossier.verbatimTranscript].filter(Boolean); };

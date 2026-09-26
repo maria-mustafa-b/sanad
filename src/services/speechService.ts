@@ -202,3 +202,5 @@ export const analyzeCodeSwitching = (text: string): CodeSwitchAnalysis => {
     confidence: Math.min(0.99, 0.88 + detectedLoans.length * 0.03),
   };
 };
+
+export const DEMO_HINGLISH_TRANSCRIPT = 'Meri job chali gayi hai aur August ki salary bhi nahi mili.';

@@ -1,3 +1,4 @@
+﻿"use client";
 import { DocumentEvidence } from '../types';
 
 export interface OcrResult {
@@ -52,8 +53,8 @@ export const processDocumentOcr = async (
       'Probation Period': 'Completed (Past 6 Months)'
     },
     prohibitedClauses: [
-      '⚠️ Unlawful Clause 14: "Worker agrees to surrender physical passport to company HR for visa security." — Void under Ministerial Decree 267 of 2015.',
-      '⚠️ Penalty Clause 19: "Company reserves right to deduct 2 days pay for minor defects without tribunal consent." — Void under Federal Decree-Law No. 33 Art. 25.'
+      'âš ï¸ Unlawful Clause 14: "Worker agrees to surrender physical passport to company HR for visa security." â€” Void under Ministerial Decree 267 of 2015.',
+      'âš ï¸ Penalty Clause 19: "Company reserves right to deduct 2 days pay for minor defects without tribunal consent." â€” Void under Federal Decree-Law No. 33 Art. 25.'
     ]
   };
 };

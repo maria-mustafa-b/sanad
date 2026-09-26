@@ -1,3 +1,4 @@
+﻿"use client";
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { languageMeta, extendedLanguages } from '../locales';

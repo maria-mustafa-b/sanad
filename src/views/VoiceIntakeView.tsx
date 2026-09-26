@@ -1,3 +1,4 @@
+﻿"use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { StepTracker } from '../components/StepTracker';
@@ -20,13 +21,12 @@ export const VoiceIntakeView: React.FC = () => {
   const [analysis, setAnalysis] = useState<CodeSwitchAnalysis>(() => analyzeCodeSwitching(activeDossier.verbatimTranscript));
   const [isProcessing, setIsProcessing] = useState(false);
   const [empatheticResponse, setEmpatheticResponse] = useState({
-    native: "SANAD is actively listening to your grievance. Once you finish, we will structure your statement into legal facts.",
-    english: "AI Advocate is actively analyzing your statement for relevant legal claims..."
+    native: "à¤¹à¤®à¤¨à¥‡ à¤†à¤ªà¤•à¥€ à¤¶à¤¿à¤•à¤¾à¤¯à¤¤ à¤ªà¥‚à¤°à¥€ à¤¤à¤°à¤¹ à¤¸à¤®à¤ à¤²à¥€ à¤¹à¥ˆ: à¤†à¤ªà¤•à¤¾ à¤ªà¤¾à¤¸à¤ªà¥‹à¤°à¥à¤Ÿ à¤µà¤¾à¤ªà¤¸ à¤¦à¤¿à¤²à¤¾à¤¨à¤¾ à¤”à¤° 2 à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¤¾ à¤¬à¤•à¤¾à¤¯à¤¾ à¤µà¥‡à¤¤à¤¨à¥¤ SANAD à¤†à¤ªà¤•à¥‡ à¤¸à¤¾à¤¥ à¤–à¤¡à¤¼à¤¾ à¤¹à¥ˆà¥¤ à¤•à¥à¤¯à¤¾ à¤¹à¤® à¤²à¥‡à¤¬à¤° à¤•à¥‹à¤°à¥à¤Ÿ à¤”à¤° à¤¶à¥à¤°à¤® à¤®à¤‚à¤¤à¥à¤°à¤¾à¤²à¤¯ à¤®à¥‡à¤‚ à¤†à¤§à¤¿à¤•à¤¾à¤°à¤¿à¤• à¤•à¥‡à¤¸ à¤¦à¤°à¥à¤œ à¤•à¤°à¥‡à¤‚?",
+    english: "We have identified your dual claims: recovery of withheld passport and recovery of 2 unpaid monthly salaries. SANAD is ready to file formal dispute resolution."
   });
 
   const recognizerRef = useRef<any>(null);
   const timerRef = useRef<any>(null);
-  const initialTextRef = useRef<string>('');
 
   useEffect(() => {
     setActiveStep(1);
@@ -41,13 +41,11 @@ export const VoiceIntakeView: React.FC = () => {
     }
 
     try {
-      initialTextRef.current = transcriptText;
       const recognizer = createSpeechRecognizer(
         language,
         (text) => {
-          const combined = initialTextRef.current ? initialTextRef.current + ' ' + text : text;
-          setTranscriptText(combined);
-          setAnalysis(analyzeCodeSwitching(combined));
+          setTranscriptText(text);
+          setAnalysis(analyzeCodeSwitching(text));
         },
         (err) => {
           console.warn('Speech error:', err);
@@ -95,7 +93,7 @@ export const VoiceIntakeView: React.FC = () => {
 
     setTimeout(() => {
       stopVoiceRecording();
-      const simulated = "";
+      const simulated = "Mera kafeel passport return nahi kar raha hai aur 2 months ki salary pending hai, can SANAD help me file urgent grievance?";
       setTranscriptText(simulated);
       setAnalysis(analyzeCodeSwitching(simulated));
     }, 4000);
@@ -152,7 +150,7 @@ export const VoiceIntakeView: React.FC = () => {
       <div className="max-w-3xl">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold mb-3">
           <span className="material-symbols-outlined text-[15px] text-tertiary">mic_none</span>
-          <span>Natural Conversational Intake • Screen 02-04</span>
+          <span>Natural Conversational Intake â€¢ Screen 02-04</span>
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-headline font-bold text-on-surface tracking-tight leading-tight">
           {t.intake.title}
@@ -196,7 +194,7 @@ export const VoiceIntakeView: React.FC = () => {
                   <span>{t.intake.waveformTitle}</span>
                 </span>
                 <span className="font-mono text-[11px] text-secondary">
-                  48.0 kHz • Live Multi-Token Stream
+                  48.0 kHz â€¢ Live Multi-Token Stream
                 </span>
               </div>
 
@@ -266,7 +264,7 @@ export const VoiceIntakeView: React.FC = () => {
                 </div>
                 <div className="space-y-2 flex-1">
                   <p className="font-headline text-lg text-on-surface leading-relaxed">
-                    “{transcriptText}”
+                    â€œ{transcriptText}â€
                   </p>
 
                   {/* Code-switching tags */}
@@ -337,7 +335,7 @@ export const VoiceIntakeView: React.FC = () => {
                     className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container text-on-surface text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-primary text-[18px]">volume_up</span>
-                    <span>🔊 Listen Audio</span>
+                    <span>ðŸ”Š Listen Audio</span>
                   </button>
                 </div>
               </div>
@@ -400,6 +398,48 @@ export const VoiceIntakeView: React.FC = () => {
             </div>
           </div>
 
+          {/* Quick Preset Scenarios */}
+          <div className="p-6 rounded-2xl bg-surface-container-low space-y-4 shadow-sm">
+            <span className="text-xs uppercase tracking-wider text-outline font-bold block">
+              Sample Voice Scenarios:
+            </span>
+
+            <div className="space-y-2 text-xs">
+              <button
+                onClick={() => handleUsePreset("Mera kafeel passport return nahi kar raha hai aur 2 months ki salary pending hai, can SANAD help me file urgent grievance?")}
+                className="w-full text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-xs cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-primary text-base mt-0.5">chat</span>
+                <div>
+                  <strong className="text-on-surface block font-semibold">Unpaid Wages + Passport Confiscation</strong>
+                  <span className="text-[11px] text-outline">Hindi/Arabic/English code-switch (August case)</span>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleUsePreset("ÙƒÙÙŠÙ„ÙŠ Ø±ÙØ¶ Ø¯ÙØ¹ ØªØ°ÙƒØ±Ø© Ø§Ù„Ø¹ÙˆØ¯Ø© ÙˆÙ…ÙƒØ§ÙØ£Ø© Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø®Ø¯Ù…Ø© Ø¨Ø¹Ø¯ Ø§Ù†ØªÙ‡Ø§Ø¡ Ø¹Ù‚Ø¯ÙŠ Ø§Ù„Ø±Ø³Ù…ÙŠ")}
+                className="w-full text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-xs cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-primary text-base mt-0.5">chat</span>
+                <div>
+                  <strong className="text-on-surface block font-semibold">End-of-Service &amp; Repatriation Ticket</strong>
+                  <span className="text-[11px] text-outline">Arabic labour dispute statement</span>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleUsePreset("à¦†à¦®à¦¾à¦° à¦•à§‹à¦®à§à¦ªà¦¾à¦¨à¦¿à¦° à¦¸à¦¾à¦¥à§‡ à§¨ à¦¬à¦›à¦°à§‡à¦° à¦šà§à¦•à§à¦¤à¦¿ à¦¶à§‡à¦· à¦¹à§Ÿà§‡à¦›à§‡ à¦•à¦¿à¦¨à§à¦¤à§ à¦¤à¦¾à¦°à¦¾ à¦ªà¦¾à¦¸à¦ªà§‹à¦°à§à¦Ÿ à¦¦à¦¿à¦šà§à¦›à§‡ à¦¨à¦¾")}
+                className="w-full text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-xs cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-primary text-base mt-0.5">chat</span>
+                <div>
+                  <strong className="text-on-surface block font-semibold">Contract Completion &amp; Passport Retrieval</strong>
+                  <span className="text-[11px] text-outline">Bengali dialect grievance</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
           {/* Next Step Action Button */}
           <div className="p-4 rounded-xl bg-primary-fixed/40 space-y-2">
             <span className="text-xs font-bold text-primary block">Ready to confirm your story?</span>
@@ -420,5 +460,3 @@ export const VoiceIntakeView: React.FC = () => {
     </div>
   );
 };
-
-

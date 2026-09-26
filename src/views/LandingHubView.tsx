@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+﻿"use client";
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { speakText, createSpeechRecognizer, isSpeechRecognitionSupported } from '../services/speechService';
+import { speakText } from '../services/speechService';
 import { languageMeta, extendedLanguages } from '../locales';
 import { LanguageCode } from '../types';
 
@@ -12,7 +13,6 @@ export const LandingHubView: React.FC = () => {
   const [isExtendedOpen, setIsExtendedOpen] = useState(false);
   const [langSearchFilter, setLangSearchFilter] = useState('');
   const [showLanguageBanner, setShowLanguageBanner] = useState(true);
-  const recognizerRef = useRef<any>(null);
 
   // Wage Calculator modal state
   const [showCalcModal, setShowCalcModal] = useState(false);
@@ -23,49 +23,14 @@ export const LandingHubView: React.FC = () => {
   const toggleVoice = () => {
     if (!isRecording) {
       setIsRecording(true);
-      setVoiceFeedback("🎙️ Listening live in " + (languageMeta[language]?.label || 'your language') + "... Speak now.");
-      
-      if (isSpeechRecognitionSupported()) {
-        try {
-          const rec = createSpeechRecognizer(
-            language,
-            (transcript, isFinal) => {
-              setSearchQuery(transcript);
-              setVoiceFeedback(`Transcribed: "${transcript}"`);
-              if (isFinal) {
-                setIsRecording(false);
-              }
-            },
-            (err) => {
-              console.warn('Speech recog error:', err);
-              setIsRecording(false);
-              setVoiceFeedback('Microphone finished listening.');
-            },
-            () => {
-              setIsRecording(false);
-            }
-          );
-          if (rec) {
-            recognizerRef.current = rec;
-            rec.start();
-            return;
-          }
-        } catch {
-          // fallback to simulation
-        }
-      }
-
-      // Fallback simulation if browser doesn't have mic permissions or Speech API
+      setVoiceFeedback("ðŸŽ™ï¸ Listening in real-time... Say your situation in any language or dialect. SANAD will auto-detect it.");
       const timer = setTimeout(() => {
         setIsRecording(false);
-        setVoiceFeedback('Transcribed: "Unpaid wages for 2 months and withheld passport"');
+        setVoiceFeedback('Transcribed: "Checking pending wages for 2 months and passport return..."');
         setSearchQuery("Unpaid 2 months salary and passport return");
       }, 3500);
       return () => clearTimeout(timer);
     } else {
-      if (recognizerRef.current) {
-        try { recognizerRef.current.stop(); } catch {}
-      }
       setIsRecording(false);
       setVoiceFeedback(null);
     }
@@ -73,7 +38,7 @@ export const LandingHubView: React.FC = () => {
 
   const handleSimulatePrompt = (phrase: string, meaning: string) => {
     setSearchQuery(phrase);
-    setVoiceFeedback(`Dialect Recognized: "${phrase}" (${meaning}) — Mapping to relevant grievance category...`);
+    setVoiceFeedback(`Dialect Recognized: "${phrase}" (${meaning}) â€” Mapping to relevant grievance category...`);
     speakText(phrase, language);
   };
 
@@ -266,23 +231,23 @@ export const LandingHubView: React.FC = () => {
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     <button
-                      onClick={() => handleSimulatePrompt('मेरा 3 महीने का पगार नहीं मिला, कंपनी छुट्टी भी नहीं दे रही', 'Unpaid wage dispute (Hindi)')}
+                      onClick={() => handleSimulatePrompt('à¤®à¥‡à¤°à¤¾ 3 à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¤¾ à¤ªà¤—à¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾, à¤•à¤‚à¤ªà¤¨à¥€ à¤›à¥à¤Ÿà¥à¤Ÿà¥€ à¤­à¥€ à¤¨à¤¹à¥€à¤‚ à¤¦à¥‡ à¤°à¤¹à¥€', 'Unpaid wage dispute (Hindi)')}
                       className="text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-sm cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-primary text-lg shrink-0">chat_bubble</span>
                       <div>
-                        <strong className="text-on-surface block font-semibold">“मेरा 3 महीने का पगार नहीं मिला...”</strong>
+                        <strong className="text-on-surface block font-semibold">â€œà¤®à¥‡à¤°à¤¾ 3 à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¤¾ à¤ªà¤—à¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾...â€</strong>
                         <span className="text-outline text-[11px]">Unpaid wage dispute (Hindi)</span>
                       </div>
                     </button>
 
                     <button
-                      onClick={() => handleSimulatePrompt('كفيلي حجز جواز سفري ورفض يدفع تذكرة العودة', 'Passport retention & return flight (Arabic)')}
+                      onClick={() => handleSimulatePrompt('ÙƒÙÙŠÙ„ÙŠ Ø­Ø¬Ø² Ø¬ÙˆØ§Ø² Ø³ÙØ±ÙŠ ÙˆØ±ÙØ¶ ÙŠØ¯ÙØ¹ ØªØ°ÙƒØ±Ø© Ø§Ù„Ø¹ÙˆØ¯Ø©', 'Passport retention & return flight (Arabic)')}
                       className="text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-sm cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-primary text-lg shrink-0">chat_bubble</span>
                       <div>
-                        <strong className="text-on-surface block font-semibold leading-snug">“كفيلي حجز جواز سفري ويرفض سفري...”</strong>
+                        <strong className="text-on-surface block font-semibold leading-snug">â€œÙƒÙÙŠÙ„ÙŠ Ø­Ø¬Ø² Ø¬ÙˆØ§Ø² Ø³ÙØ±ÙŠ ÙˆÙŠØ±ÙØ¶ Ø³ÙØ±ÙŠ...â€</strong>
                         <span className="text-outline text-[11px]">Passport retention (Arabic)</span>
                       </div>
                     </button>
@@ -293,18 +258,18 @@ export const LandingHubView: React.FC = () => {
                     >
                       <span className="material-symbols-outlined text-primary text-lg shrink-0">chat_bubble</span>
                       <div>
-                        <strong className="text-on-surface block font-semibold leading-snug">“May sakit ako, walang clinic pass...”</strong>
+                        <strong className="text-on-surface block font-semibold leading-snug">â€œMay sakit ako, walang clinic pass...â€</strong>
                         <span className="text-outline text-[11px]">Medical denial (Tagalog)</span>
                       </div>
                     </button>
 
                     <button
-                      onClick={() => handleSimulatePrompt('আমার চুক্তি অনুযায়ী বেতন দেয় নাই, অতিরিক্ত কাজ করায়', 'Overtime & contract breach (Bengali)')}
+                      onClick={() => handleSimulatePrompt('à¦†à¦®à¦¾à¦° à¦šà§à¦•à§à¦¤à¦¿ à¦…à¦¨à§à¦¯à¦¾à§Ÿà§€ à¦¬à§‡à¦¤à¦¨ à¦¦à§‡à§Ÿ à¦¨à¦¾à¦‡, à¦…à¦¤à¦¿à¦°à¦¿à¦•à§à¦¤ à¦•à¦¾à¦œ à¦•à¦°à¦¾à§Ÿ', 'Overtime & contract breach (Bengali)')}
                       className="text-left p-3 rounded-xl bg-surface hover:bg-surface-container-highest transition-colors flex items-start gap-2 shadow-sm cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-primary text-lg shrink-0">chat_bubble</span>
                       <div>
-                        <strong className="text-on-surface block font-semibold leading-snug">“আমার চুক্তি অনুযায়ী বেতন দেয় নাই...”</strong>
+                        <strong className="text-on-surface block font-semibold leading-snug">â€œà¦†à¦®à¦¾à¦° à¦šà§à¦•à§à¦¤à¦¿ à¦…à¦¨à§à¦¯à¦¾à§Ÿà§€ à¦¬à§‡à¦¤à¦¨ à¦¦à§‡à§Ÿ à¦¨à¦¾à¦‡...â€</strong>
                         <span className="text-outline text-[11px]">Overtime breach (Bengali)</span>
                       </div>
                     </button>
@@ -442,7 +407,7 @@ export const LandingHubView: React.FC = () => {
                       {meta.nativeLabel}
                     </span>
                     <span className={`text-xs block mt-1 ${isSelected ? 'opacity-90' : 'text-on-surface-variant'}`}>
-                      {meta.label} • {meta.dir === 'rtl' ? 'RTL Layout' : 'Standard'}
+                      {meta.label} â€¢ {meta.dir === 'rtl' ? 'RTL Layout' : 'Standard'}
                     </span>
                   </button>
                 );
@@ -546,7 +511,7 @@ export const LandingHubView: React.FC = () => {
                   <h3 className="text-lg font-headline font-bold text-on-surface group-hover:text-primary transition-colors">
                     Unpaid Wages &amp; End of Service Calculation
                   </h3>
-                  <p className="text-xs text-outline mt-0.5" dir="rtl">حساب مكافأة نهاية الخدمة والأجور المتأخرة</p>
+                  <p className="text-xs text-outline mt-0.5" dir="rtl">Ø­Ø³Ø§Ø¨ Ù…ÙƒØ§ÙØ£Ø© Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø®Ø¯Ù…Ø© ÙˆØ§Ù„Ø£Ø¬ÙˆØ± Ø§Ù„Ù…ØªØ£Ø®Ø±Ø©</p>
                 </div>
 
                 <p className="text-sm text-on-surface-variant leading-relaxed">
@@ -603,7 +568,7 @@ export const LandingHubView: React.FC = () => {
                   <h3 className="text-lg font-headline font-bold text-on-surface group-hover:text-primary transition-colors">
                     Contract Verifier &amp; Camera Scan
                   </h3>
-                  <p className="text-xs text-outline mt-0.5" dir="rtl">قارئ العقود الذكي وكشف الشروط غير القانونية</p>
+                  <p className="text-xs text-outline mt-0.5" dir="rtl">Ù‚Ø§Ø±Ø¦ Ø§Ù„Ø¹Ù‚ÙˆØ¯ Ø§Ù„Ø°ÙƒÙŠ ÙˆÙƒØ´Ù Ø§Ù„Ø´Ø±ÙˆØ· ØºÙŠØ± Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠØ©</p>
                 </div>
 
                 <p className="text-sm text-on-surface-variant leading-relaxed">
@@ -654,7 +619,7 @@ export const LandingHubView: React.FC = () => {
                   <h3 className="text-lg font-headline font-bold text-on-surface group-hover:text-primary transition-colors">
                     Work Permit &amp; Visa Status Tracker
                   </h3>
-                  <p className="text-xs text-outline mt-0.5" dir="rtl">متابعة الإقامة وتصريح العمل وحالة البلاغات</p>
+                  <p className="text-xs text-outline mt-0.5" dir="rtl">Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„Ø¥Ù‚Ø§Ù…Ø© ÙˆØªØµØ±ÙŠØ­ Ø§Ù„Ø¹Ù…Ù„ ÙˆØ­Ø§Ù„Ø© Ø§Ù„Ø¨Ù„Ø§ØºØ§Øª</p>
                 </div>
 
                 <p className="text-sm text-on-surface-variant leading-relaxed">
@@ -702,7 +667,7 @@ export const LandingHubView: React.FC = () => {
                   <h3 className="text-lg font-headline font-bold text-on-surface group-hover:text-primary transition-colors">
                     Health Insurance &amp; Medical Clinic Locator
                   </h3>
-                  <p className="text-xs text-outline mt-0.5" dir="rtl">التأمين الصحي والمراكز الطبية المجانية للعمال</p>
+                  <p className="text-xs text-outline mt-0.5" dir="rtl">Ø§Ù„ØªØ£Ù…ÙŠÙ† Ø§Ù„ØµØ­ÙŠ ÙˆØ§Ù„Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ø·Ø¨ÙŠØ© Ø§Ù„Ù…Ø¬Ø§Ù†ÙŠØ© Ù„Ù„Ø¹Ù…Ø§Ù„</p>
                 </div>
 
                 <p className="text-sm text-on-surface-variant leading-relaxed">
@@ -748,7 +713,7 @@ export const LandingHubView: React.FC = () => {
                   <h3 className="text-lg font-headline font-bold text-on-surface group-hover:text-primary transition-colors">
                     Official Grievance &amp; Labor Court Support
                   </h3>
-                  <p className="text-xs text-outline mt-0.5" dir="rtl">تسجيل الشكاوى الرسمية والدعم القانوني المجاني</p>
+                  <p className="text-xs text-outline mt-0.5" dir="rtl">ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø§Ù„Ø±Ø³Ù…ÙŠØ© ÙˆØ§Ù„Ø¯Ø¹Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ Ø§Ù„Ù…Ø¬Ø§Ù†ÙŠ</p>
                 </div>
 
                 <p className="text-sm text-on-surface-variant leading-relaxed">
@@ -791,7 +756,7 @@ export const LandingHubView: React.FC = () => {
                   <h3 className="text-lg font-headline font-bold text-on-surface group-hover:text-error transition-colors">
                     24/7 Emergency Helpline &amp; Safe Shelter
                   </h3>
-                  <p className="text-xs text-outline mt-0.5" dir="rtl">خط الإغاثة الطارئ ومراكز الإيواء الآمنة والمجانية</p>
+                  <p className="text-xs text-outline mt-0.5" dir="rtl">Ø®Ø· Ø§Ù„Ø¥ØºØ§Ø«Ø© Ø§Ù„Ø·Ø§Ø±Ø¦ ÙˆÙ…Ø±Ø§ÙƒØ² Ø§Ù„Ø¥ÙŠÙˆØ§Ø¡ Ø§Ù„Ø¢Ù…Ù†Ø© ÙˆØ§Ù„Ù…Ø¬Ø§Ù†ÙŠØ©</p>
                 </div>
 
                 <p className="text-sm text-on-surface-variant leading-relaxed">
@@ -803,7 +768,7 @@ export const LandingHubView: React.FC = () => {
                     <span className="material-symbols-outlined text-error text-xl">phone_in_talk</span>
                     <div>
                       <span className="font-bold text-error block text-sm">800-SANAD-SOS</span>
-                      <span className="text-outline text-[11px]">Toll-Free • Multilingual 24/7</span>
+                      <span className="text-outline text-[11px]">Toll-Free â€¢ Multilingual 24/7</span>
                     </div>
                   </div>
                   <span className="inline-flex h-2 w-2 rounded-full bg-error animate-ping"></span>

@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   LanguageCode, 
@@ -57,17 +58,17 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Load saved language or default to English
   const [language, setLanguageState] = useState<LanguageCode>(() => {
-    const saved = localStorage.getItem('sanad_lang') as LanguageCode;
+    const saved = (typeof window !== 'undefined' ? window.localStorage.getItem('sanad_lang') : null) as LanguageCode;
     return (saved && translations[saved]) ? saved : 'en';
   });
 
   const [textScale, setTextScaleState] = useState<TextScale>(() => {
-    const saved = localStorage.getItem('sanad_text_scale') as TextScale;
+    const saved = (typeof window !== 'undefined' ? localStorage.getItem : () => null)('sanad_text_scale') as TextScale;
     return (saved && ['normal', 'large', 'xlarge'].includes(saved)) ? saved : 'normal';
   });
 
   const [currentRoute, setCurrentRoute] = useState<string>(() => {
-    return window.location.pathname.length > 1 ? window.location.pathname : '/';
+    return (typeof window !== 'undefined' ? window.location.pathname : '/').length > 1 ? (typeof window !== 'undefined' ? window.location.pathname : '/') : '/';
   });
 
   const [currentUser, setCurrentUser] = useState<UserProfile>(mockUser);
@@ -82,13 +83,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const direction = languageMeta[language]?.dir || 'ltr';
   const t = translations[language] || translations.en;
-
-
-  useEffect(() => {
-    // Silently start a backend demo session to get the auth cookie
-    // This allows real backend APIs like Document Upload and Blockchain VC to work
-    fetch('/api/auth/demo', { method: 'POST' }).catch(console.error);
-  }, []);
 
   // Sync direction and font-scaling to document root
   useEffect(() => {
@@ -117,15 +111,61 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTextScaleState(scale);
   };
 
+  // Alias → canonical path (one path per screen)
+  const canonicalizeRoute = (path: string): string => {
+    const aliases: Record<string, string> = {
+      '/home': '/dashboard',
+      '/journey': '/dashboard',
+      '/tell-sanad': '/chat',
+      '/confirm-situation': '/situation',
+      '/consent': '/consent',
+      '/my-proof': '/credentials',
+      '/document-reader': '/documents',
+      '/evidence-application': '/applications/submit',
+      '/public-verification': '/verify',
+      '/worker-dignity': '/services',
+      '/narrative-processing': '/credentials/create',
+      '/processing': '/credentials/create',
+      '/auth/welcome': '/auth/signin',
+      '/auth/register': '/auth/signup',
+      '/settings': '/settings/accessibility',
+    };
+    return aliases[path] || path;
+  };
+
   const navigate = (route: string) => {
-    setCurrentRoute(route);
+    const canonical = canonicalizeRoute(route);
+    setCurrentRoute(canonical);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     try {
-      window.history.pushState({}, '', route);
+      window.history.pushState({}, '', canonical);
     } catch {
       // browser environment fallback
     }
   };
+
+  // Sync React view when browser/phone back-forward changes the URL
+  useEffect(() => {
+    const onPopState = () => {
+      const path = (typeof window !== 'undefined' ? window.location.pathname : '/').length > 1
+        ? (typeof window !== 'undefined' ? window.location.pathname : '/')
+        : '/';
+      const canonical = canonicalizeRoute(path);
+      setCurrentRoute(canonical);
+      if (canonical !== path) {
+        try {
+          window.history.replaceState({}, '', canonical);
+        } catch {
+          // ignore
+        }
+      }
+    };
+
+    window.addEventListener('popstate', onPopState);
+    // Normalize initial URL if it used an alias
+    onPopState();
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   const updateDossier = (updates: Partial<DossierClaim>) => {
     setActiveDossier(prev => ({
@@ -191,7 +231,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentUser(mockUser);
     setIsDemoMode(true);
     setActiveStep(2);
-    navigate('/journey');
+    navigate('/dashboard');
   };
 
   const loginUser = (user: UserProfile) => {
@@ -258,4 +298,3 @@ export const useApp = () => {
   }
   return context;
 };
-
