@@ -21,8 +21,8 @@ export const isSpeechSynthesisSupported = (): boolean => {
 export const createSpeechRecognizer = (
   lang: LanguageCode,
   onResult: (transcript: string, isFinal: boolean) => void,
-  onError: (err: any) => void,
-  onEnd: () => void
+  onError?: (err: any) => void,
+  onEnd?: () => void
 ) => {
   if (!isSpeechRecognitionSupported()) {
     return null;
@@ -61,40 +61,59 @@ export const createSpeechRecognizer = (
   };
 
   recognition.onerror = (event: any) => {
-    console.warn('Speech recognition event:', event.error);
-    onError(event.error);
+    console.warn('Speech recognition notice:', event.error);
+    if (onError) onError(event.error);
   };
 
   recognition.onend = () => {
-    onEnd();
+    if (onEnd) onEnd();
   };
 
   return recognition;
 };
 
-// Natural Voice Read-Aloud / Accessibility TTS
+// Natural Voice Read-Aloud / Accessibility TTS with best native voice matching
 export const speakText = (text: string, lang: LanguageCode) => {
   if (!isSpeechSynthesisSupported()) {
     console.warn('Speech synthesis not supported in this browser environment');
     return;
   }
 
-  window.speechSynthesis.cancel(); // cancel any active speaking
-  const utterance = new SpeechSynthesisUtterance(text);
+  try {
+    window.speechSynthesis.cancel(); // cancel any active speaking
 
-  const langMap: Record<LanguageCode, string> = {
-    en: 'en-US',
-    ar: 'ar-XA',
-    hi: 'hi-IN',
-    ur: 'ur-PK',
-    bn: 'bn-BD',
-  };
+    const cleanText = text.replace(/[*_#`]/g, '').trim();
+    if (!cleanText) return;
 
-  utterance.lang = langMap[lang] || 'en-US';
-  utterance.rate = 0.95; // comfortable, clear pace
-  utterance.pitch = 1.0;
+    const utterance = new SpeechSynthesisUtterance(cleanText);
 
-  window.speechSynthesis.speak(utterance);
+    const langMap: Record<LanguageCode, string> = {
+      en: 'en-US',
+      ar: 'ar-AE',
+      hi: 'hi-IN',
+      ur: 'ur-PK',
+      bn: 'bn-BD',
+    };
+
+    const targetLang = langMap[lang] || 'en-US';
+    utterance.lang = targetLang;
+    utterance.rate = 0.95; // comfortable, clear pace
+    utterance.pitch = 1.0;
+
+    // Pick best available voice matching language
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      const match = voices.find(v => v.lang.startsWith(targetLang.slice(0, 2))) ||
+                    voices.find(v => v.lang.includes(lang));
+      if (match) {
+        utterance.voice = match;
+      }
+    }
+
+    window.speechSynthesis.speak(utterance);
+  } catch (e) {
+    console.warn('Error during TTS playback:', e);
+  }
 };
 
 export const stopSpeaking = () => {
@@ -111,22 +130,23 @@ export const analyzeCodeSwitching = (text: string): CodeSwitchAnalysis => {
 
   // Arabic loan terms common in Gulf migrant settings
   const arabicTerms = [
-    { word: 'kafeel', category: 'Arabic loan: كفيل (Sponsor)' },
-    { word: 'iqama', category: 'Arabic loan: إقامة (Residency)' },
-    { word: 'shurti', category: 'Arabic loan: شرطي (Police)' },
-    { word: 'tasreeh', category: 'Arabic loan: تصريح (Permit)' },
-    { word: 'khedmah', category: 'Arabic loan: نهاية الخدمة (End of Service)' },
-    { word: 'mushkila', category: 'Arabic loan: مشكلة (Grievance/Problem)' },
-    { word: 'maktab', category: 'Arabic loan: مكتب (Labour Office)' },
+    { word: 'kafeel', category: 'Arabic: كفيل (Sponsor)' },
+    { word: 'iqama', category: 'Arabic: إقامة (Residency)' },
+    { word: 'shurti', category: 'Arabic: شرطي (Police)' },
+    { word: 'tasreeh', category: 'Arabic: تصريح (Permit)' },
+    { word: 'khedmah', category: 'Arabic: نهاية الخدمة (End of Service)' },
+    { word: 'mushkila', category: 'Arabic: مشكلة (Grievance)' },
+    { word: 'maktab', category: 'Arabic: مكتب (Labour Office)' },
+    { word: 'ejari', category: 'Arabic: إيجاري (Tenancy Register)' },
   ];
 
   // South Asian loan terms (Hindi/Urdu/Bengali)
   const southAsianTerms = [
     { word: 'mera', category: 'Hindi/Urdu: मेरा (My)' },
     { word: 'meri', category: 'Hindi/Urdu: मेरी (My)' },
-    { word: 'pagar', category: 'Hindi/Urdu loan: पगार (Salary/Wage)' },
-    { word: 'chutti', category: 'Hindi/Urdu loan: छुट्टी (Leave/Vacation)' },
-    { word: 'nahi', category: 'Hindi/Urdu: नहीं (Denial/Negative)' },
+    { word: 'pagar', category: 'Hindi/Urdu: पगार (Salary/Wage)' },
+    { word: 'chutti', category: 'Hindi/Urdu: छुट्टी (Leave)' },
+    { word: 'nahi', category: 'Hindi/Urdu: नहीं (Denial)' },
     { word: 'amar', category: 'Bengali: আমার (My)' },
     { word: 'beton', category: 'Bengali: বেতন (Wage)' },
     { word: 'taka', category: 'Bengali: টাকা (Money)' },
@@ -134,7 +154,7 @@ export const analyzeCodeSwitching = (text: string): CodeSwitchAnalysis => {
 
   // English legal intent terms
   const englishIntentTerms = [
-    'salary', 'passport', 'months', 'company', 'grievance', 'help', 'urgent', 'contract', 'court', 'visa'
+    'salary', 'passport', 'months', 'company', 'grievance', 'help', 'urgent', 'contract', 'court', 'visa', 'ejari', 'rent'
   ];
 
   for (const item of arabicTerms) {

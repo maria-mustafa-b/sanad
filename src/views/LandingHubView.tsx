@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useApp } from '../context/AppContext';
-import { speakText } from '../services/speechService';
+import { speakText, createSpeechRecognizer, isSpeechRecognitionSupported } from '../services/speechService';
 import { languageMeta, extendedLanguages } from '../locales';
 import { LanguageCode } from '../types';
 
@@ -12,6 +12,7 @@ export const LandingHubView: React.FC = () => {
   const [isExtendedOpen, setIsExtendedOpen] = useState(false);
   const [langSearchFilter, setLangSearchFilter] = useState('');
   const [showLanguageBanner, setShowLanguageBanner] = useState(true);
+  const recognizerRef = useRef<any>(null);
 
   // Wage Calculator modal state
   const [showCalcModal, setShowCalcModal] = useState(false);
@@ -22,14 +23,49 @@ export const LandingHubView: React.FC = () => {
   const toggleVoice = () => {
     if (!isRecording) {
       setIsRecording(true);
-      setVoiceFeedback("🎙️ Listening in real-time... Say your situation in any language or dialect. SANAD will auto-detect it.");
+      setVoiceFeedback("🎙️ Listening live in " + (languageMeta[language]?.label || 'your language') + "... Speak now.");
+      
+      if (isSpeechRecognitionSupported()) {
+        try {
+          const rec = createSpeechRecognizer(
+            language,
+            (transcript, isFinal) => {
+              setSearchQuery(transcript);
+              setVoiceFeedback(`Transcribed: "${transcript}"`);
+              if (isFinal) {
+                setIsRecording(false);
+              }
+            },
+            (err) => {
+              console.warn('Speech recog error:', err);
+              setIsRecording(false);
+              setVoiceFeedback('Microphone finished listening.');
+            },
+            () => {
+              setIsRecording(false);
+            }
+          );
+          if (rec) {
+            recognizerRef.current = rec;
+            rec.start();
+            return;
+          }
+        } catch {
+          // fallback to simulation
+        }
+      }
+
+      // Fallback simulation if browser doesn't have mic permissions or Speech API
       const timer = setTimeout(() => {
         setIsRecording(false);
-        setVoiceFeedback('Transcribed: "Checking pending wages for 2 months and passport return..."');
+        setVoiceFeedback('Transcribed: "Unpaid wages for 2 months and withheld passport"');
         setSearchQuery("Unpaid 2 months salary and passport return");
       }, 3500);
       return () => clearTimeout(timer);
     } else {
+      if (recognizerRef.current) {
+        try { recognizerRef.current.stop(); } catch {}
+      }
       setIsRecording(false);
       setVoiceFeedback(null);
     }
