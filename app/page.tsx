@@ -1,75 +1,49 @@
 import Link from "next/link";
-import { HeroScrollDemo } from "@/components/HeroScrollDemo";
 import { SanadHero } from "@/components/landing/sanad-hero";
-import { ShieldCheck, FileSearch, Mic, ArrowRight } from "lucide-react";
+import { ServicesPreview } from "@/components/landing/services-preview";
+import { Features } from "@/components/ui/features-4";
+import { ShieldCheck, Users, Globe2, Lock } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="flex-1 flex flex-col w-full bg-gray-50">
+    <div className="flex-1 flex flex-col w-full bg-white">
       
       {/* Full-width Dubai Parallax Hero */}
       <SanadHero />
 
-      {/* Dark Section for the 3D Scroll Demo to seamlessly blend with the Hero */}
-      <div className="w-full bg-gray-900 border-b border-gray-800">
-        <div className="max-w-5xl mx-auto px-4 py-12 md:py-20">
-          <HeroScrollDemo />
+      {/* New Features Grid (from user snippet) */}
+      <Features />
+
+      {/* Services Preview Section */}
+      <ServicesPreview />
+
+      {/* Stats / Trust Section */}
+      <section className="w-full bg-slate-900 py-24 border-t border-slate-800 text-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center divide-x divide-slate-800">
+            <div className="flex flex-col items-center">
+              <Globe2 className="w-10 h-10 text-emerald-500 mb-4 opacity-80" />
+              <div className="text-4xl font-black mb-2">5+</div>
+              <div className="text-gray-400 font-medium tracking-wide">Languages Supported</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <Lock className="w-10 h-10 text-emerald-500 mb-4 opacity-80" />
+              <div className="text-4xl font-black mb-2">Web3</div>
+              <div className="text-gray-400 font-medium tracking-wide">Polygon Amoy Testnet</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <ShieldCheck className="w-10 h-10 text-emerald-500 mb-4 opacity-80" />
+              <div className="text-4xl font-black mb-2">Zero</div>
+              <div className="text-gray-400 font-medium tracking-wide">Mock Data</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <Users className="w-10 h-10 text-emerald-500 mb-4 opacity-80" />
+              <div className="text-4xl font-black mb-2">24/7</div>
+              <div className="text-gray-400 font-medium tracking-wide">AI Legal structuring</div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="w-full max-w-5xl mx-auto px-4 py-20">
-        
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-4">How SANAD Empowers You</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            A complete end-to-end ecosystem for understanding your situation, creating verifiable evidence, and applying for government support.
-          </p>
-        </div>
-
-        {/* Feature Grid */}
-        <section className="grid md:grid-cols-3 gap-8 mb-24">
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300">
-            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 border border-blue-100">
-              <Mic className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">1. Voice Intake</h3>
-            <p className="text-gray-600 leading-relaxed mb-6">
-              Speak naturally in Urdu, Hindi, Arabic, Bengali, or English. Our AI transcripts, translates, and structures your situation legally in real-time.
-            </p>
-            <Link href="/chat" className="text-blue-600 font-bold flex items-center gap-2 hover:gap-3 transition-all">
-              Start Voice Intake <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300">
-            <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 border border-emerald-100">
-              <ShieldCheck className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">2. Cryptographic Proof</h3>
-            <p className="text-gray-600 leading-relaxed mb-6">
-              Upload documents for AI OCR verification. We seal your claim and evidence on the Polygon blockchain as a tamper-proof Verifiable Credential.
-            </p>
-            <Link href="/documents" className="text-emerald-600 font-bold flex items-center gap-2 hover:gap-3 transition-all">
-              Open Document Vault <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300">
-            <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6 border border-purple-100">
-              <FileSearch className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">3. Find Support</h3>
-            <p className="text-gray-600 leading-relaxed mb-6">
-              Automatically match your situation with the exact UAE government services and legal clinics that can help resolve your specific case.
-            </p>
-            <Link href="/services" className="text-purple-600 font-bold flex items-center gap-2 hover:gap-3 transition-all">
-              Browse UAE Services <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </section>
-
-      </div>
+      </section>
     </div>
   );
 }

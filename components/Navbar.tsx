@@ -3,56 +3,63 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const isHome = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isSolid = !isHome || scrolled;
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isSolid
-          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200"
-          : "bg-transparent border-b border-transparent"
+        scrolled
+          ? "bg-white border-b border-gray-100 shadow-sm py-3"
+          : "bg-transparent py-4"
       }`}
     >
-      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center font-bold text-lg group-hover:bg-emerald-700 transition">
-            S
-          </div>
-          <span className={`font-bold text-xl tracking-tight transition-colors ${isSolid ? "text-gray-900" : "text-white drop-shadow-sm"}`}>
+      <div className="w-full px-4 lg:px-8 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 shrink-0">
+          <img src="/sanad-logo.png" alt="SANAD Logo" className="w-10 h-10 object-contain drop-shadow-md" />
+          <span className={`font-extrabold text-2xl tracking-tight transition-colors ${scrolled ? 'text-gray-900' : 'text-white'}`}>
             SANAD
           </span>
         </Link>
         
-        <nav className={`hidden md:flex items-center gap-6 font-medium text-sm transition-colors ${isSolid ? "text-gray-600" : "text-gray-100 drop-shadow-sm"}`}>
-          <Link href="/" className={`hover:text-emerald-500 transition`}>Home</Link>
-          <Link href="/services" className={`hover:text-emerald-500 transition`}>Services</Link>
-          <Link href="/dashboard" className={`hover:text-emerald-500 transition`}>Dashboard</Link>
-          <Link href="/documents" className={`hover:text-emerald-500 transition`}>Documents</Link>
-          <Link href="/chat" className={`hover:text-emerald-500 transition`}>Get Help</Link>
-          <Link href="/verify" className={`hover:text-emerald-500 transition`}>Verify Credential</Link>
-        </nav>
+        {/* Center Nav Pill */}
+        <div className={`hidden lg:flex items-center gap-5 px-6 py-2.5 rounded-full font-semibold text-sm transition-all whitespace-nowrap overflow-x-auto no-scrollbar ${
+          scrolled 
+            ? "bg-gray-100 text-gray-700" 
+            : "bg-gray-800/40 backdrop-blur-md text-white border border-white/10"
+        }`}>
+          <Link href="/dashboard" className="hover:text-emerald-400 transition-colors">Dashboard</Link>
+          <Link href="/chat" className="hover:text-emerald-400 transition-colors">My Situation</Link>
+          <Link href="/services" className="hover:text-emerald-400 transition-colors">Services</Link>
+          <Link href="/applications" className="hover:text-emerald-400 transition-colors">My Applications</Link>
+          <Link href="/credentials" className="hover:text-emerald-400 transition-colors">My Credentials</Link>
+          <Link href="/documents" className="hover:text-emerald-400 transition-colors">Documents</Link>
+          <Link href="/notifications" className="hover:text-emerald-400 transition-colors">Notifications</Link>
+        </div>
 
-        <div className="flex items-center gap-3">
-          <Link href="/chat" className="bg-emerald-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-emerald-700 transition shadow-sm border border-emerald-500/50">
-            Start Case
+        {/* Right CTA */}
+        <div className="flex items-center gap-4 shrink-0">
+          <Link 
+            href="/chat" 
+            className={`px-6 py-2.5 rounded-full font-bold text-sm flex items-center gap-2 transition-all ${
+              scrolled 
+                ? "bg-gray-900 text-white hover:bg-gray-800" 
+                : "bg-gray-900 text-white hover:bg-gray-800 border border-white/10 shadow-lg"
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4" /> Start Case
           </Link>
         </div>
       </div>

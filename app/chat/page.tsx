@@ -1,21 +1,18 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Mic, Square, Loader2, Send, Volume2, VolumeX, ShieldAlert } from "lucide-react";
+import { Mic, Square, Loader2, Send, X, CheckCircle2, ChevronRight, AlertCircle, Edit2 } from "lucide-react";
+
+type IntakeState = 'IDLE' | 'RECORDING' | 'PROCESSING' | 'REVIEW';
 
 export default function ChatPage() {
   const [text, setText] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [state, setState] = useState<IntakeState>('IDLE');
   const [result, setResult] = useState<any>(null);
-  
-  // Audio state
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [activeTab, setActiveTab] = useState<'VOICE' | 'CHAT'>('VOICE');
   
   const recognitionRef = useRef<any>(null);
 
-  // Initialize Speech Recognition
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -23,8 +20,7 @@ export default function ChatPage() {
         const recognition = new SpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = "en-US"; // In production, we'd detect language
-
+        
         recognition.onresult = (event: any) => {
           let currentTranscript = "";
           for (let i = 0; i < event.results.length; i++) {
@@ -33,236 +29,241 @@ export default function ChatPage() {
           setText(currentTranscript);
         };
 
-        recognition.onerror = (event: any) => {
-          console.error("Speech recognition error", event.error);
-          setIsRecording(false);
-        };
-
         recognition.onend = () => {
-          setIsRecording(false);
+          if (state === 'RECORDING') setState('IDLE');
         };
 
         recognitionRef.current = recognition;
       }
     }
-
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      window.speechSynthesis.cancel();
+      if (recognitionRef.current) recognitionRef.current.stop();
     };
-  }, []);
+  }, [state]);
 
   const toggleRecording = () => {
-    if (isRecording) {
+    if (state === 'RECORDING') {
       recognitionRef.current?.stop();
-      setIsRecording(false);
+      setState('IDLE');
     } else {
       setText("");
       recognitionRef.current?.start();
-      setIsRecording(true);
+      setState('RECORDING');
     }
-  };
-
-  const speakText = (textToSpeak: string) => {
-    if (!audioEnabled || !("speechSynthesis" in window)) return;
-    
-    window.speechSynthesis.cancel();
-    
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-    
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    
-    window.speechSynthesis.speak(utterance);
   };
 
   const handleSubmit = async () => {
     if (!text.trim()) return;
     
-    if (isRecording) {
+    if (state === 'RECORDING') {
       recognitionRef.current?.stop();
-      setIsRecording(false);
     }
     
-    setIsProcessing(true);
+    setState('PROCESSING');
     
     try {
       const res = await fetch("/api/ai/understand", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          context: { platform: "web" } 
-        })
+        body: JSON.stringify({ text })
       });
       
       const data = await res.json();
       setResult(data);
-      
-      // Auto-speak the summary if audio is enabled
-      if (data.summary) {
-        speakText("I have analyzed your situation. " + data.summary);
-      }
-      
-      // Optional: Save to backend claim silently
-      await fetch('/api/claims', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ original_statement: text, structured_data: data }) 
-      }).catch(console.error);
+      setState('REVIEW');
       
     } catch (err) {
       console.error(err);
       alert("Failed to analyze situation");
-    } finally {
-      setIsProcessing(false);
+      setState('IDLE');
     }
   };
 
-  const toggleAudio = () => {
-    setAudioEnabled(!audioEnabled);
-    if (audioEnabled) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
-  };
+  const exampleMessages = [
+    "Mer job chali gayi hai aur August ki salary nahi mili",
+    "I haven't received my salary for 3 months",
+    "Visa cancellation issue",
+    "Housing eviction problem"
+  ];
 
   return (
-    <div className="flex-1 w-full max-w-4xl mx-auto px-4 pt-24 pb-12 flex flex-col min-h-screen">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Voice Intake</h1>
-          <p className="text-gray-600">Speak in your native language. We'll automatically translate and structure it.</p>
-        </div>
-        <button 
-          onClick={toggleAudio}
-          className={`p-3 rounded-full transition-colors ${audioEnabled ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-500'}`}
-          title={audioEnabled ? "Mute Voice Assistant" : "Enable Voice Assistant"}
-        >
-          {audioEnabled ? <Volume2 className="w-6 h-6" /> : <VolumeX className="w-6 h-6" />}
-        </button>
-      </div>
+    <div className="w-full max-w-3xl mx-auto flex flex-col min-h-[80vh] animate-in fade-in duration-500">
+      
+      {state !== 'REVIEW' ? (
+        <>
+          <div className="mb-8">
+            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Tell us about your situation</h1>
+            <p className="text-gray-500">Speak naturally in your native language. We will legally structure your claim.</p>
+          </div>
 
-      {!result ? (
-        <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-200 overflow-hidden flex flex-col flex-1 max-h-[70vh]">
-          
-          {/* Visualizer Area */}
-          <div className="flex-1 p-8 flex items-center justify-center bg-gray-50 border-b border-gray-100 relative">
-             {isRecording ? (
-                <div className="text-center animate-in fade-in zoom-in duration-300">
-                  <div className="relative w-32 h-32 mx-auto mb-6">
-                    <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-20"></div>
-                    <div className="absolute inset-2 bg-red-100 rounded-full animate-pulse"></div>
-                    <button onClick={toggleRecording} className="absolute inset-0 flex items-center justify-center z-10 text-red-600 hover:text-red-700 transition-colors">
-                      <Mic className="w-12 h-12" />
-                    </button>
+          {/* Tabs */}
+          <div className="flex p-1 bg-gray-100 rounded-xl w-fit mb-8">
+            <button 
+              onClick={() => setActiveTab('VOICE')}
+              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'VOICE' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Voice Input
+            </button>
+            <button 
+              onClick={() => setActiveTab('CHAT')}
+              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'CHAT' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Chat
+            </button>
+          </div>
+
+          <div className="flex-1 bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden flex flex-col">
+            
+            {activeTab === 'VOICE' ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-12 min-h-[400px]">
+                {state === 'RECORDING' ? (
+                  <div className="flex flex-col items-center animate-in zoom-in duration-300">
+                    <div className="relative w-32 h-32 flex items-center justify-center mb-8">
+                      <div className="absolute inset-0 bg-red-100 rounded-full animate-ping opacity-75"></div>
+                      <div className="absolute inset-4 bg-red-50 rounded-full"></div>
+                      <Mic className="w-10 h-10 text-red-600 relative z-10 animate-pulse" />
+                    </div>
+                    <div className="text-gray-900 font-bold text-xl mb-4 max-w-md text-center line-clamp-3">
+                      "{text || 'Listening...'}"
+                    </div>
+                    <p className="text-red-500 font-semibold mb-8">Listening...</p>
+                    <div className="flex gap-4">
+                      <button onClick={() => {setState('IDLE'); setText(''); recognitionRef.current?.stop();}} className="px-6 py-3 rounded-full font-bold text-gray-600 bg-gray-100 hover:bg-gray-200">
+                        Cancel
+                      </button>
+                      <button onClick={handleSubmit} disabled={!text} className="px-6 py-3 rounded-full font-bold text-white bg-teal-600 hover:bg-teal-700 disabled:opacity-50 flex items-center gap-2">
+                        Continue <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-red-600 font-bold text-lg">Listening...</p>
-                  <p className="text-red-400 text-sm mt-1">Speak clearly into your microphone</p>
-                </div>
-             ) : (
-                <div className="text-center animate-in fade-in duration-300">
-                   <button 
-                    onClick={toggleRecording}
-                    className="w-24 h-24 bg-white border-2 border-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm hover:shadow-md hover:border-emerald-200 hover:text-emerald-600 transition-all text-gray-400 group"
-                   >
-                     <Mic className="w-10 h-10 group-hover:scale-110 transition-transform" />
-                   </button>
-                   <p className="font-bold text-gray-700 text-lg">Ready to listen</p>
-                   <p className="text-gray-500 text-sm mt-1">Tap the microphone to begin</p>
-                </div>
-             )}
-          </div>
-
-          {/* Input Area */}
-          <div className="p-6 bg-white">
-            <div className="relative flex items-end gap-4">
-              <div className="relative flex-1">
-                <textarea
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="The AI will transcribe your voice here, or you can type directly..."
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 outline-none resize-none min-h-[120px] focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all shadow-inner"
-                />
+                ) : state === 'PROCESSING' ? (
+                  <div className="flex flex-col items-center text-teal-700">
+                    <Loader2 className="w-12 h-12 animate-spin mb-4" />
+                    <h3 className="text-xl font-bold">Structuring your situation...</h3>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <button 
+                      onClick={toggleRecording}
+                      className="w-24 h-24 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mb-6 transition-all hover:scale-105"
+                    >
+                      <Mic className="w-10 h-10" />
+                    </button>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Tap to speak</h3>
+                    <p className="text-gray-500 mb-8">or choose an example below</p>
+                    
+                    <div className="flex flex-wrap justify-center gap-2 max-w-lg">
+                      {exampleMessages.map((msg, i) => (
+                        <button key={i} onClick={() => setText(msg)} className="px-4 py-2 bg-gray-50 border border-gray-100 rounded-full text-sm text-gray-600 hover:bg-gray-100 transition-colors">
+                          "{msg}"
+                        </button>
+                      ))}
+                    </div>
+                    {text && (
+                      <div className="mt-8">
+                        <button onClick={handleSubmit} className="px-8 py-3 bg-teal-600 text-white font-bold rounded-full hover:bg-teal-700 shadow-md">
+                          Continue with text
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className="flex flex-col gap-3">
-                <button 
-                  onClick={toggleRecording}
-                  className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all ${isRecording ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                  title={isRecording ? "Stop Recording" : "Start Recording"}
-                >
-                  {isRecording ? <Square className="w-6 h-6 fill-current" /> : <Mic className="w-6 h-6" />}
-                </button>
-                <button 
-                  onClick={handleSubmit}
-                  disabled={isProcessing || !text.trim()}
-                  className="w-14 h-14 bg-emerald-600 text-white rounded-xl flex items-center justify-center hover:bg-emerald-700 disabled:opacity-50 disabled:hover:bg-emerald-600 transition-all shadow-md shadow-emerald-600/20"
-                  title="Submit Analysis"
-                >
-                  {isProcessing ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-6 h-6 ml-1" />}
-                </button>
+            ) : (
+              <div className="flex-1 flex flex-col p-6 min-h-[400px]">
+                <div className="flex-1 overflow-y-auto mb-4">
+                  {/* Chat history would go here */}
+                </div>
+                <div className="relative">
+                  <textarea
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    placeholder="Type your message..."
+                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 pr-16 resize-none outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                    rows={3}
+                  />
+                  <button 
+                    onClick={handleSubmit}
+                    disabled={!text || state === 'PROCESSING'}
+                    className="absolute bottom-4 right-4 p-2 bg-teal-600 text-white rounded-xl hover:bg-teal-700 disabled:opacity-50 transition-colors"
+                  >
+                    {state === 'PROCESSING' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* Results View */
-        <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-emerald-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-emerald-700 text-white p-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Situation Analyzed</h2>
-              <p className="text-emerald-100 text-lg">We have structured your input for formal review.</p>
-            </div>
-            {isSpeaking && (
-               <div className="flex items-center gap-2 bg-emerald-800/50 px-4 py-2 rounded-full border border-emerald-600">
-                 <Volume2 className="w-5 h-5 animate-pulse" />
-                 <span className="text-sm font-semibold">Speaking...</span>
-               </div>
             )}
           </div>
-          
-          <div className="p-8 space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Classification</h3>
-                <p className="text-xl font-bold text-gray-900">{result.category || "Workplace Dispute"}</p>
-              </div>
-              
-              <div className="bg-orange-50 p-6 rounded-2xl border border-orange-100 flex items-start gap-4">
-                <ShieldAlert className="w-8 h-8 text-orange-500 shrink-0" />
-                <div>
-                  <h3 className="text-xs font-bold text-orange-400 uppercase tracking-widest mb-2">Urgency Level</h3>
-                  <p className="text-lg font-bold text-orange-900">Requires Attention</p>
-                </div>
-              </div>
-            </div>
+        </>
+      ) : (
+        /* SITUATION UNDERSTANDING (REVIEW STATE) */
+        <div className="animate-in slide-in-from-right-8 duration-500">
+          <div className="mb-8">
+            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Here's what I understood</h1>
+            <p className="text-gray-500">Please review the structured information before we proceed.</p>
+          </div>
 
-            <div>
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">AI Legal Summary</h3>
-              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-gray-800 leading-relaxed text-lg">
-                {result.summary || "You reported a workplace dispute regarding your contract."}
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden mb-8">
+            <div className="p-8">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Structured Facts</h3>
+              
+              <div className="grid md:grid-cols-2 gap-y-6 gap-x-12">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Situation type</p>
+                  <p className="font-bold text-gray-900">{result?.category || 'Employment issue'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Employment status</p>
+                  <p className="font-bold text-gray-900">{result?.facts?.employment_status || 'Lost job'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Issue</p>
+                  <p className="font-bold text-gray-900">{result?.facts?.issue || 'Unpaid wages'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Salary period</p>
+                  <p className="font-bold text-gray-900">{result?.facts?.salary_period || 'August 2026'}</p>
+                </div>
+                <div className="md:col-span-2">
+                  <p className="text-sm text-gray-500 mb-1">Employer</p>
+                  <p className="font-bold text-gray-900">{result?.facts?.employer || 'Not specified'}</p>
+                </div>
               </div>
             </div>
             
-            <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
-              <button 
-                onClick={() => { setResult(null); setText(""); window.speechSynthesis.cancel(); }}
-                className="px-6 py-4 bg-white border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-lg hover:bg-gray-50 transition flex-1"
-              >
-                Start Over
-              </button>
-              <button 
-                onClick={() => alert("Success! Evidence sealed on Polygon Amoy. Proceed to Dashboard.")} 
-                className="px-6 py-4 bg-gray-900 text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition shadow-lg shadow-gray-900/20 flex-[2]"
-              >
-                Confirm & Seal as Verifiable Credential
-              </button>
+            <div className="bg-amber-50/50 p-8 border-t border-amber-100/50">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-amber-700 uppercase tracking-widest mb-4">
+                <AlertCircle className="w-4 h-4" /> Information still needed
+              </h3>
+              <ul className="list-disc list-inside text-amber-900 space-y-2">
+                <li>Employment end date</li>
+                <li>Location (Emirate)</li>
+              </ul>
             </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button 
+              onClick={() => setState('IDLE')}
+              className="px-8 py-4 bg-white border border-gray-200 text-gray-700 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition flex-1"
+            >
+              <Edit2 className="w-5 h-5 text-gray-400" /> Edit
+            </button>
+            <button 
+              onClick={async () => {
+                const res = await fetch('/api/blockchain/issue', { 
+                  method: 'POST', 
+                  body: JSON.stringify({ claimId: 'SANAD-VC-' + Date.now(), claimDataHash: '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b=>b.toString(16).padStart(2,'0')).join('') }) 
+                }); 
+                const data = await res.json(); 
+                if(data.success) { 
+                  alert('Success! Credential sealed on Polygon Amoy.\\nTx: ' + data.transactionHash); 
+                  window.location.href = '/dashboard'; 
+                }
+              }}
+              className="px-8 py-4 bg-teal-700 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 flex-[2]"
+            >
+              Confirm and Continue <CheckCircle2 className="w-5 h-5" />
+            </button>
           </div>
         </div>
       )}

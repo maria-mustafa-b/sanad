@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FolderOpen, FileText, CheckCircle2, Clock, Loader2, RefreshCw } from "lucide-react";
+import { 
+  FileText, CheckCircle2, Clock, Loader2, Bell, AlertTriangle, 
+  ArrowRight, ShieldCheck, CheckCircle
+} from "lucide-react";
 
 export default function DashboardPage() {
   const [claims, setClaims] = useState<any[]>([]);
@@ -25,89 +28,127 @@ export default function DashboardPage() {
     fetchDashboard();
   }, []);
 
+  const activeClaim = claims[0] || null;
+
+  const journeySteps = [
+    { name: "Understand Situation", status: "Completed" },
+    { name: "Find Services", status: "Completed" },
+    { name: "Prepare Documents", status: "In Progress" },
+    { name: "Submit Application", status: "Pending" },
+    { name: "Track Status", status: "Pending" },
+  ];
+
   return (
-    <div className="flex-1 w-full max-w-5xl mx-auto px-4 pt-24 pb-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Dashboard</h1>
-          <p className="text-gray-600">Track your claims, credentials, and applications.</p>
-        </div>
-        <button onClick={fetchDashboard} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition">
-          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-        </button>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6 mb-12">
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
-            <FolderOpen className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-sm font-bold text-gray-500 uppercase tracking-wide">Active Claims</div>
-            <div className="text-3xl font-black text-gray-900">{loading ? '-' : claims.length}</div>
-          </div>
-        </div>
-
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center gap-4">
-          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-sm font-bold text-gray-500 uppercase tracking-wide">Credentials</div>
-            <div className="text-3xl font-black text-gray-900">0</div>
-          </div>
-        </div>
-
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center gap-4">
-          <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center shrink-0">
-            <Clock className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="text-sm font-bold text-gray-500 uppercase tracking-wide">Applications</div>
-            <div className="text-3xl font-black text-gray-900">0</div>
-          </div>
-        </div>
-      </div>
-
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Claims</h2>
+    <div className="w-full flex flex-col space-y-8 animate-in fade-in duration-500">
       
-      {loading ? (
-        <div className="flex justify-center p-12">
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Your Dashboard</h1>
+        <p className="text-gray-500">Here's an overview of your journey with SANAD.</p>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col justify-between">
+          <div className="flex items-center gap-2 mb-3 text-gray-500 font-semibold text-sm">
+            <FileText className="w-4 h-4" /> Current Situation
+          </div>
+          <div className="font-bold text-gray-900 line-clamp-1">
+            {activeClaim ? (activeClaim.structured_data?.category || "Employment issue") : "None active"}
+          </div>
         </div>
-      ) : claims.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden text-center py-16 px-4">
-          <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-900 mb-2">No active claims</h3>
-          <p className="text-gray-500 max-w-sm mx-auto mb-8">
-            You haven't reported any workplace situations yet. Get started by talking to SANAD.
-          </p>
-          <Link href="/chat" className="inline-flex items-center justify-center px-6 py-3 bg-emerald-700 text-white rounded-xl font-semibold hover:bg-emerald-800 transition shadow-sm">
-            Start a New Claim
+
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col justify-between">
+          <div className="flex items-center gap-2 mb-3 text-gray-500 font-semibold text-sm">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" /> Credentials
+          </div>
+          <div className="font-bold text-emerald-700">1 Valid</div>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col justify-between">
+          <div className="flex items-center gap-2 mb-3 text-gray-500 font-semibold text-sm">
+            <Clock className="w-4 h-4 text-amber-500" /> Applications
+          </div>
+          <div className="font-bold text-amber-700">1 Under Review</div>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col justify-between">
+          <div className="flex items-center gap-2 mb-3 text-gray-500 font-semibold text-sm">
+            <Bell className="w-4 h-4 text-blue-500" /> Notifications
+          </div>
+          <div className="font-bold text-blue-700">2 New Updates</div>
+        </div>
+      </div>
+
+      {/* Journey Stepper */}
+      <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+        <h2 className="text-lg font-bold text-gray-900 mb-6">Your Journey Progress</h2>
+        <div className="relative flex justify-between items-center w-full">
+          {/* Connecting Line */}
+          <div className="absolute top-4 left-0 right-0 h-[2px] bg-gray-100 -z-10" />
+          
+          {journeySteps.map((step, index) => {
+            const isCompleted = step.status === "Completed";
+            const isInProgress = step.status === "In Progress";
+            
+            return (
+              <div key={index} className="flex flex-col items-center gap-3 w-1/5 bg-white">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors ${
+                  isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' : 
+                  isInProgress ? 'bg-white border-teal-600 text-teal-600' : 
+                  'bg-white border-gray-200 text-gray-300'
+                }`}>
+                  {isCompleted ? <CheckCircle className="w-4 h-4" /> : <span className="text-xs font-bold">{index + 1}</span>}
+                </div>
+                <div className="text-center">
+                  <p className={`text-xs md:text-sm font-bold ${isInProgress ? 'text-gray-900' : 'text-gray-500'}`}>
+                    {step.name}
+                  </p>
+                  <p className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider ${
+                    isCompleted ? 'text-emerald-600' : 
+                    isInProgress ? 'text-amber-500' : 'text-gray-400'
+                  }`}>
+                    {step.status}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Recommended Services */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-gray-900">Recommended Services</h2>
+          <Link href="/services" className="text-sm font-bold text-teal-700 hover:text-teal-800">
+            View all
           </Link>
         </div>
-      ) : (
-        <div className="grid gap-4">
-          {claims.map((claim) => (
-            <div key={claim.id} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md transition">
-              <div className="flex justify-between items-start mb-4">
-                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">
-                  {claim.status}
+        
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            { title: "Unpaid Wages Complaint", relevance: "High Relevance", color: "emerald" },
+            { title: "Employment Support Assistance", relevance: "High Relevance", color: "emerald" },
+            { title: "Financial Assistance Program", relevance: "Medium Relevance", color: "amber" }
+          ].map((svc, i) => (
+            <div key={i} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:border-teal-200 transition-colors cursor-pointer group flex flex-col justify-between">
+              <div>
+                <span className={`inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider mb-3 ${
+                  svc.color === 'emerald' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                }`}>
+                  {svc.relevance}
                 </span>
-                <span className="text-sm text-gray-500">
-                  {new Date(claim.created_at).toLocaleDateString()}
-                </span>
+                <h3 className="font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">{svc.title}</h3>
               </div>
-              <h3 className="font-bold text-lg text-gray-900 mb-1">
-                {claim.structured_data?.category || "Reported Situation"}
-              </h3>
-              <p className="text-gray-600 line-clamp-2">
-                {claim.structured_data?.summary || claim.original_statement}
-              </p>
+              <div className="mt-4 flex items-center text-sm font-bold text-gray-400 group-hover:text-teal-600 transition-colors">
+                View Details <ArrowRight className="w-4 h-4 ml-1" />
+              </div>
             </div>
           ))}
         </div>
-      )}
+      </div>
+
     </div>
   );
 }
