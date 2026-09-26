@@ -59,20 +59,20 @@ async function sign(value: string) {
 }
 
 export async function startDemo() {
+  if (!demoMode())
+    throw new AppError(
+      "DEMO_DISABLED",
+      "Demo sessions are disabled in Supabase mode.",
+      403,
+    );
   const id = randomUUID();
-  try {
-    if (demoMode()) {
-      await insert("users", { id, role: "user" });
-      await insert("profiles", {
-        id,
-        display_name: "Demo explorer",
-        preferred_language: "en",
-        accessibility: {},
-      });
-    }
-  } catch {
-    // ignore
-  }
+  await insert("users", { id, role: "user" });
+  await insert("profiles", {
+    id,
+    display_name: "Demo explorer",
+    preferred_language: "en",
+    accessibility: {},
+  });
   const value = `${id}.${Date.now() + 86400000}`;
   const jar = await cookies();
   jar.set("sanad_demo", `${value}.${await sign(value)}`, {
@@ -86,57 +86,38 @@ export async function startDemo() {
 }
 
 export async function actor(): Promise<Actor> {
-  const jar = await cookies();
-  const token = jar.get("sanad_demo")?.value;
-  if (token) {
-    const [id, expiry, signature] = token.split(".");
-    if (id && expiry && signature && Number(expiry) >= Date.now()) {
-      try {
-        const expected = await sign(`${id}.${expiry}`);
-        if (
-          signature.length === expected.length &&
-          timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
-        ) {
-          return { id, role: "user", demo: true };
-        }
-      } catch {
-        // fallback
-      }
-    }
-  }
-
   if (demoMode()) {
-    const defaultId = "00000000-0000-0000-0000-000000000001";
-    return { id: defaultId, role: "user", demo: true };
+    const token = (await cookies()).get("sanad_demo")?.value || "";
+    const [id, expiry, signature] = token.split(".");
+    if (!id || !expiry || !signature || Number(expiry) < Date.now())
+      throw new AppError("UNAUTHORIZED", "Please start a demo session.", 401);
+    const expected = await sign(`${id}.${expiry}`);
+    if (
+      signature.length !== expected.length ||
+      !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
+    )
+      throw new AppError("UNAUTHORIZED", "Your session is invalid.", 401);
+    const user = await get("users", id);
+    return { id, role: user.role, demo: true };
   }
-
-  try {
-    const client = await supabaseSession();
-    const { data, error } = await client.auth.getUser();
-    if (!error && data?.user) {
-      const user = await get("users", data.user.id);
-      return {
-        id: data.user.id,
-        email: data.user.email,
-        role: user?.role || "user",
-        demo: false,
-      };
-    }
-  } catch {
-    // fallback
-  }
-
-  const defaultId = "00000000-0000-0000-0000-000000000001";
-  return { id: defaultId, role: "user", demo: true };
+  const client = await supabaseSession();
+  const { data, error } = await client.auth.getUser();
+  if (error || !data.user)
+    throw new AppError("UNAUTHORIZED", "Please sign in.", 401);
+  const user = await get("users", data.user.id);
+  return {
+    id: data.user.id,
+    email: data.user.email,
+    role: user.role,
+    demo: false,
+  };
 }
 
 export async function logout() {
-  const jar = await cookies();
-  jar.delete("sanad_demo");
-  try {
-    const client = await supabaseSession();
-    await client.auth.signOut();
-  } catch {
-    // fallback
+  if (demoMode()) (await cookies()).delete("sanad_demo");
+  else {
+    const { error } = await (await supabaseSession()).auth.signOut();
+    if (error)
+      throw new AppError("AUTH_FAILED", "Could not sign out. Try again.", 503);
   }
 }
