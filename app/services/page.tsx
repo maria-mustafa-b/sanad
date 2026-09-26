@@ -51,7 +51,7 @@ export default function ServicesPage() {
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {services.map((service) => (
-            <div key={service.id} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition group">
+            <div key={service.id} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md transition group">
               <div className="flex justify-between items-start mb-4">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded-full">
                   <Building2 className="w-3.5 h-3.5" />
