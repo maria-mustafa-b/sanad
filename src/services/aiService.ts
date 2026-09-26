@@ -227,7 +227,7 @@ function getEmpatheticResponse(userLanguage: LanguageCode) {
       englishSynopsis: "AI Advocate has processed your statement."
     }
   };
-  // @ts-ignore
+  // @ts-expect-error
   return responsesByLang[userLanguage] || responsesByLang.en;
 }
 export const getSituationBulletsFromDossier = (dossier: any): string[] => { return [dossier.employmentStatus, dossier.category, dossier.incidentPeriod, dossier.employerName, dossier.verbatimTranscript].filter(Boolean); };

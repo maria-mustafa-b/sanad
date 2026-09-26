@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { AppShell } from '../layouts/AppShell';
@@ -18,15 +18,15 @@ import { structureWorkerNarrative } from '../services/aiService';
 type Phase = 'idle' | 'listening' | 'processing' | 'ready';
 
 /**
- * Voice-first intake â€” primary SANAD experience.
- * Speak â†’ listen â†’ transcript â†’ understand â†’ confirm (no credential yet).
+ * Voice-first intake — primary SANAD experience.
+ * Speak → listen → transcript → understand → confirm (no credential yet).
  */
 export const ChatPage: React.FC = () => {
   const { navigate, language, updateDossier, t } = useApp();
   const [phase, setPhase] = useState<Phase>('idle');
   const [transcript, setTranscript] = useState('');
   const [mode, setMode] = useState<'voice' | 'text'>('voice');
-  const [statusMsg, setStatusMsg] = useState('Tap the microphone and speak freely â€” any language is fine.');
+  const [statusMsg, setStatusMsg] = useState('Tap the microphone and speak freely — any language is fine.');
   const [seconds, setSeconds] = useState(0);
   const recognizerRef = useRef<ReturnType<typeof createSpeechRecognizer>>(null);
   const timerRef = useRef<number | null>(null);
@@ -46,7 +46,7 @@ export const ChatPage: React.FC = () => {
     demoTimerRef.current = null;
   };
 
-  const stopListening = (silent = false) => {
+  function stopListening(silent = false) {
     try {
       recognizerRef.current?.stop?.();
     } catch {
@@ -59,7 +59,7 @@ export const ChatPage: React.FC = () => {
 
   const runDemoFallback = () => {
     setPhase('listening');
-    setStatusMsg('Listeningâ€¦ speak naturally. (Demo mode if mic unavailable)');
+    setStatusMsg('Listening… speak naturally. (Demo mode if mic unavailable)');
     setSeconds(0);
     setTranscript('');
     timerRef.current = window.setInterval(() => setSeconds((s) => s + 1), 1000);
@@ -91,7 +91,7 @@ export const ChatPage: React.FC = () => {
           stopListening(true);
           setTranscript(DEMO_HINGLISH_TRANSCRIPT);
           setPhase('ready');
-          setStatusMsg('Speech unavailable â€” using demo statement. You can edit it.');
+          setStatusMsg('Speech unavailable — using demo statement. You can edit it.');
         },
         () => {
           clearTimers();
@@ -113,7 +113,7 @@ export const ChatPage: React.FC = () => {
       recognizerRef.current = recognizer;
       recognizer.start();
       setPhase('listening');
-      setStatusMsg('Listeningâ€¦ tell SANAD what happened.');
+      setStatusMsg('Listening… tell SANAD what happened.');
       setSeconds(0);
       setTranscript('');
       timerRef.current = window.setInterval(() => setSeconds((s) => s + 1), 1000);
@@ -144,7 +144,7 @@ export const ChatPage: React.FC = () => {
     const text = transcript.trim();
     if (!text) return;
     setPhase('processing');
-    setStatusMsg('SANAD is understanding your situationâ€¦');
+    setStatusMsg('SANAD is understanding your situation…');
     try {
       const structured = await structureWorkerNarrative(text, language);
       updateDossier({
@@ -182,7 +182,7 @@ export const ChatPage: React.FC = () => {
             {t.intake.title}
           </h1>
           <p className="text-ink-secondary leading-relaxed">
-            Just speak what happened. No forms. No legal words needed. Hindi, Arabic, Urdu, English â€” or mix.
+            Just speak what happened. No forms. No legal words needed. Hindi, Arabic, Urdu, English — or mix.
           </p>
         </div>
 
@@ -229,10 +229,10 @@ export const ChatPage: React.FC = () => {
               {phase === 'listening' && (
                 <>
                   <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                  <span>Listening Â· {mm}:{ss}</span>
+                  <span>Listening · {mm}:{ss}</span>
                 </>
               )}
-              {phase === 'processing' && <span>Understandingâ€¦</span>}
+              {phase === 'processing' && <span>Understanding…</span>}
               {phase === 'ready' && transcript && <Badge tone="success">Ready to continue</Badge>}
               {phase === 'idle' && <span className="text-white/60">Tap mic to speak</span>}
             </div>
