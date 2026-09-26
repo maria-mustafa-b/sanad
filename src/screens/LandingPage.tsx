@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { PublicHeader } from '../layouts/PublicHeader';
@@ -45,7 +45,7 @@ export const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-background">
       <PublicHeader />
 
-      {/* Asymmetric hero â€” copy + visual weight */}
+      {/* Asymmetric hero — copy + visual weight */}
       <section className="relative overflow-hidden bg-brand-dark text-white">
         <div className="absolute inset-0 glow-brand-strong pointer-events-none" />
         <div
@@ -70,7 +70,7 @@ export const LandingPage: React.FC = () => {
                 </span>
               </h1>
               <p className="text-lg sm:text-xl text-white/75 max-w-md leading-relaxed font-normal tracking-normal">
-                Voice-first support for migrant and domestic workers â€” speak naturally, confirm what we understood, carry portable proof.
+                Voice-first support for migrant and domestic workers — speak naturally, confirm what we understood, carry portable proof.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 pt-1">
                 <Button
@@ -84,14 +84,14 @@ export const LandingPage: React.FC = () => {
                 <Button
                   size="lg"
                   variant="outlineInverse"
-                  onClick={() => navigate('/auth/signup')}
+                  data-testid="cta-get-started" onClick={() => navigate('/auth/signup')}
                 >
                   Get Started
                 </Button>
               </div>
             </div>
 
-            {/* Layered product mock â€” visual weight, not centered icon stack */}
+            {/* Layered product mock — visual weight, not centered icon stack */}
             <div className="lg:col-span-5 relative">
               <div className="absolute -inset-8 glow-brand pointer-events-none blur-2xl opacity-80" />
               <div className="relative rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md p-5 sm:p-6 shadow-elev">
@@ -104,7 +104,7 @@ export const LandingPage: React.FC = () => {
                 </div>
                 <div className="space-y-2.5">
                   {[
-                    { k: 'Claim', v: 'Unpaid wages Â· Augâ€“Sep' },
+                    { k: 'Claim', v: 'Unpaid wages · Aug–Sep' },
                     { k: 'Status', v: 'Valid attestation' },
                     { k: 'Control', v: 'You choose who sees it' },
                   ].map((row) => (
@@ -119,7 +119,7 @@ export const LandingPage: React.FC = () => {
                 </div>
                 <div className="mt-5 flex items-center gap-2 text-[12px] text-white/60">
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-light" />
-                  Device-held Â· selective disclosure
+                  Device-held · selective disclosure
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Varied feature layout â€” not 4 identical icon cards */}
+      {/* Varied feature layout — not 4 identical icon cards */}
       <section id="features" className="max-w-6xl mx-auto px-4 sm:px-6 py-18 sm:py-22">
         <Reveal>
           <div className="max-w-xl mb-12 sm:mb-14">
@@ -145,7 +145,7 @@ export const LandingPage: React.FC = () => {
               <IconWell icon="smart_toy" size="lg" className="mb-6" />
               <h3 className="text-display-sm text-xl sm:text-2xl text-ink mb-3">AI-Powered Guidance</h3>
               <p className="text-body max-w-md">
-                Explain your situation in any language. SANAD structures it for you â€” without forcing legal jargon.
+                Explain your situation in any language. SANAD structures it for you — without forcing legal jargon.
               </p>
             </Card>
           </Reveal>
@@ -156,7 +156,7 @@ export const LandingPage: React.FC = () => {
               <div>
                 <h3 className="text-lg font-semibold tracking-[-0.02em] text-ink mb-2">Verifiable Credentials</h3>
                 <p className="text-[14px] text-ink-secondary leading-relaxed">
-                  Carry sealed digital proof you control â€” share only when you choose.
+                  Carry sealed digital proof you control — share only when you choose.
                 </p>
               </div>
             </Card>
@@ -191,20 +191,20 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* How it works â€” asymmetric numbered band */}
+      {/* How it works — asymmetric numbered band */}
       <section id="how" className="bg-white border-y border-border py-18 sm:py-22">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <Reveal>
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12 sm:mb-14">
               <h2 className="text-section max-w-sm">How it works</h2>
-              <Button size="lg" onClick={() => navigate('/auth/signup')}>
+              <Button size="lg" data-testid="cta-get-started" onClick={() => navigate('/auth/signup')}>
                 Create your account
               </Button>
             </div>
           </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-12">
             {[
-              { n: '01', t: 'Speak to SANAD', d: 'Tell what happened in your words â€” voice or text, any language.' },
+              { n: '01', t: 'Speak to SANAD', d: 'Tell what happened in your words — voice or text, any language.' },
               { n: '02', t: 'Confirm & get proof', d: 'Check what we understood, give consent, carry a SANAD Digital Proof.' },
               { n: '03', t: 'Find support & track', d: 'See Wage Dispute help, prepare papers, and follow status simply.' },
             ].map((s, i) => (
@@ -225,7 +225,7 @@ export const LandingPage: React.FC = () => {
           <div>
             <Logo variant="dark" size="md" />
             <p className="mt-4 text-sm text-white/55 max-w-sm leading-relaxed">
-              Independent worker support platform. Concept prototype â€” not an official government portal.
+              Independent worker support platform. Concept prototype — not an official government portal.
             </p>
           </div>
           <div className="text-sm text-white/55">

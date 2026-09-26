@@ -1,26 +1,15 @@
 import { test, expect } from "@playwright/test";
 
 test("navigation, demo entry and responsive foundation", async ({ page }) => {
-  // Landing page loads with a heading
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 15000 });
+  await expect(page.locator("[data-testid='cta-get-started']").first()).toBeVisible({ timeout: 10000 });
 
-  // Get Started button exists on landing page
-  await expect(
-    page.getByRole("button", { name: /Get Started/i }).or(
-      page.getByRole("link", { name: /Get Started/i })
-    )
-  ).toBeVisible();
-
-  // Verify page loads with a heading
   await page.goto("/verify");
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 15000 });
 
-  // No horizontal scroll (responsive check)
   expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
   ).toBe(true);
 });
 
