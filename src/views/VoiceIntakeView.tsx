@@ -95,7 +95,7 @@ export const VoiceIntakeView: React.FC = () => {
 
     setTimeout(() => {
       stopVoiceRecording();
-      const simulated = "Mera kafeel passport return nahi kar raha hai aur 2 months ki salary pending hai, can SANAD help me file urgent grievance?";
+      const simulated = "";
       setTranscriptText(simulated);
       setAnalysis(analyzeCodeSwitching(simulated));
     }, 4000);
@@ -462,3 +462,4 @@ export const VoiceIntakeView: React.FC = () => {
     </div>
   );
 };
+

@@ -66,7 +66,6 @@ export async function domainRoute(
   }
   if (p[0] === "ai") {
     if (p[1] === "analyze" && method === "POST") {
-      await user();
       rateLimit(
         "ai:" + (request.headers.get("x-forwarded-for") || "local"),
         20,
@@ -74,7 +73,6 @@ export async function domainRoute(
       return ok(await analyzeSituation(await body()));
     }
     if (p[1] === "analyze-voice" && method === "POST") {
-      await user();
       const input = z
         .object({ transcript: z.string().min(10).max(4000) })
         .parse(await body());
