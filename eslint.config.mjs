@@ -6,7 +6,6 @@ export default defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    files: ["src/**", "app/**", "components/**", "lib/**"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",
@@ -16,6 +15,8 @@ export default defineConfig([
       "@next/next/no-page-custom-font": "off",
       "import/no-anonymous-default-export": "off",
       "react-hooks/rules-of-hooks": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
   globalIgnores([

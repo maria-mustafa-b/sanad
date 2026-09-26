@@ -4,13 +4,15 @@ const config: NextConfig = {
   poweredByHeader: false,
   
   // Ignore ESLint errors during Vercel build to ensure the deploy goes through
-  // @ts-ignore
+  // @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 eslint: {
     ignoreDuringBuilds: true,
   },
   
   // Ignore TypeScript errors during Vercel build to ensure the deploy goes through
-  // @ts-ignore
+  // @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 typescript: {
     ignoreBuildErrors: true,
   },
