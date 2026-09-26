@@ -26,6 +26,7 @@ export const VoiceIntakeView: React.FC = () => {
 
   const recognizerRef = useRef<any>(null);
   const timerRef = useRef<any>(null);
+  const initialTextRef = useRef<string>('');
 
   useEffect(() => {
     setActiveStep(1);
@@ -40,11 +41,13 @@ export const VoiceIntakeView: React.FC = () => {
     }
 
     try {
+      initialTextRef.current = transcriptText;
       const recognizer = createSpeechRecognizer(
         language,
         (text) => {
-          setTranscriptText(text);
-          setAnalysis(analyzeCodeSwitching(text));
+          const combined = initialTextRef.current ? initialTextRef.current + ' ' + text : text;
+          setTranscriptText(combined);
+          setAnalysis(analyzeCodeSwitching(combined));
         },
         (err) => {
           console.warn('Speech error:', err);

@@ -48,15 +48,15 @@ export const createSpeechRecognizer = (
     let interimTranscript = '';
     let finalTranscript = '';
 
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
+    for (let i = 0; i < event.results.length; ++i) {
       if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript;
+        finalTranscript += event.results[i][0].transcript + ' ';
       } else {
         interimTranscript += event.results[i][0].transcript;
       }
     }
 
-    const currentText = finalTranscript || interimTranscript;
+    const currentText = (finalTranscript + interimTranscript).trim();
     onResult(currentText, Boolean(finalTranscript));
   };
 
