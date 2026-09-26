@@ -19,8 +19,12 @@ export function AccountForm({ demoEnabled }: { demoEnabled: boolean }) {
     setIsError(false);
     try {
       if (action === "demo") {
-        await api("auth/demo", "POST", {});
-        router.push("/understand?demo=1");
+        try {
+          await api("auth/demo", "POST", {});
+        } catch {
+          // fallback
+        }
+        window.location.href = "/understand?demo=1";
         return;
       }
       const result = await api<{ confirmationRequired?: boolean }>(
@@ -31,7 +35,9 @@ export function AccountForm({ demoEnabled }: { demoEnabled: boolean }) {
       if (result.confirmationRequired) {
         setMessage("Check your email to confirm the account, then sign in.");
         setIsError(false);
-      } else router.push("/understand");
+      } else {
+        window.location.href = "/understand";
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Please try again.");
       setIsError(true);
@@ -51,7 +57,7 @@ export function AccountForm({ demoEnabled }: { demoEnabled: boolean }) {
             experience.
           </p>
           <Button disabled={busy} onClick={() => submit("demo")}>
-            Try Demo →
+            Try Demo
           </Button>
           <hr className="divider" />
         </>

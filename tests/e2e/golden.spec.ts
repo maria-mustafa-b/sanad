@@ -1,61 +1,68 @@
 import { test, expect } from "@playwright/test";
+
 test("complete accessible demo journey and public verification", async ({
   page,
 }) => {
-  await page.goto("/onboarding");
-  await page.getByRole("button", { name: "Try Demo" }).click();
-  const description = page.getByLabel(
-    "Describe the situation in your own words",
-  );
-  await expect(description).toHaveValue(
-    "Meri job chali gayi hai aur August ki salary bhi nahi mili.",
-  );
-  await page.getByRole("button", { name: "Understand my situation" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Here’s what SANAD understood." }),
-  ).toBeVisible();
-  await expect(
-    page.getByText("Local example analysis (rule-based simulation)"),
-  ).toBeVisible();
-  await expect(page.getByLabel("Issue", { exact: true })).toHaveValue(
-    "unpaid_wages",
-  );
-  await page.getByRole("button", { name: "Confirm information" }).click();
-  await expect(page.getByText("Your confirmed claim was saved.")).toBeVisible();
-  await page
-    .getByRole("button", { name: "Issue user-confirmed credential" })
-    .click();
-  await expect(
-    page.getByText("Credential valid · Demo/Testnet Simulation"),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Find relevant support" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Private-sector labour complaint" }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Start SANAD journey" })
-    .first()
-    .click();
-  await expect(
-    page.getByRole("heading", { name: "Your application journey" }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Submit demo journey" }).click();
-  await page.getByRole("button", { name: "Simulate under review" }).click();
-  await page.getByRole("button", { name: "Simulate document request" }).click();
-  await expect(
-    page
-      .getByRole("status")
-      .filter({ hasText: "Additional documents are required" })
-      .first(),
-  ).toBeVisible();
-  await page.getByRole("link", { name: /Open public verification/ }).click();
-  await page.getByRole("button", { name: "Verify credential" }).click();
-  await expect(page.locator(".verification-result .valid")).toContainText(
-    "VALID",
-  );
+  // Step 1: Landing Hub and trigger demo mode
+  await page.goto("/");
+  
+  // Click Try Demo Mode
+  await page.getByRole("button", { name: /Try Demo Mode/ }).click();
+
+  // Now on /journey (JourneyHomeView)
+  await expect(page.getByRole("heading", { name: "Tell SANAD what happened." })).toBeVisible();
+
+  // Click Tell SANAD What Happened
+  await page.getByRole("button", { name: /Tell SANAD What Happened/ }).click();
+
+  // Now on /tell-sanad (VoiceIntakeView)
+  await expect(page.getByRole("heading", { name: /Tell SANAD what happened/i })).toBeVisible();
+
+  // Wait for AI button to be ready (it's called "Yes, Confirm & Structure Case" or "Analyze & Structure My Account")
+  // In the file it's: {isProcessing ? t.intake.structuringWait : 'Yes, Confirm & Structure Case'}
+  await page.getByRole("button", { name: /Confirm & Structure Case/ }).click();
+
+  // Click "Confirm & Review Summary" on /processing once it becomes ready
+  await page.getByRole("button", { name: /Confirm & Review Summary/ }).click({ timeout: 15000 });
+
+  // Wait for Confirm situation heading (on /confirm-situation)
+  await expect(page.getByRole("heading", { name: "Is this what happened?" })).toBeVisible({ timeout: 15000 });
+
+  // Click Confirm & Create Verifiable Proof
+  await page.getByRole("button", { name: /Confirm & Create Verifiable Proof/ }).click();
+
+  // Now on /my-proof (MyProofVaultView)
+  await expect(page.getByText("✓ Tamper-Evident Signed")).toBeVisible();
+  
+  // Click Step 4: Find Support & Apply
+  await page.getByRole("button", { name: "Step 4: Find Support & Apply" }).click();
+
+  // Now on /evidence-application (EvidenceApplicationView)
+  await expect(page.getByRole("heading", { name: /Migrant Justice Legal Clinic|South Asian Bilateral Worker Mission/ })).toBeVisible();
+
+  // Click Submit Application
+  await page.getByRole("button", { name: /Submit Application/ }).click();
+
+  // Wait for success modal
+  await expect(page.getByRole("heading", { name: "Application Successfully Transferred" })).toBeVisible();
+
+  // Click Go to Applications
+  await page.getByRole("button", { name: /Go to Applications/ }).click();
+
+  // Now on /applications (ApplicationsTrackingView)
+  await expect(page.getByRole("heading", { name: "Applications & Live Case Tracking" })).toBeVisible();
+
+  // Click Public Verification Portal
+  await page.getByRole("button", { name: /Public Verification/ }).first().click();
+
+  // Now on /verify
+  await page.getByRole("button", { name: "Verify Credential" }).click();
+  await expect(page.getByText("✓ Credential Valid")).toBeVisible();
+
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
 });
+

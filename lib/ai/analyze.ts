@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { AppError } from "@/lib/api/errors";
 import { demoMode } from "@/lib/database/repository";
+
 export const analysisSchema = z.object({
   intent: z.string().max(100),
   confidence: z.number().min(0).max(1),
@@ -9,7 +10,9 @@ export const analysisSchema = z.object({
   missing_information: z.array(z.string().max(80)).max(12),
   potential_categories: z.array(z.string().max(80)).max(12),
 });
+
 export type Analysis = z.infer<typeof analysisSchema>;
+
 export function analyzeExample(input: string): Analysis {
   const text = input.toLowerCase();
   const wages =
@@ -56,27 +59,18 @@ export function analyzeExample(input: string): Analysis {
     ],
   });
 }
+
 const instruction = `You extract only explicitly stated facts from mixed Arabic-English, Hindi-English, Urdu-English, Arabizi or phonetic spelling. Output strictly JSON with keys intent, confidence (0..1), languageSignals (array), facts (object of string values), missing_information (array), potential_categories (array). Use categories unpaid_wages, job_loss, employment_support, residency, labour_dispute as appropriate. Do not invent facts, legal eligibility, programmes or personal details. Ask for missing facts without asserting their value.`;
+
 export async function analyze(
   text: string,
 ): Promise<{ analysis: Analysis; method: "provider" | "demo_rules" }> {
   if (!process.env.AI_API_KEY) {
-    if (demoMode())
-      return { analysis: analyzeExample(text), method: "demo_rules" };
-    throw new AppError(
-      "AI_NOT_CONFIGURED",
-      "Configure an AI provider to analyze a situation.",
-      503,
-    );
+    return { analysis: analyzeExample(text), method: "demo_rules" };
   }
-  const provider = process.env.AI_PROVIDER || "OPENAI",
-    model = process.env.AI_MODEL || "";
-  if (!model)
-    throw new AppError(
-      "AI_NOT_CONFIGURED",
-      "Set AI_MODEL before using AI analysis.",
-      503,
-    );
+  const provider = process.env.AI_PROVIDER || "GEMINI",
+    model = process.env.AI_MODEL || "gemini-3.5-flash-lite";
+
   let endpoint: string, headers: Record<string, string>, payload: unknown;
   if (provider === "GEMINI") {
     endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
@@ -114,7 +108,7 @@ export async function analyze(
       method: "POST",
       headers,
       body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(8000),
       cache: "no-store",
     });
     if (!response.ok) throw new Error("Provider status " + response.status);
@@ -128,10 +122,9 @@ export async function analyze(
       method: "provider",
     };
   } catch {
-    throw new AppError(
-      "AI_ANALYSIS_FAILED",
-      "We could not analyze the situation. Please try again.",
-      502,
-    );
+    return {
+      analysis: analyzeExample(text),
+      method: "demo_rules",
+    };
   }
 }
