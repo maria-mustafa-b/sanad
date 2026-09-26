@@ -21,7 +21,7 @@ Set `AI_PROVIDER=OPENAI`, `AZURE_OPENAI` or `GEMINI`, `AI_API_KEY` and `AI_MODEL
 
 ## Polygon Amoy (optional testnet)
 
-Create a dedicated testnet wallet privately, fund it with test POL from a legitimate Amoy faucet, and use a reliable chain-ID-80002 RPC endpoint. Set `POLYGON_AMOY_RPC_URL` and `BLOCKCHAIN_PRIVATE_KEY` privately. Run `npm run test:contract`, then `npm run deploy:contract`. Put the resulting address in `SANAD_CONTRACT_ADDRESS` and set `BLOCKCHAIN_MODE=real`. Verify the contract and issuer address before issuing any test credential. Never share the private key, seed phrase or production wallet in chat. Testnet records are not government credentials.
+Create a dedicated testnet-only wallet privately, fund its public address with test POL using an option from [Polygon's faucet guide](https://docs.polygon.technology/tools/gas/matic-faucet/), and choose an RPC from [Polygon's Amoy network reference](https://docs.polygon.technology/pos/reference/rpc-endpoints/). Set `POLYGON_AMOY_RPC_URL` and `BLOCKCHAIN_PRIVATE_KEY` in the ignored local `.env.local`. Run `npm run test:contract`, then `npm run deploy:check` (read-only), and only when it passes run `npm run deploy:contract`. Put the printed address in `SANAD_CONTRACT_ADDRESS` and rerun `npm run deploy:check` to verify code and issuer. Set `BLOCKCHAIN_MODE=real` only after a new Supabase project is configured in `SANAD_MODE=supabase`; local demo mode cannot issue real records. Never share the private key, seed phrase or production wallet in chat. Testnet records are not government credentials.
 
 ## Vercel deployment
 

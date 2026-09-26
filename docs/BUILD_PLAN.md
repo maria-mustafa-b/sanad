@@ -31,5 +31,5 @@ Mixed-language worker statement → extracted facts → clarification → user c
 
 ## Current progress
 - Phases 1–10: implemented in repository and local demo, with Supabase/AI/Amoy adapters. Curated catalog contains 28 official-source records. Explicitly simulated application and local-chain modes are labelled throughout.
-- Phase 11: 12 unit/integration harness tests, local contract test, API golden path and desktop/mobile browser tests pass. Further manual assistive-tech review, hosted Supabase isolation and live provider/Amoy tests remain external release gates.
-- Phase 12: the user reports deleting the SANAD_2 Supabase project. No hosted database is connected to this app. Deployment configuration and steps are documented; Vercel, AI and Amoy credentials are still unavailable here. Do not call this production-ready until the live gates pass.
+- Phase 11: 12 unit/integration harness tests, local contract and Amoy preflight tests, API golden path and desktop/mobile browser tests pass. Further manual assistive-tech review, hosted Supabase isolation and live provider/Amoy tests remain external release gates.
+- Phase 12: the user reports deleting the SANAD_2 Supabase project. No hosted database is connected to this app. Amoy preflight and deployment instructions are implemented; Vercel, AI and Amoy credentials are still unavailable here. Live contract deployment and app issuance require user-owned configuration. Do not call this production-ready until the live gates pass.
