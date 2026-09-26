@@ -1,23 +1,17 @@
-# SANAD 2.0 Backend Integration Guide
+# SANAD 2.0 Full Feature Integration Guide
 
-Hi Humairah! 👋 Your UI looks incredible. 
+Hi Humairah! 👋 Your UI looks incredible. The backend (Gemini AI, Vision OCR, Polygon Blockchain, and government services) is **100% built and running**. 
 
-The backend (Gemini AI, Vision OCR, Polygon Blockchain, and government services) is **100% built and running**. 
-Since you built a beautiful React/Vite SPA and we are serving it through Next.js, all you need to do is replace the dummy mock data in your components with real `fetch()` calls to our Next.js API routes.
+To make this a fully working product (no fake buttons, no simulated mock data), you need to replace the dummy data in your components with real `fetch()` calls to our Next.js API routes.
 
-Here is exactly how to wire up each of your beautiful screens:
+Here are the exact code snippets to wire up **ALL** the core features:
 
 ---
 
-## 1. Chat & Voice Intake (`src/screens/ChatPage.tsx` / `VoicePage.tsx`)
-
+## 1. Chat & Voice Intake (`src/screens/ChatPage.tsx`)
 **Goal:** Send the worker's story to Gemini AI to structure it into a legal claim.
 
-Currently, the app uses dummy data or just shows a nice UI. You need to send the text to `/api/ai/understand`.
-
-**How to wire it:**
 ```typescript
-// When the user finishes speaking or typing:
 const analyzeSituation = async (text: string) => {
   setIsLoading(true);
   try {
@@ -26,15 +20,13 @@ const analyzeSituation = async (text: string) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         text: text,
-        context: { platform: "web", language: "ur" }
+        context: { platform: "web", language: "ur" } // change language dynamically if possible
       })
     });
     
     const data = await res.json();
-    
-    // 'data' contains the structured Gemini output!
-    // Example: { category: "Unpaid Wages", severity: "high", summary: "..." }
-    // Save this to your AppContext so the Dashboard and Situation page can show it!
+    // 'data' contains the structured Gemini output: { category, severity, summary, missingInformation }
+    // Save this to AppContext to display on the Dashboard and Situation screens!
     setSituation(data);
   } catch (error) {
     console.error(error);
@@ -47,12 +39,9 @@ const analyzeSituation = async (text: string) => {
 ---
 
 ## 2. Document OCR (`src/screens/DocumentsPage.tsx`)
-
 **Goal:** Read Arabic/English passports, visas, or contracts using Gemini Vision.
 
-**How to wire it:**
 ```typescript
-// When a user selects a file from <input type="file" />
 const uploadAndAnalyzeDocument = async (file: File) => {
   // 1. Upload file (FormData)
   const formData = new FormData();
@@ -71,17 +60,15 @@ const uploadAndAnalyzeDocument = async (file: File) => {
   
   const analysis = await analyzeRes.json();
   // analysis contains { extractedText, confidence, documentType: 'PASSPORT', flags: [] }
-  // Display this in the UI!
+  // Display this in the UI to warn users of illegal clauses or show extracted info!
 };
 ```
 
 ---
 
 ## 3. UAE Government Services (`src/screens/ServicesPage.tsx`)
-
 **Goal:** Fetch the real database of 28 mapped MOHRE / UAE Pass services instead of hardcoding them.
 
-**How to wire it:**
 ```typescript
 useEffect(() => {
   const fetchServices = async () => {
@@ -97,10 +84,8 @@ useEffect(() => {
 ---
 
 ## 4. Blockchain Verifiable Credentials (`src/screens/CredentialsPages/VaultPage.tsx`)
-
 **Goal:** Issue a real Polygon smart contract credential.
 
-**How to wire it:**
 ```typescript
 const issueCredential = async (claimId: string) => {
   const res = await fetch(`/api/credentials/issue`, {
@@ -120,7 +105,60 @@ const issueCredential = async (claimId: string) => {
 
 ---
 
-## Summary
-You don't need to write any backend code or setup Prisma/Supabase/ethers.js! Just use native `fetch()` calls to these endpoints in your components where you currently have `setTimeout` or hardcoded variables.
+## 5. Dashboard Data (`src/screens/DashboardPage.tsx`)
+**Goal:** Show real claims and applications for the user.
 
-When you're done, commit it to this branch (`humairah-backend-integration`) and we will merge it!
+```typescript
+useEffect(() => {
+  const fetchDashboard = async () => {
+    const res = await fetch('/api/claims');
+    const json = await res.json();
+    // Use json.data to populate the Dashboard cards instead of mockData.ts
+    setClaims(json.data);
+  };
+  fetchDashboard();
+}, []);
+```
+
+---
+
+## 6. Real Verification Portal (`/verify` page)
+**Goal:** Public QR code verification of credentials against the blockchain.
+
+```typescript
+const verifyCredential = async (hash: string) => {
+  const res = await fetch(`/api/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ hash })
+  });
+  
+  const result = await res.json();
+  // result contains { valid: true/false, timestamp, issuer }
+  // Display green checkmark if valid!
+};
+```
+
+---
+
+## 7. Real Authentication & Sessions (`src/screens/AuthPage.tsx`)
+**Goal:** Real sign in/up endpoints.
+
+```typescript
+const handleLogin = async (email, password) => {
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  if (res.ok) {
+     navigate('/dashboard');
+  }
+};
+```
+
+---
+
+### Summary
+No backend code (Prisma/ethers.js) needed on your end. Just wire up these `fetch()` calls wherever you currently have `setTimeout` or hardcoded mock variables, and the app will be 100% functional end-to-end!
