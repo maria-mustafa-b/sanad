@@ -8,11 +8,16 @@ const abi = [
   "function revoke(bytes32 id) external",
   "function status(bytes32 id) external view returns (bytes32, address, uint64, bool)",
 ];
+import { createHash } from "node:crypto";
 export function onchainId(id: string) {
-  return "0x" + id.replaceAll("-", "").padStart(64, "0");
+  const clean = id.replaceAll("-", "").replace(/^0x/, "");
+  if (/^[0-9a-fA-F]{1,64}$/.test(clean)) {
+    return "0x" + clean.padStart(64, "0");
+  }
+  return "0x" + createHash("sha256").update(id).digest("hex");
 }
 function contract(write = false) {
-  if (demoMode())
+  if (demoMode() && process.env.BLOCKCHAIN_MODE !== "real")
     throw new AppError(
       "CHAIN_CONFIG_REQUIRED",
       "Real issuance requires Supabase mode and a configured issuer.",
