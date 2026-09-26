@@ -1,0 +1,499 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><title>SANAD (سند) — Multilingual Worker Support &amp; Verifiable Proof Platform</title><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&amp;family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary": "#4a7c59", "on-secondary-fixed": "#1e1a13", "secondary": "#6b6358", "inverse-primary": "#8ecf9e", "tertiary": "#705c30", "on-surface": "#2e3230", "surface-bright": "#faf6f0", "on-tertiary-fixed": "#221a05", "tertiary-container": "#c4a66a", "surface-container-highest": "#e4e0d8", "surface-container-lowest": "#ffffff", "primary-container": "#78a886", "on-secondary": "#ffffff", "surface-variant": "#e4e0d8", "on-secondary-container": "#5e5548", "secondary-container": "#f0e8db", "tertiary-fixed-dim": "#dcc48e", "on-surface-variant": "#4a4e4a", "on-background": "#2e3230", "on-tertiary": "#ffffff", "surface-container": "#f0ece4", "surface-container-low": "#f5f1ea", "primary-fixed-dim": "#8ecf9e", "surface-dim": "#dbd7cf", "secondary-fixed": "#f0e8db", "inverse-surface": "#2e3230", "tertiary-fixed": "#f8e0a8", "outline": "#74796e", "inverse-on-surface": "#f5f0e8", "on-error-container": "#690005", "error": "#b83230", "surface": "#faf6f0", "on-tertiary-container": "#554020", "on-error": "#ffffff", "outline-variant": "#c4c8bc", "on-primary-fixed": "#002110", "surface-tint": "#4a7c59", "on-primary-fixed-variant": "#2a6038", "surface-container-high": "#eae6de", "on-primary-container": "#d8f0de", "secondary-fixed-dim": "#d4ccbf", "background": "#faf6f0", "error-container": "#ffdad8", "on-secondary-fixed-variant": "#4a4538", "on-primary": "#ffffff", "primary-fixed": "#c8e8d0", "on-tertiary-fixed-variant": "#554020" }, "borderRadius": { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" }, "spacing": {}, "fontFamily": { "headline": ["Literata"], "display": ["Literata"], "body": ["Nunito Sans"], "label": ["Nunito Sans"] }, "fontSize": {} } } };</script></head><body class="bg-surface font-body text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(46,50,48,0.06)]"><div class="w-full bg-secondary-container text-on-secondary-container py-1.5 px-4 text-center text-xs font-semibold tracking-wide border-b border-surface-container-high/60 flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px] text-tertiary">info</span><span class="">SANAD Public Verification &amp; Dashboard • Concept Prototype Demonstration</span></div><div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="h-24 flex items-center justify-between gap-4"><div class="flex items-center gap-4 min-w-0"><div class="flex items-center gap-3"><div class="w-11 h-11 rounded-xl bg-primary flex items-center justify-center text-on-primary font-headline font-bold text-xl shadow-sm tracking-tight">سـ</div><div class="flex flex-col min-w-0"><div class="flex items-baseline gap-2"><span class="font-headline font-bold text-lg text-primary tracking-tight">SANAD</span><span class="font-headline text-base text-tertiary font-semibold">سَنَد</span><span class="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>Demo Mode: Unpaid August Wages</span></div><span class="text-xs text-on-surface-variant truncate font-normal">Support you can find. Proof you can trust. | Independent worker support</span></div></div></div><div class="flex items-center gap-2 sm:gap-3 flex-shrink-0"><div class="hidden lg:flex items-center bg-surface-container rounded-lg p-0.5"><button class="px-2 py-1 text-xs font-semibold rounded-md text-on-surface hover:bg-surface-container-high transition-colors" title="Standard Font Size" type="button">A</button><button class="px-2 py-1 text-xs font-semibold rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Enlarge Text" type="button">A+</button><button class="px-2 py-1 text-xs font-semibold rounded-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" title="Maximum Text Size" type="button">A++</button><button class="px-2 py-1 flex items-center gap-1 text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-md transition-colors" title="Voice Assistance" type="button"><span class="material-symbols-outlined text-[16px]">record_voice_over</span></button></div><div class="relative inline-block"><button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-xs font-medium text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[18px] text-tertiary">translate</span><span class="hidden sm:inline font-semibold">EN / العربية</span><span class="material-symbols-outlined text-[16px]">expand_more</span></button></div><a class="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed text-xs font-semibold hover:bg-tertiary-fixed-dim transition-colors" data-path="help-and-human-support" href="#"><span class="material-symbols-outlined text-[16px]">support_agent</span><span class="">Get Help</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><nav class="flex items-center gap-1 overflow-x-auto pb-2 pt-0 -mt-1 scrollbar-none" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="journey-demo" href="#">Journey Demo</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="tell-sanad" href="#">Tell SANAD</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="my-proof" href="#">My Proof</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="applications-and-tracking" href="#">Applications &amp; Tracking</a><a aria-current="page" class="px-3 py-1.5 rounded-lg tracking-wide whitespace-nowrap transition-colors bg-primary-container text-on-primary-container font-semibold" data-path="public-verification" href="#">Public Verification</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="updates-and-notifications" href="#">Updates &amp; Notifications</a><a class="px-3 py-1.5 rounded-lg text-xs tracking-wide text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface whitespace-nowrap transition-colors" data-path="help-and-human-support" href="#">Help &amp; Human Support</a></nav></div></header><main class="w-full pt-24 bg-surface min-h-[calc(100vh-14rem)]"><div class="flex flex-col w-full">
+<div class="relative w-full overflow-hidden pb-16 pt-6">
+<div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary-fixed/20 blur-3xl pointer-events-none"></div>
+<div class="absolute top-1/2 -left-20 w-80 h-80 rounded-full bg-tertiary-fixed/20 blur-3xl pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+<!-- SECTION 1: PUBLIC CREDENTIAL VERIFICATION (SCREEN 13) -->
+<section class="relative">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div class="max-w-3xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold uppercase tracking-wider mb-3">
+<span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+<span class="">Screen 13 • Zero-Knowledge Trust Node</span>
+</div>
+<h1 class="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">Verify a SANAD Credential</h1>
+<p class="mt-2 text-base sm:text-lg text-on-surface-variant font-normal leading-relaxed">Independent verification demo for support caseworkers and advocates. Only attestation proofs are revealed — no raw personal identity records or conversation audio are ever exposed.</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high text-xs font-mono text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+              Ledger Anchor: Sync'd
+            </span>
+</div>
+</div>
+<!-- Verification Search Bar & Action -->
+<div class="bg-surface-container rounded-xl p-4 sm:p-6 shadow-sm mb-8">
+<form class="flex flex-col lg:flex-row items-stretch gap-4" id="verifyForm" onsubmit="event.preventDefault(); triggerVerify();">
+<div class="relative flex-1">
+<span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">fingerprint</span>
+</span>
+<input class="w-full pl-11 pr-4 py-3.5 rounded-xl bg-surface text-on-surface font-mono text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-primary shadow-inner" id="credentialInput" placeholder="Enter Credential Hash or ID (e.g. SANAD-VC-XXXXX)" type="text" value="SANAD-VC-00124">
+</div>
+<div class="flex flex-wrap sm:flex-nowrap gap-3">
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-on-primary font-semibold text-sm hover:opacity-95 transition-opacity shadow-sm cursor-pointer" type="submit">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="">Verify Credential</span>
+</button>
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-surface text-on-surface font-semibold text-sm hover:bg-surface-container-high transition-colors shadow-sm" onclick="toggleScannerModal(true)" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary">qr_code_scanner</span>
+<span class="">Scan QR Code</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Verification Result Module (Screen 13 Main Display) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 sm:p-8 shadow-md relative overflow-hidden transition-all duration-300" id="resultModule">
+<div class="absolute top-0 right-0 w-44 h-44 -mr-12 -mt-12 bg-primary/5 rounded-full pointer-events-none"></div>
+<!-- Top Status Strip -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 gap-4 border-b border-surface-container-high/60">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary-container text-xs font-bold uppercase tracking-wider">
+                    ✓ Credential Valid
+                  </span>
+<span class="text-xs text-on-surface-variant font-mono">Status: Authenticated</span>
+</div>
+<h2 class="text-xl font-headline font-bold text-on-surface mt-1">SANAD Independent Verification Certificate</h2>
+</div>
+</div>
+<div class="flex items-center gap-2 self-start sm:self-center">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-xs font-medium text-on-surface transition-colors" onclick="printReceipt()" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+<span class="">Audit Slip</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-xs font-medium text-on-surface transition-colors" onclick="copyClaimLink()" type="button">
+<span class="material-symbols-outlined text-[16px]">share</span>
+<span id="copyBtnText" class="">Public Proof Link</span>
+</button>
+</div>
+</div>
+<!-- Cryptographic and Meta Claims Grid -->
+<div class="space-y-6 mb-8"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-5 rounded-xl bg-surface-container-low border border-surface-container-high/60"><div><span class="text-xs text-on-surface-variant block uppercase font-bold tracking-wider">Credential</span><p class="font-mono font-bold text-on-surface text-base mt-1">SANAD-VC-00124</p><span class="text-[11px] text-on-surface-variant">Issued: 25 Sept 2026</span></div><div><span class="text-xs text-on-surface-variant block uppercase font-bold tracking-wider">Status</span><div class="flex items-center gap-1.5 mt-1"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="font-bold text-primary text-base">Valid</span></div><span class="text-[11px] text-on-surface-variant">Revocation Check: Active</span></div><div><span class="text-xs text-on-surface-variant block uppercase font-bold tracking-wider">Claim</span><p class="font-semibold text-on-surface text-sm mt-1 leading-snug">Unpaid wages &amp; recently ended employment</p><span class="text-[11px] text-tertiary font-mono font-medium block mt-0.5">(August 2026)</span></div><div><span class="text-xs text-on-surface-variant block uppercase font-bold tracking-wider">Confirmation Type</span><p class="font-semibold text-primary text-sm mt-1 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">verified</span>User Confirmed Attestation</p><span class="text-[11px] text-on-surface-variant">Zero-Knowledge Sealed</span></div></div><details class="group bg-surface-container-low rounded-xl border border-surface-container-high/60 overflow-hidden"><summary class="flex items-center justify-between p-4 cursor-pointer font-semibold text-xs text-on-surface hover:bg-surface-container transition-colors"><span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">terminal</span><span class="">View Technical Verification Data</span></span><span class="material-symbols-outlined text-[18px] text-on-surface-variant group-open:rotate-180 transition-transform">expand_more</span></summary><div class="p-4 border-t border-surface-container-high/60 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono bg-surface-container-lowest"><div class="space-y-2"><div><span class="text-on-surface-variant block text-[11px]">Subject Pseudonym Anchor:</span><span class="text-on-surface truncate block">did:sanad:worker:ae82…994f</span></div><div><span class="text-on-surface-variant block text-[11px]">Trust Root Authority:</span><span class="text-on-surface block">SANAD Independent Trust Root Node</span></div><div><span class="text-on-surface-variant block text-[11px]">Attestation Standard:</span><span class="text-on-surface block">W3C Verifiable Credential v2.0</span></div></div><div class="space-y-2"><div><span class="text-on-surface-variant block text-[11px]">Ledger Proof Anchor:</span><span class="text-on-surface block">Poly-Ledger Merkle Tree (Root consensus testnet)</span></div><div><span class="text-on-surface-variant block text-[11px]">Cryptographic Merkle Hash:</span><span class="text-on-surface break-all block">0x9e12bf4097f...7ccb0a</span></div></div></div></details></div>
+<!-- Strict Privacy Guard Callout -->
+<div class="rounded-xl bg-surface-container-high/60 p-4 sm:p-5 flex items-start gap-3.5">
+<span class="material-symbols-outlined text-primary text-[24px] shrink-0 mt-0.5">security</span>
+<div class="space-y-1 text-xs text-on-surface-variant leading-relaxed">
+<span class="font-bold text-on-surface text-sm block">Strict Privacy Guard Active</span>
+<p class="">
+                No raw identity cards, passport copies, salary amounts, employer phone numbers, or private audio files are hosted or accessible through this public verification ledger. Only the cryptographic proof of claims processed via SANAD Sovereign Node is validated.
+              </p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: MY SANAD / RETURNING WORKER DASHBOARD (SCREEN 14) -->
+<section class="relative pt-4">
+<!-- Section Header with Editorial Overline -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold uppercase tracking-wider mb-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary">dashboard</span>
+<span class="">Screen 14 • Sovereign Worker Vault</span>
+</div>
+<h2 class="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">My SANAD Overview</h2>
+<p class="text-sm sm:text-base text-on-surface-variant mt-1">
+              Your self-sovereign workspace. Your documents remain encrypted on your device.
+            </p>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<span class="text-xs text-on-surface-variant block">Sync Status</span>
+<span class="text-xs font-semibold text-primary inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Encrypted Client Cache Active
+              </span>
+</div>
+</div>
+</div>
+<!-- 4-Card Bento Grid Dashboard Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1: My Confirmed Situation -->
+<div class="bg-surface-container rounded-xl p-6 flex flex-col justify-between relative shadow-sm hover:shadow-md transition-shadow">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">assignment_turned_in</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-semibold">Confirmed</span>
+</div>
+<p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">My Situation</p>
+<h3 class="font-headline text-lg font-bold text-on-surface">August Unpaid Wages</h3>
+<p class="text-xs text-on-surface-variant mt-2 leading-relaxed">
+                Employment recently concluded. End-of-service settlement and monthly wages documented.
+              </p>
+</div>
+<div class="pt-6 mt-4 border-t border-surface-container-highest/70 flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Validated: 25 Sep 2026</span>
+<a class="font-semibold text-primary hover:underline inline-flex items-center gap-0.5" href="#">
+<span class="">Details</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Card 2: My Proof (Credentials) -->
+<div class="bg-surface-container rounded-xl p-6 flex flex-col justify-between relative shadow-sm hover:shadow-md transition-shadow">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">workspace_premium</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary-container text-xs font-bold">1 Active Credential</span>
+</div>
+<p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">My Proof</p>
+<h3 class="font-headline text-lg font-bold text-on-surface font-mono">SANAD-VC-00124</h3>
+<p class="text-xs text-on-surface-variant mt-2 leading-relaxed">
+                Zero-knowledge cryptographic badge proving employment and unpaid wage history without disclosing private ID.
+              </p>
+</div>
+<div class="pt-6 mt-4 border-t border-surface-container-highest/70 flex items-center gap-2">
+<button class="flex-1 py-2 px-3 rounded-lg bg-surface text-on-surface text-xs font-semibold hover:bg-surface-container-high transition-colors text-center inline-flex items-center justify-center gap-1.5" onclick="showProofModal()" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary">qr_code</span>
+<span class="">View QR</span>
+</button>
+<button class="flex-1 py-2 px-3 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:opacity-95 transition-opacity text-center inline-flex items-center justify-center gap-1.5" onclick="triggerShareProof()" type="button">
+<span class="material-symbols-outlined text-[16px]">share</span>
+<span class="">Share Proof</span>
+</button>
+</div>
+</div>
+<!-- Card 3: My Applications & Dispute Tracking -->
+<div class="bg-surface-container rounded-xl p-6 flex flex-col justify-between relative shadow-sm hover:shadow-md transition-shadow">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[22px]">gavel</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-xs font-bold">Under Review</span>
+</div>
+<p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">My Applications</p>
+<h3 class="font-headline text-lg font-bold text-on-surface">Wage Dispute Support</h3>
+<p class="text-xs font-mono text-on-surface-variant mt-1">Ref: SANAD-APP-00124</p>
+<div class="w-full bg-surface-container-high rounded-full h-2 mt-4 overflow-hidden">
+<div class="bg-tertiary h-2 rounded-full w-2/3"></div>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-1.5">Review in progress</p>
+</div>
+<div class="pt-6 mt-4 border-t border-surface-container-highest/70 flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Update: Today 11:20 AM</span>
+<a class="font-semibold text-tertiary hover:underline inline-flex items-center gap-0.5" href="#">
+<span class="">Timeline</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Card 4: Recent Updates & Activity -->
+<div class="bg-surface-container rounded-xl p-6 flex flex-col justify-between relative shadow-sm hover:shadow-md transition-shadow">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[22px]">notifications_active</span>
+</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-variant text-on-surface-variant text-xs font-bold">2 Unread</span>
+</div>
+<p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">Recent Updates</p>
+<div class="space-y-3 mt-3">
+<div class="flex items-start gap-2.5">
+<span class="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0"></span>
+<div class="text-xs">
+<p class="font-semibold text-on-surface">Credential Issued</p>
+<p class="text-on-surface-variant text-[11px]">SANAD-VC-00124 created &amp; signed</p>
+</div>
+</div>
+<div class="flex items-start gap-2.5">
+<span class="w-2 h-2 rounded-full bg-tertiary mt-1.5 shrink-0"></span>
+<div class="text-xs">
+<p class="font-semibold text-on-surface">Evidence Attached</p>
+<p class="text-on-surface-variant text-[11px]">Timesheet audit ledger verified</p>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4 mt-4 border-t border-surface-container-highest/70 flex items-center justify-between text-xs">
+<button class="text-xs font-medium text-on-surface-variant hover:text-on-surface" type="button">Mark all read</button>
+<a class="font-semibold text-primary hover:underline" href="#">Full Feed</a>
+</div>
+</div>
+</div>
+<!-- Worker Self-Sovereign Visual Banner with Generated Imagery -->
+<div class="mt-8 rounded-xl bg-surface-container-low p-6 sm:p-8 flex flex-col lg:flex-row items-center gap-8 shadow-sm">
+<div class="w-full lg:w-1/3 h-52 rounded-xl overflow-hidden shadow-sm shrink-0">
+<img class="w-full h-full object-cover" data-alt="A warm, grounded scene of two compassionate labor support advisors seated in a warm timber-clad clinic room, reviewing verifiable documents with a worker. Natural afternoon daylight, earthy muted olive greens, terracotta, warm cream tones, gentle cinematic depth, conveying dignity, human warmth, and peaceful security." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSfAf_vmm8LXStM7FjlbUPKxGUO-UNkDrfwBOR1o6xqFMSGOFEv2jIbVhRJeiRZBPy7gRwW6yIrkBy6kDBsaUlxXc1py5lMQ0U8DM6wHELNEsdS5zNjMcgUuhUAs2z47xKn4GZagTJ5y33fL_rE1mWNPNf7Ess8-T7ZFEcqdxFiD067tWsywxgBdMeiOB6XNXN1rH1N4PDPefEIQ9Gv7AEx8C-8fxShMwdryBiE7_oeSpL_n4yiCnb">
+</div>
+<div class="flex-1 space-y-3">
+<div class="flex items-center gap-2 text-xs font-bold tracking-wide uppercase text-tertiary">
+<span class="material-symbols-outlined text-[18px]">lock_reset</span>
+<span class="">Private Client Vault Protection</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-on-surface">Your Dignity. Your Immutable Record.</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Every document you process through SANAD stays anchored under your personal passkey. You choose when to provide proof to a labor court, an embassy liaison, or a prospective sponsor — without disclosing confidential personal papers or jeopardizing your safety.
+            </p>
+<div class="pt-2 flex flex-wrap gap-4 text-xs font-mono text-on-surface-variant">
+<span class="">• Device Storage: AES-GCM 256-bit</span>
+<span class="">• Peer-to-Peer Zero-Knowledge Sync</span>
+<span class="">• Multi-Language Voice Transcripts Cached</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: HUMAN ASSISTANCE ESCALATION (SCREEN 17) -->
+<section class="relative pt-4 pb-8">
+<div class="bg-surface-container rounded-xl p-6 sm:p-10 shadow-md relative overflow-hidden">
+<div class="absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-tertiary-fixed/30 blur-2xl pointer-events-none"></div>
+<div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+<!-- Left Col: Description & Dignified Promise -->
+<div class="flex-1 space-y-4">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-xs font-bold tracking-wide uppercase">
+<span class="material-symbols-outlined text-[16px]">support_agent</span>
+<span class="">Screen 17 • Human Fallback &amp; Escalation</span>
+</div>
+<h2 class="font-headline text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+                "I'd like a person to help"
+              </h2>
+<p class="text-base text-on-surface-variant leading-relaxed">
+                If you feel unsure, stressed, or need human assistance, an accredited independent worker support caseworker can review your case with you.
+              </p>
+<div class="rounded-xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm space-y-2.5">
+<p class="text-xs font-bold uppercase tracking-wider text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<span class="">You won't have to explain everything from scratch</span>
+</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                  With your permission, your caseworker receives a secure summary package so you do not have to repeat painful details:
+                </p>
+<!-- Check List of Transferred Context -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+<div class="flex items-center gap-2 text-xs font-semibold text-on-surface bg-surface-container-low px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span class="">Confirmed situation details</span>
+</div>
+<div class="flex items-center gap-2 text-xs font-semibold text-on-surface bg-surface-container-low px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">tag</span>
+<span class="">Application ID #SANAD-APP-00124</span>
+</div>
+<div class="flex items-center gap-2 text-xs font-semibold text-on-surface bg-surface-container-low px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">transcribe</span>
+<span class="">Conversation transcript context</span>
+</div>
+<div class="flex items-center gap-2 text-xs font-semibold text-on-surface bg-surface-container-low px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">attach_file</span>
+<span class="">Attached documents &amp; time logs</span>
+</div>
+</div>
+</div>
+<!-- Caseworker Profile Card Sneak-peek -->
+<div class="flex items-center gap-4 pt-2">
+<div class="w-12 h-12 rounded-full overflow-hidden shrink-0 shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Warm portrait of an empathetic labor rights legal counselor in a modest office, soft lighting, wearing natural neutral attire, gentle friendly expression, earthy tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8ZvxLTUeJARq0k0mxUOvBQcZvsRiXo68a6_efoA5RSTFT5Gx4zoP0j5-s2J16RRaSOYpDnFlK5F-il11TLOlZ5y-QBAxjFiPlE8Kx-O5k2u62OJyB4wQepYWv7Y1Gry_-8n8OXDYkRFc1xEjHS8PsWejLPXeYinIFur7x0zv3LsIOzhRiVOe3woSBjFg0O8iGQdNYl4LGV3pu5nyFccqKul8O1ben_c3SFY-Et6_aRaJoPaGMVtxB">
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="text-xs font-bold text-on-surface">Available Caseworker: Sarah M.</span>
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+<span class="text-xs text-on-surface-variant block">Languages: English, Arabic (العربية), Urdu (اردو), Hindi</span>
+<span class="text-[11px] text-tertiary font-semibold block">Independent Legal Aid &amp; Migrant Welfare Certified</span>
+</div>
+</div>
+</div>
+<!-- Right Col: Escalation Actions Box -->
+<div class="w-full lg:w-96 bg-surface-container-lowest rounded-xl p-6 sm:p-7 shadow-md flex flex-col justify-between shrink-0 space-y-6">
+<div>
+<span class="text-xs font-bold uppercase tracking-wider text-secondary block mb-1">Connect Directly</span>
+<h3 class="font-headline text-lg font-bold text-on-surface">Connect with a Community Caseworker</h3>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Calls are free, confidential, and run over an encrypted sovereign relay.
+                </p>
+<!-- Queue Status Widget -->
+<div class="mt-5 p-3.5 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[22px]">timer</span>
+<div>
+<span class="text-xs font-bold text-on-surface block">Average Wait Time</span>
+<span class="text-[11px] text-on-surface-variant font-mono">Current queue: 2 workers ahead</span>
+</div>
+</div>
+<span class="font-headline font-bold text-base text-primary">~ 3 mins</span>
+</div>
+</div>
+<div class="space-y-3">
+<button class="w-full py-4 px-4 rounded-xl bg-primary text-on-primary font-bold text-sm hover:opacity-95 transition-opacity flex items-center justify-center gap-2 shadow-sm cursor-pointer" id="callRequestBtn" onclick="triggerCaseworkerCall()" type="button"><span class="material-symbols-outlined text-[20px]">support_agent</span><span class="">Connect with a Community Caseworker</span></button>
+<button class="w-full py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer" onclick="triggerCallbackModal()" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary">chat</span>
+<span class="">Schedule WhatsApp / Callback</span>
+</button>
+<div class="pt-2">
+<button class="w-full py-2.5 px-4 text-xs font-semibold text-on-surface-variant hover:text-on-surface text-center transition-colors" onclick="dismissEscalation()" type="button">
+                    Continue Independently →
+                  </button>
+</div>
+</div>
+<div class="text-center pt-2 border-t border-surface-container-high/60">
+<span class="text-[11px] text-on-surface-variant flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">lock</span>
+<span class="">No data sold or shared with government databases</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- MODAL: QR Code Verification Display -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm hidden items-center justify-center p-4" id="qrModal">
+<div class="bg-surface rounded-xl max-w-sm w-full p-6 shadow-xl relative animate-in fade-in zoom-in-95 duration-200">
+<button class="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface" onclick="closeProofModal()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<div class="text-center space-y-3">
+<span class="px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold uppercase tracking-wider">
+          Portable Offline Proof
+        </span>
+<h3 class="font-headline text-lg font-bold text-on-surface">SANAD-VC-00124</h3>
+<p class="text-xs text-on-surface-variant">
+          Present this QR code to legal representatives or support staff for instant zero-knowledge attestation.
+        </p>
+<!-- Simulated Scalable QR Code SVG -->
+<div class="w-52 h-52 mx-auto bg-surface-container-lowest rounded-xl p-4 flex items-center justify-center shadow-inner">
+<svg class="w-full h-full text-on-surface" fill="currentColor" viewBox="0 0 100 100">
+<!-- Position markers -->
+<rect height="26" rx="2" width="26" x="5" y="5"></rect>
+<rect fill="white" height="18" width="18" x="9" y="9"></rect>
+<rect height="10" width="10" x="13" y="13"></rect>
+<rect height="26" rx="2" width="26" x="69" y="5"></rect>
+<rect fill="white" height="18" width="18" x="73" y="9"></rect>
+<rect height="10" width="10" x="77" y="13"></rect>
+<rect height="26" rx="2" width="26" x="5" y="69"></rect>
+<rect fill="white" height="18" width="18" x="9" y="73"></rect>
+<rect height="10" width="10" x="13" y="77"></rect>
+<!-- Randomized Pattern blocks -->
+<rect height="8" width="8" x="36" y="8"></rect>
+<rect height="8" width="8" x="48" y="14"></rect>
+<rect height="8" width="8" x="36" y="24"></rect>
+<rect height="8" width="8" x="54" y="28"></rect>
+<rect height="8" width="8" x="8" y="38"></rect>
+<rect height="8" width="8" x="20" y="44"></rect>
+<rect height="12" width="12" x="36" y="40"></rect>
+<rect height="10" width="10" x="52" y="44"></rect>
+<rect height="8" width="8" x="68" y="38"></rect>
+<rect height="8" width="8" x="82" y="44"></rect>
+<rect height="10" width="10" x="38" y="68"></rect>
+<rect height="8" width="8" x="52" y="64"></rect>
+<rect height="8" width="8" x="66" y="70"></rect>
+<rect height="12" width="12" x="80" y="68"></rect>
+<rect height="12" width="12" x="50" y="80"></rect>
+<rect height="8" width="8" x="68" y="84"></rect>
+</svg>
+</div>
+<div class="pt-2 text-xs font-mono text-on-surface-variant break-all">
+          0x49f3...e91a • Merkle verified
+        </div>
+<div class="pt-2 flex gap-2">
+<button class="w-full py-2.5 rounded-lg bg-primary text-on-primary text-xs font-bold hover:opacity-95 transition-opacity" onclick="closeProofModal()" type="button">
+            Close &amp; Return
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- TOAST NOTIFICATION CONTAINER -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none" id="toastBox">
+<div class="bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-xs font-medium max-w-sm">
+<span class="material-symbols-outlined text-inverse-primary text-[20px]" id="toastIcon">check_circle</span>
+<span id="toastMsg" class="">Action completed successfully.</span>
+</div>
+</div>
+<script>
+    function showToast(message, icon = 'check_circle') {
+      const toast = document.getElementById('toastBox');
+      const msg = document.getElementById('toastMsg');
+      const ic = document.getElementById('toastIcon');
+      if (!toast || !msg || !ic) return;
+      msg.textContent = message;
+      ic.textContent = icon;
+      toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+      }, 3500);
+    }
+
+    function triggerVerify() {
+      const input = document.getElementById('credentialInput').value.trim();
+      const result = document.getElementById('resultModule');
+      if (!input) {
+        showToast('Please enter a credential hash or ID', 'error');
+        return;
+      }
+      result.classList.add('opacity-50', 'scale-[0.99]');
+      setTimeout(() => {
+        result.classList.remove('opacity-50', 'scale-[0.99]');
+        showToast('Credential ' + input + ' verified via Merkle root.', 'verified');
+      }, 400);
+    }
+
+    function showProofModal() {
+      const modal = document.getElementById('qrModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeProofModal() {
+      const modal = document.getElementById('qrModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function toggleScannerModal(state) {
+      if (state) {
+        showToast('Camera scanner initialized (Zero-document leakage active)', 'photo_camera');
+      }
+    }
+
+    function triggerShareProof() {
+      navigator.clipboard ? navigator.clipboard.writeText('https://sanad.rights/verify/SANAD-VC-00124') : null;
+      showToast('Public proof URL copied to clipboard!', 'share');
+    }
+
+    function copyClaimLink() {
+      navigator.clipboard ? navigator.clipboard.writeText('https://sanad.rights/verify/SANAD-VC-00124') : null;
+      const btn = document.getElementById('copyBtnText');
+      if (btn) btn.textContent = 'Link Copied!';
+      showToast('Verification audit link copied to clipboard.', 'content_copy');
+      setTimeout(() => {
+        if (btn) btn.textContent = 'Public Proof Link';
+      }, 2500);
+    }
+
+    function printReceipt() {
+      window.print();
+    }
+
+    function triggerCaseworkerCall() {
+      const btn = document.getElementById('callRequestBtn');
+      if (btn) {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">refresh</span><span>Connecting to Sarah M...</span>';
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">ring_volume</span><span>Call Connecting (Line Secured)</span>';
+          showToast('Caseworker Sarah M. is joining your encrypted call...', 'phone_in_talk');
+        }, 1800);
+      }
+    }
+
+    function triggerCallbackModal() {
+      showToast('Callback request queued for WhatsApp relay (+971 ...)', 'send_to_mobile');
+    }
+
+    function dismissEscalation() {
+      showToast('Continuing self-guided navigation. Help is always one tap away.', 'support_agent');
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-low shadow-[0_-1px_12px_rgba(46,50,48,0.04)] mt-16"><div class="max-w-7xl mx-auto px-6 lg:px-12 py-12"><div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10"><div class="space-y-3"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline font-bold text-sm">سـ</div><span class="font-headline font-bold text-primary tracking-tight text-base">SANAD</span><span class="font-headline text-tertiary text-sm">سَنَد</span></div><p class="text-xs text-on-surface-variant leading-relaxed">Human-centered decentralized worker support research prototype. An independent research demonstration — not an official government agency or state portal.</p><div class="flex items-center gap-2 text-xs font-semibold text-primary"><span class="material-symbols-outlined text-[16px]">verified_user</span><span class="">Zero-Knowledge Proof Secured</span></div></div><div class="space-y-2"><span class="text-xs font-bold uppercase tracking-wider text-secondary">Privacy &amp; Sovereign Trust</span><ul class="space-y-1.5 text-xs text-on-surface-variant"><li class="">• No personal documents saved on-chain</li><li class="">• Encrypted client-side storage</li><li class="">• Portable W3C Verifiable Credentials</li><li class="">• Tamper-proof cryptographic hashes</li></ul></div><div class="space-y-2"><span class="text-xs font-bold uppercase tracking-wider text-secondary">Community Caseworker Support</span><p class="text-xs text-on-surface-variant">Confidential peer support and independent NGO partner triage for migrant worker rights and guidance.</p><div class="flex items-center gap-2 text-xs font-semibold text-primary"><span class="material-symbols-outlined text-[16px]">volunteer_activism</span><span class="">NGO Partner Network Relay</span></div><p class="text-xs text-on-surface-variant font-mono text-[11px]">Non-governmental demonstration environment</p></div><div class="space-y-2"><span class="text-xs font-bold uppercase tracking-wider text-secondary">Supported Languages</span><p class="text-xs text-on-surface-variant leading-relaxed">English • العربية • हिन्दी • اردو • বাংলা • മലയാളം • தமிழ் • Tagalog</p><div class="pt-2 flex items-center gap-2 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[16px] text-primary">accessibility_new</span><span class="">WCAG 2.1 AAA Compliant UX</span></div></div></div><div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-on-surface-variant"><p class="">© 2024 SANAD Research Project. Independent prototype research demonstration — not affiliated with any government entity or state labor department.</p><div class="flex items-center gap-6"><a class="hover:text-on-surface transition-colors" data-path="help-and-human-support" href="#">Independent Legal Partners</a><a class="hover:text-on-surface transition-colors" data-path="public-verification" href="#">Audited Smart Verification</a><span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[11px]">v2.4-root</span></div></div></div></footer>
+
+</body></html>
