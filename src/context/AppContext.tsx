@@ -63,7 +63,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [textScale, setTextScaleState] = useState<TextScale>(() => {
-    const saved = (typeof window !== 'undefined' ? localStorage.getItem : () => null)('sanad_text_scale') as TextScale;
+    const saved = (typeof window !== 'undefined' ? window.localStorage.getItem('sanad_text_scale') : null) as TextScale;
     return (saved && ['normal', 'large', 'xlarge'].includes(saved)) ? saved : 'normal';
   });
 
