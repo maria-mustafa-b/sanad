@@ -1,36 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getServiceRoleClient } from '@/lib/supabase';
+import { seedServices } from '@/lib/services/catalog';
 
-const FALLBACK_SERVICES = [
-  {
-    id: '1',
-    name: 'MOHRE - Wage Protection System (WPS)',
-    description: 'If your employer has not paid your salary on time, you can file a formal complaint through the Ministry of Human Resources and Emiratisation. The WPS ensures that workers are paid their wages via registered financial institutions.',
-    category: 'Employment & Labor',
-    official_url: 'https://www.mohre.gov.ae/en/services/wage-protection-system.aspx',
-  },
-  {
-    id: '2',
-    name: 'Dubai Courts - Labor Case Registration',
-    description: 'For severe labor disputes regarding end-of-service benefits, unfair dismissal, or unpaid wages exceeding amicable settlement. You must first obtain an NOC from MOHRE before filing.',
-    category: 'Legal Support',
-    official_url: 'https://www.dc.gov.ae/',
-  },
-  {
-    id: '3',
-    name: 'GDRFA - Residency Status & Overstay Support',
-    description: 'If you have lost your job and your visa has been cancelled, you have a grace period. Use this service to check your status, apply for extensions, or resolve overstay fines.',
-    category: 'Residency & Visa',
-    official_url: 'https://www.gdrfad.gov.ae/',
-  },
-  {
-    id: '4',
-    name: 'Pro Bono Legal Clinic - DIFC Courts',
-    description: 'Free legal advice for individuals who cannot afford lawyers. Accessible for workers dealing with severe contract breaches or needing guidance on filing a case.',
-    category: 'Pro Bono Legal',
-    official_url: 'https://www.difccourts.ae/pro-bono',
-  }
-];
+// The reviewed catalog of official UAE government resources (29 entries with
+// verified official URLs) is the single fallback source, keeping the live demo
+// path aligned with the full catalog instead of a short ad-hoc list.
+const FALLBACK_SERVICES = seedServices.map((service, index) => ({
+  id: String(index + 1),
+  name: service.title,
+  description: service.description,
+  category: service.category,
+  official_url: service.url,
+  supported_situations: [...service.situations],
+}));
 
 export async function GET() {
   try {
@@ -40,13 +22,13 @@ export async function GET() {
       .order('created_at', { ascending: false });
 
     if (error || !services || services.length === 0) {
-      console.error('Supabase error or empty services, returning fallback data:', error?.message);
-      return NextResponse.json({ data: FALLBACK_SERVICES });
+      console.error('Supabase error or empty services, returning reviewed official catalog:', error?.message);
+      return NextResponse.json({ data: FALLBACK_SERVICES, source: 'official_catalog_fallback' });
     }
 
-    return NextResponse.json({ data: services });
+    return NextResponse.json({ data: services, source: 'database' });
   } catch (error) {
     console.error('API error:', error);
-    return NextResponse.json({ data: FALLBACK_SERVICES });
+    return NextResponse.json({ data: FALLBACK_SERVICES, source: 'official_catalog_fallback' });
   }
 }

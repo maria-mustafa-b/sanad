@@ -1,22 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, ShieldCheck, Download, QrCode, ArrowRight, CheckCircle2, Clock, XCircle } from "lucide-react";
 
 export default function CredentialsPage() {
   const [activeTab, setActiveTab] = useState('ALL');
+  const [claims, setClaims] = useState<any[]>([]);
 
-  const credentials = [
-    {
+  useEffect(() => {
+    fetch('/api/claims').then(r => r.json()).then(j => { if(j.data) setClaims(j.data) }).catch(console.error);
+  }, []);
+
+  const credentials = claims.map((c, i) => {
+    let sit = "Employment Situation";
+    try {
+      const intentObj = typeof c.intent === 'string' ? JSON.parse(c.intent) : c.intent;
+      if (intentObj.intent) sit = intentObj.intent;
+    } catch(e) {}
+    
+    return {
+      id: "SANAD-VC-0" + (124 + i),
+      situation: sit,
+      issueDate: new Date(c.created_at).toISOString().split('T')[0],
+      issuer: "SANAD",
+      blockchain: "Polygon Amoy",
+      status: "Valid"
+    }
+  });
+
+  if (credentials.length === 0) {
+    credentials.push({
       id: "SANAD-VC-00124",
       situation: "Employment Situation: Unpaid Wages",
       issueDate: "2026-09-26",
       issuer: "SANAD",
       blockchain: "Polygon Amoy",
       status: "Valid"
-    }
-  ];
+    });
+  }
 
   const filtered = activeTab === 'ALL' 
     ? credentials 
@@ -30,7 +52,7 @@ export default function CredentialsPage() {
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">My Credentials</h1>
           <p className="text-gray-500">Manage your cryptographic proofs and verifiable claims.</p>
         </div>
-        <Link href="/chat" className="flex items-center gap-2 px-6 py-3 bg-teal-700 text-white rounded-xl font-bold hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 shrink-0">
+        <Link href="/documents" className="flex items-center gap-2 px-6 py-3 bg-teal-700 text-white rounded-xl font-bold hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 shrink-0">
           <Plus className="w-5 h-5" /> Create New
         </Link>
       </div>
@@ -122,3 +144,4 @@ export default function CredentialsPage() {
     </div>
   );
 }
+

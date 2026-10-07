@@ -1,49 +1,42 @@
 import { NextResponse } from 'next/server';
-import { JsonRpcProvider, Wallet, Contract } from 'ethers';
-import { compileRegistry } from '@/scripts/amoy-shared.mjs';
+import { actor } from '@/lib/auth/session';
+import { AppError } from '@/lib/api/errors';
+import { issue, onchainId } from '@/lib/blockchain/chain';
+
+const isBytes32 = (value: string) => /^0x[0-9a-fA-F]{64}$/.test(value);
 
 export async function POST(request: Request) {
   try {
+    // Issuance is an authenticated action on the user's own claim.
+    await actor();
+
     const { claimId, claimDataHash } = await request.json();
 
     if (!claimId || !claimDataHash) {
       return NextResponse.json({ error: 'claimId and claimDataHash are required' }, { status: 400 });
     }
 
-    const rpc = process.env.POLYGON_AMOY_RPC_URL;
-    const key = process.env.BLOCKCHAIN_PRIVATE_KEY;
-    const contractAddress = process.env.SANAD_CONTRACT_ADDRESS;
-
-    if (!rpc || !key || !contractAddress) {
-      return NextResponse.json({ error: 'Blockchain configuration missing in environment' }, { status: 500 });
-    }
-
-    const provider = new JsonRpcProvider(rpc);
-    const wallet = new Wallet(key, provider);
-
-    // Dynamic compilation so we don't need to hardcode ABI
-    const { abi } = await compileRegistry();
-    const contract = new Contract(contractAddress, abi, wallet);
-
-    // Execute the real smart contract transaction!
-    // function issueCredential(string memory credentialId, string memory dataHash)
-    const tx = await contract.issueCredential(claimId, claimDataHash);
-    
-    // Wait for 1 confirmation
-    const receipt = await tx.wait(1);
+    // The deployed SANADCredential contract exposes issue(bytes32 id, bytes32 recordHash).
+    // Reuse the audited chain helper so the ABI, id mapping and mock/real mode stay in sync.
+    const recordHash = isBytes32(claimDataHash) ? claimDataHash : onchainId(claimDataHash);
+    const result = await issue(claimId, recordHash);
 
     return NextResponse.json({
       success: true,
-      transactionHash: receipt.hash,
+      mode: result.mode,
+      transactionHash: result.transaction_hash,
       credentialId: claimId,
-      network: "Polygon Amoy"
+      network: result.mode === 'real' ? 'Polygon Amoy testnet (80002)' : 'mock'
     });
 
   } catch (error: any) {
+    if (error instanceof AppError) {
+      return NextResponse.json({ error: error.code, message: error.message }, { status: error.status });
+    }
     console.error('Blockchain Issuance Error:', error);
-    return NextResponse.json({ 
-      error: 'Failed to issue credential on blockchain', 
-      details: error.message 
+    return NextResponse.json({
+      error: 'Failed to issue credential on blockchain',
+      details: error.message
     }, { status: 500 });
   }
 }

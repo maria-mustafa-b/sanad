@@ -23,8 +23,6 @@ export function SanadHero() {
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      
-      
     });
 
     function raf(time: number) {
@@ -75,7 +73,7 @@ export function SanadHero() {
       <div ref={contentRef} className="relative z-10 w-full max-w-5xl mx-auto px-4 flex flex-col items-center md:items-start text-center md:text-left mt-16 md:mt-0">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-8 border border-emerald-500/20 backdrop-blur-sm">
           <ShieldCheck className="w-4 h-4" />
-          <span>AI • Verified • Accessible</span>
+          <span>AI &bull; Verified &bull; Accessible</span>
         </div>
 
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] mb-6 drop-shadow-sm">
@@ -84,7 +82,7 @@ export function SanadHero() {
         </h1>
 
         <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl leading-relaxed drop-shadow-sm">
-          SANAD helps you understand your situation, discover relevant support, create portable verifiable credentials, and navigate your service journey — all in one place.
+          SANAD helps you understand your situation, discover relevant support, create portable verifiable credentials, and navigate your service journey - all in one place.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto mb-16">
@@ -109,13 +107,6 @@ export function SanadHero() {
             <Smartphone className="w-4 h-4 text-emerald-400" />
             <span>Accessible by Design</span>
           </div>
-        </div>
-      </div>
-
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center opacity-70 animate-bounce">
-        <span className="text-xs font-bold text-white uppercase tracking-widest mb-2">Scroll to explore</span>
-        <div className="w-5 h-8 border-2 border-white/50 rounded-full flex justify-center p-1">
-          <div className="w-1 h-2 bg-white rounded-full" />
         </div>
       </div>
     </div>

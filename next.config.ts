@@ -2,18 +2,10 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {
   poweredByHeader: false,
-  
-  // Ignore ESLint errors during Vercel build to ensure the deploy goes through
-  // @ts-expect-error
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-eslint: {
-    ignoreDuringBuilds: true,
-  },
-  
-  // Ignore TypeScript errors during Vercel build to ensure the deploy goes through
-  // @ts-expect-error
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-typescript: {
+
+  // Next 16 no longer runs ESLint during builds (the `eslint` key was removed),
+  // so linting is enforced via `npm run lint` as a separate gate.
+  typescript: {
     ignoreBuildErrors: true,
   },
 

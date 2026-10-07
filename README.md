@@ -19,11 +19,12 @@
 
 ## 🌟 What is SANAD?
 
-**SANAD (سند)** is an AI-powered multilingual situation navigator combined with a portable, zero-PII verifiable credential system. It empowers workers, residents, and individuals to naturally explain complex life situations in mixed languages (Hinglish, Arabizi, Urdu-English, Arabic-English), extract structured facts, generate cryptographic proof of their confirmed claims, and dynamically connect with **28 verified official UAE government service portals**.
+**SANAD (سند)** is an AI-powered multilingual situation navigator combined with a portable, zero-PII verifiable credential system. It empowers workers, residents, and individuals to naturally explain complex life situations in mixed languages (Hinglish, Arabizi, Urdu-English, Arabic-English), extract structured facts, generate cryptographic proof of their confirmed claims, and dynamically connect with **29 verified official UAE government service portals**.
 
 > [!IMPORTANT]
-> **Live Production Deployment**: SANAD is live on Vercel connected to Supabase Database & Gemini 3.5 AI:  
-> 👉 **[https://sanad-ebon.vercel.app](https://sanad-ebon.vercel.app)**
+> **Live prototype (hackathon demo)**: the UI and AI flow are deployed at  
+> 👉 **[https://sanad-ebon.vercel.app](https://sanad-ebon.vercel.app)**  
+> Blockchain credential issuance targets the **Polygon Amoy testnet** (no mainnet deployment). Database and AI calls depend on configured environment keys; when a provider is unavailable the app returns clearly-labelled sample data, never invented results. See [docs/VALIDATION.md](docs/VALIDATION.md) for which gates are verified and which are pending.
 
 ---
 
@@ -58,16 +59,16 @@ flowchart TD
     end
 
     subgraph User Outcome
-        G & H --> I["28 Matched UAE Official Gov Services"]
+        G & H --> I["Matched UAE Official Gov Services (29-portal catalog)"]
         G & H --> J["Verifiable QR Credential (/verify?id=...)"]
     end
 ```
 
 ---
 
-## 📋 Official Government Resource Network (28 Categories)
+## 📋 Official Government Resource Network (29 Categories)
 
-SANAD automatically maps confirmed user situations to **28 verified UAE official government portals**:
+SANAD automatically maps confirmed user situations to **29 verified UAE official government portals**:
 
 ```text
 🏛️ LABOUR & WAGES          • MOHRE Private Sector Complaints, Wage Protection, Worker Rights

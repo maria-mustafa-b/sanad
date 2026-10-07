@@ -24,7 +24,7 @@ textarea:focus-visible {
   outline-offset: 5px;
 }
 .site-header {
-  max-width: 1280px;
+  
   margin: auto;
   padding: 26px 40px;
   display: flex;
@@ -63,7 +63,7 @@ nav a:hover {
   border-radius: 4px;
 }
 .hero {
-  max-width: 1280px;
+  
   margin: auto;
   padding: 90px 40px 80px;
   display: grid;
@@ -164,7 +164,7 @@ h1 em {
   color: #365743;
 }
 .journey {
-  max-width: 1280px;
+  
   margin: auto;
   padding: 36px 40px 65px;
 }
@@ -259,7 +259,7 @@ textarea {
   list-style: disc;
 }
 footer {
-  max-width: 1280px;
+  
   margin: auto;
   border-top: 1px solid #dce2da;
   padding: 25px 40px;

@@ -8,12 +8,14 @@ import { useParams } from "next/navigation";
 export default function ServiceDetailsPage() {
   const params = useParams();
   const [service, setService] = useState<any>(null);
+  const [hasContract, setHasContract] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // In a real scenario, fetch specific service. 
     // Here we fetch all and find, or just mock it for the UI design.
     const fetchService = async () => {
+      try { const v = localStorage.getItem('sanad_vault'); if (v) { const docs = JSON.parse(v); setHasContract(docs.length > 0); } } catch(e) {}
       try {
         const res = await fetch('/api/services');
         const json = await res.json();
@@ -107,9 +109,7 @@ export default function ServiceDetailsPage() {
                       <p className="text-xs text-gray-500">Required</p>
                     </div>
                   </div>
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> In Vault
-                  </span>
+                  {hasContract ? <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> In Vault</span> : <span className="text-xs font-bold text-gray-400">Missing</span>}
                 </div>
                 <div className="flex items-center justify-between opacity-60">
                   <div className="flex items-center gap-3">
@@ -152,9 +152,9 @@ export default function ServiceDetailsPage() {
             </div>
 
             <div className="mt-12 space-y-4">
-              <button className="w-full py-4 bg-teal-700 text-white rounded-2xl font-bold text-lg hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 flex items-center justify-center gap-2">
+              <Link href="/applications/new" className="w-full py-4 bg-teal-700 text-white rounded-2xl font-bold text-lg hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 flex items-center justify-center gap-2">
                 Start Application <ChevronRight className="w-5 h-5" />
-              </button>
+              </Link>
               {service.official_url && (
                 <a 
                   href={service.official_url} 
@@ -174,3 +174,5 @@ export default function ServiceDetailsPage() {
     </div>
   );
 }
+
+

@@ -21,7 +21,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <>
         <Navbar />
         {children}
-        <footer className="bg-slate-950 text-gray-400 py-12 border-t border-slate-900 z-10 relative">
+        <footer className="w-full bg-slate-950 text-gray-400 py-12 border-t border-slate-900 z-10 relative mt-auto">
           <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
               <img src="/sanad-logo.png" className="w-8 h-8 opacity-80 object-contain" alt="SANAD"/>
@@ -71,7 +71,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <Link href="/" className="p-6 hidden md:flex items-center gap-3 mb-4 hover:opacity-80 transition-opacity">
           <img src="/sanad-logo.png" alt="SANAD Logo" className="w-8 h-8 object-contain" />
           <span className="font-extrabold text-2xl text-gray-900 tracking-tight">SANAD</span>
-        </div>
+        </Link>
 
         <div className="flex-1 overflow-y-auto py-4 px-4 space-y-1">
           {navItems.map((item) => {

@@ -54,7 +54,7 @@ export default function DashboardPage() {
             <FileText className="w-4 h-4" /> Current Situation
           </div>
           <div className="font-bold text-gray-900 line-clamp-1">
-            {activeClaim ? (activeClaim.structured_data?.category || "Employment issue") : "None active"}
+            {activeClaim ? (activeClaim.original_text || "Employment issue") : "None active"}
           </div>
         </div>
 
@@ -62,21 +62,21 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2 mb-3 text-gray-500 font-semibold text-sm">
             <ShieldCheck className="w-4 h-4 text-emerald-600" /> Credentials
           </div>
-          <div className="font-bold text-emerald-700">1 Valid</div>
+          <div className="font-bold text-emerald-700">{claims.length > 0 ? claims.length : 0} Valid</div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3 text-gray-500 font-semibold text-sm">
             <Clock className="w-4 h-4 text-amber-500" /> Applications
           </div>
-          <div className="font-bold text-amber-700">1 Under Review</div>
+          <div className="font-bold text-amber-700">{claims.length > 1 ? claims.length - 1 : 0} Under Review</div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3 text-gray-500 font-semibold text-sm">
             <Bell className="w-4 h-4 text-blue-500" /> Notifications
           </div>
-          <div className="font-bold text-blue-700">2 New Updates</div>
+          <div className="font-bold text-blue-700">{claims.length > 0 ? 1 : 0} New Updates</div>
         </div>
       </div>
 
@@ -128,11 +128,27 @@ export default function DashboardPage() {
         
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { title: "Unpaid Wages Complaint", relevance: "High Relevance", color: "emerald" },
-            { title: "Employment Support Assistance", relevance: "High Relevance", color: "emerald" },
+            { 
+              title: (() => { 
+                try { 
+                  const i = typeof activeClaim?.intent === 'string' ? JSON.parse(activeClaim.intent) : activeClaim?.intent;
+                  return i?.intent ? i.intent.replace(/request|issue|inquiry/gi, '').trim() + ' Services' : 'Unpaid Wages Complaint'; 
+                } catch(e) { return 'Unpaid Wages Complaint'; } 
+              })(), 
+              relevance: "High Relevance", color: "emerald" 
+            },
+            { 
+              title: (() => { 
+                try { 
+                  const i = typeof activeClaim?.intent === 'string' ? JSON.parse(activeClaim.intent) : activeClaim?.intent;
+                  return i?.category ? i.category + ' Assistance' : 'Employment Support Assistance'; 
+                } catch(e) { return 'Employment Support Assistance'; } 
+              })(), 
+              relevance: "High Relevance", color: "emerald" 
+            },
             { title: "Financial Assistance Program", relevance: "Medium Relevance", color: "amber" }
           ].map((svc, i) => (
-            <div key={i} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:border-teal-200 transition-colors group flex flex-col justify-between">
+            <a href={`/services/${i+1}`} key={i} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:border-teal-200 transition-colors group flex flex-col justify-between cursor-pointer">
               <div>
                 <span className={`inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider mb-3 ${
                   svc.color === 'emerald' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
@@ -144,7 +160,7 @@ export default function DashboardPage() {
               <div className="mt-4 flex items-center text-sm font-bold text-gray-400 group-hover:text-teal-600 transition-colors">
                 View Details <ArrowRight className="w-4 h-4 ml-1" />
               </div>
-            </div>
+            </a>
           ))}
         </div>
       </div>
@@ -152,3 +168,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
+
+

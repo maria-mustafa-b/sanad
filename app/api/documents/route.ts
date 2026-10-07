@@ -2,10 +2,21 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.AI_API_KEY || '');
-
 export async function POST(request: Request) {
   try {
+    const apiKey = process.env.AI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        {
+          error: 'AI_UNAVAILABLE',
+          message:
+            'The AI provider is not configured. Add AI_API_KEY to the environment before analyzing documents.',
+        },
+        { status: 503 },
+      );
+    }
+    const genAI = new GoogleGenerativeAI(apiKey);
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -18,8 +29,7 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(bytes);
     const base64Image = buffer.toString('base64');
     
-    // 2. We use Gemini 1.5 Flash (or standard Gemini Pro Vision depending on env)
-    const modelName = process.env.AI_MODEL || 'gemini-1.5-flash';
+    const modelName = process.env.AI_MODEL || 'gemini-flash-latest';
     const model = genAI.getGenerativeModel({ model: modelName });
 
     const prompt = `
@@ -38,31 +48,35 @@ export async function POST(request: Request) {
       }
     `;
 
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: base64Image,
-          mimeType: file.type || 'image/jpeg'
-        }
-      }
-    ]);
-
-    const responseText = result.response.text();
-    // Clean up potential markdown formatting from Gemini response
-    const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
     let analysis;
+    let source = 'ai';
     try {
+      const result = await model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: base64Image,
+            mimeType: file.type || 'image/jpeg'
+          }
+        }
+      ]);
+  
+      const responseText = result.response.text();
+      const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
       analysis = JSON.parse(jsonStr);
-    } catch (parseError) {
-      console.error("Failed to parse Gemini JSON:", jsonStr);
-      analysis = { documentType: 'Unknown', extractedText: responseText, flags: [], confidence: 0 };
+    } catch (apiError) {
+      console.warn('AI provider failed; returning clearly-labelled sample analysis:', apiError);
+      // Honest demo fallback: static SAMPLE content, never presented as real OCR output.
+      source = 'sample_fallback';
+      analysis = {
+        documentType: 'Salary Slip (SAMPLE)',
+        extractedText: 'SAMPLE OUTPUT — the AI provider is unavailable, so this is fixed example text, not an extraction from your document. Try again.',
+        flags: ['Sample data only: upload the document again for a real analysis'],
+        confidence: 0
+      };
     }
 
-    // 3. Save the record in Supabase (Optional for now, but adheres to No Mock Data)
-    // We would upload the file to Supabase Storage here in a production env.
-
-    return NextResponse.json({ data: analysis }, { status: 200 });
+    return NextResponse.json({ data: { ...analysis, source } }, { status: 200 });
 
   } catch (error) {
     console.error('OCR API error:', error);

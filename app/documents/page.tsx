@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Upload, FileText, CheckCircle, AlertTriangle, Loader2, XCircle, ShieldCheck } from "lucide-react";
 
 type DocumentState = "UPLOADED" | "PROCESSING" | "ANALYZED" | "USER_REVIEW_REQUIRED" | "CONFIRMED" | "REJECTED";
@@ -9,6 +9,8 @@ export default function DocumentsPage() {
   const [file, setFile] = useState<File | null>(null);
   const [docState, setDocState] = useState<DocumentState | null>(null);
   const [analysis, setAnalysis] = useState<any | null>(null);
+  const [vaultDocs, setVaultDocs] = useState<any[]>([]);
+  useEffect(() => { const v = localStorage.getItem('sanad_vault'); if (v) setVaultDocs(JSON.parse(v)); }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -47,7 +49,14 @@ export default function DocumentsPage() {
 
   const handleConfirm = () => {
     setDocState("CONFIRMED");
-    // Connect to Supabase logic here
+    const newDocs = [...vaultDocs, {
+      name: file?.name || "Uploaded Document",
+      type: analysis?.documentType || "Document",
+      date: new Date().toLocaleDateString(),
+      status: "Verified"
+    }];
+    setVaultDocs(newDocs);
+    localStorage.setItem('sanad_vault', JSON.stringify(newDocs));
   };
 
   return (
@@ -82,19 +91,21 @@ export default function DocumentsPage() {
               {file ? "Click to change file" : "Supports JPEG, PNG, or PDF up to 5MB"}
             </span>
           </label>
-        </div>
 
-        {docState === "UPLOADED" && (
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={handleUpload}
-              className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 transition shadow-sm"
-            >
-              <ShieldCheck className="w-5 h-5" />
-              Run AI Analysis
-            </button>
-          </div>
-        )}
+          {docState === "UPLOADED" && (
+            <div className="mt-8 w-full flex justify-center">
+              <button
+                onClick={handleUpload}
+                className="px-8 py-4 bg-teal-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-teal-700 transition shadow-md"
+              >
+                <ShieldCheck className="w-5 h-5" />
+                Run AI Analysis
+              </button>
+            </div>
+          )}
+
+
+        </div>
 
         {docState === "PROCESSING" && (
           <div className="mt-8 flex flex-col items-center justify-center space-y-4 p-8 bg-blue-50 rounded-xl border border-blue-100">
@@ -175,6 +186,38 @@ export default function DocumentsPage() {
           </div>
         </div>
       )}
+
+      {vaultDocs.length > 0 && (
+        <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 className="text-xl font-extrabold text-gray-900 mb-6">Your Vault History</h2>
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="divide-y divide-gray-100">
+              {vaultDocs.map((doc, idx) => (
+                <div key={idx} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                      <FileText className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{doc.name}</h3>
+                      <p className="text-sm text-gray-500">{doc.type} • {doc.date}</p>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-full uppercase tracking-wider border border-emerald-200">
+                    <ShieldCheck className="w-4 h-4" />
+                    {doc.status}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+
+
+
+

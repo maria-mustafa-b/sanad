@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server';
 import { generateObject } from 'ai';
-import { google } from '@ai-sdk/google';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { z } from 'zod';
-import servicesCatalog from '@/data/services.json';
+import { seedServices } from '@/lib/services/catalog';
+
+// Ground the AI matcher in the same reviewed 29-service official catalog used
+// by /api/services, so the "28 verified UAE portals" claim is actually wired
+// into the live path.
+const servicesCatalog = seedServices.map((service, index) => ({
+  service_id: `SVC-${String(index + 1).padStart(3, '0')}`,
+  name: service.title,
+  category: service.category,
+  description: service.description,
+  official_url: service.url,
+}));
 
 export async function POST(request: Request) {
   try {
@@ -12,8 +23,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Situation is required' }, { status: 400 });
     }
 
+    const apiKey = process.env.AI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        {
+          error: 'AI_UNAVAILABLE',
+          message:
+            'The AI provider is not configured. Add AI_API_KEY to the environment or browse the full catalog at /services.',
+        },
+        { status: 503 },
+      );
+    }
+
+    const googleProvider = createGoogleGenerativeAI({ apiKey });
+    const modelId = process.env.AI_MODEL || 'gemini-flash-latest';
+
     const result = await generateObject({
-      model: google('gemini-1.5-flash'),
+      model: googleProvider(modelId),
       schema: z.object({
         matches: z.array(z.object({
           service_id: z.string(),
@@ -32,17 +58,15 @@ For each match, provide the service_id, the relevance level, and a "Why am I see
 DO NOT invent services. Only return IDs from the provided catalog.`,
     });
 
-    // Populate the match objects with the full service details from the JSON
+    // Populate the match objects with the full service details from the catalog
     const populatedMatches = result.object.matches.map(match => {
       const fullService = servicesCatalog.find(s => s.service_id === match.service_id);
-      return {
-        ...fullService,
-        relevance: match.relevance,
-        reasoning: match.reasoning
-      };
-    }).filter(match => match.name); // ensure valid matches
+      return fullService
+        ? { ...fullService, relevance: match.relevance, reasoning: match.reasoning }
+        : null;
+    }).filter((match): match is NonNullable<typeof match> => match !== null);
 
-    return NextResponse.json({ data: populatedMatches });
+    return NextResponse.json({ data: populatedMatches, source: 'ai' });
 
   } catch (error: any) {
     console.error('Service Matching Error:', error);

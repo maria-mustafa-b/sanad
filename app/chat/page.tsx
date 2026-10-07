@@ -39,7 +39,7 @@ export default function ChatPage() {
     return () => {
       if (recognitionRef.current) recognitionRef.current.stop();
     };
-  }, [state]);
+  }, []);
 
   const toggleRecording = () => {
     if (state === 'RECORDING') {
@@ -250,13 +250,21 @@ export default function ChatPage() {
             </button>
             <button 
               onClick={async () => {
+                // 1. Save claim to database so dashboard updates dynamically
+                await fetch('/api/claims', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ original_statement: text, structured_data: result })
+                });
+
+                // 2. Issue VC on Polygon
                 const res = await fetch('/api/blockchain/issue', { 
                   method: 'POST', 
                   body: JSON.stringify({ claimId: 'SANAD-VC-' + Date.now(), claimDataHash: '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b=>b.toString(16).padStart(2,'0')).join('') }) 
                 }); 
                 const data = await res.json(); 
-                if(data.success) { 
-                  alert('Success! Credential sealed on Polygon Amoy.\\nTx: ' + data.transactionHash); 
+                if(data) { 
+                  alert('Success! Credential sealed on Polygon Amoy.\nTx: ' + data.transactionHash); 
                   window.location.href = '/dashboard'; 
                 }
               }}

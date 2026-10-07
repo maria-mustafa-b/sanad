@@ -26,5 +26,9 @@ export default defineConfig([
     "playwright-report/**",
     "test-results/**",
     "stitch_sanad_multilingual_worker_portal/**",
+    "brag-output-*/**",
+    "*.cjs",
+    "fix-documents.js",
+    "convert_stitch.py",
   ]),
 ]);

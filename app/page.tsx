@@ -18,7 +18,7 @@ export default function LandingPage() {
       <ServicesPreview />
 
       {/* Stats / Trust Section */}
-      <section className="w-full bg-slate-900 py-24 border-t border-slate-800 text-white">
+      <section className="w-full bg-slate-900 py-12 border-t border-slate-800 text-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center divide-x divide-slate-800">
             <div className="flex flex-col items-center">

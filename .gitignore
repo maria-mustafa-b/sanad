@@ -10,3 +10,9 @@ test-results/
 .sanad-demo/
 artifacts/
 .vercel
+
+# Local scratch scripts (never commit)
+test-ai.mjs
+test_chain*.mjs
+fix.cjs
+fix-documents.js
