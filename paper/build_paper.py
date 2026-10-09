@@ -99,7 +99,8 @@ para("authorinfo", [
 para("authorinfo", [
     ("2", {"sup": True}), (" Maharashtra Institute of Technology, Chhatrapati Sambhajinagar, India", {}),
 ])
-para("email", "e-mail: {to be supplied by the authors}")
+# NOTE: per revision instructions no e-mail line is printed in the submission
+# copy; author e-mails are tracked in paper/AUTHOR_ACTION_LIST.md instead.
 
 para("abstract", [
     ("Abstract.  ", {"bold": True}),
@@ -114,14 +115,14 @@ para("abstract", [
      "(zero-PII) verifiable-credential mechanism that anchors each user-confirmed claim to a "
      "salted SHA-256 digest recorded by an issuer-controlled smart contract on the Polygon Amoy "
      "testnet. The chain attests only a record's existence and immutability, never its "
-     "truth. A validation suite passes 12 of 12 automated tests, including live-"
-     "PostgreSQL row-level-security isolation, and a grounded-matcher benchmark returns 16 of "
-     "16 correct matches with zero out-of-catalogue results.", {}),
+     "truth. Twelve automated tests pass, including live-"
+     "PostgreSQL row-level-security isolation, and a 16-case grounded-matcher benchmark "
+     "returns 16 of 16 acceptable top matches with zero out-of-catalogue identifiers.", {}),
 ])
 para("abstract", [
     ("Keywords:  ", {"bold": True}),
     ("electronic government, verifiable credentials, blockchain, large language models, "
-     "data minimisation, multilingual access, United Arab Emirates", {}),
+     "United Arab Emirates", {}),
 ])
 
 # ================= 1 Introduction =================
@@ -131,7 +132,7 @@ p1a("The United Arab Emirates consistently performs at the top of global digital
     "the E-Government Development Index with a score of 0.9533, and first in its e-Government "
     "Literacy sub-index " + "[1]" + " " + "[2]" + ". Availability of online services, however, is "
     "not the same as accessibility of outcomes. The UAE population is majority foreign-born "
-    "(commonly cited at roughly 88%, an indicative figure), and residents routinely interact "
+    "(commonly cited at roughly 88%, an indicative figure " + "[11]" + "), and residents routinely interact "
     "with services - labour complaints, visa and status questions, wage protection, unemployment "
     "insurance, tenancy disputes - whose entry points are spread across portals such as u.ae and "
     "the Ministry of Human Resources and Emiratisation (MOHRE) " + "[10]" + ".")
@@ -152,10 +153,11 @@ pn("This paper describes SANAD, a working prototype that addresses all three gap
    "immutability and timestamping proofs for records whose accuracy the user confirms.")
 pn("Contributions. (1) A grounded navigation pipeline in which a large language model (LLM) "
    "may only select service identifiers from a curated catalogue of official portals, so that "
-   "hallucinated services are structurally impossible in the matching path. (2) A zero-PII "
-   "verifiable-credential mechanism: canonical serialisation, a 32-byte random salt and a "
-   "domain-separated SHA-256 digest, anchored by an issuer-controlled Solidity registry, with "
-   "verification that recomputes integrity off-chain and existence on-chain. (3) An "
+   "out-of-catalogue services cannot reach the user; an incorrect match to a valid catalogue "
+   "entry nevertheless remains possible and is treated as an open risk (Sect. 6.1). (2) A "
+   "zero-PII verifiable-credential mechanism: canonical serialisation, a 32-byte random salt "
+   "and a domain-separated SHA-256 digest, anchored by an issuer-controlled Solidity registry, "
+   "with verification that recomputes integrity off-chain and existence on-chain. (3) An "
    "honest-degradation policy for AI features - clearly labelled sample fallbacks at zero "
    "confidence that are blocked from credential issuance. (4) An automated validation suite, "
    "including row-level-security (RLS) tests against a live PostgreSQL instance, together with "
@@ -171,14 +173,14 @@ h2("2.1   Blockchain-Backed Credentials")
 p1a("Since Nakamoto's proposal of an append-only, trust-minimised ledger " + "[9]" + ", "
     "credential anchoring has become a recurring application: Blockcerts defined an open "
     "standard for blockchain-verified academic credentials issued by institutions " + "[4]" + ", "
-    "and later work surveyed blockchain approaches to credential management in education and "
-    "beyond " + "[5]" + ". The W3C Verifiable Credentials Data Model gave the field a common "
+    "and later work examined blockchain approaches specifically for academic credentials "
+    "beyond the issuing institution " + "[5]" + ". The W3C Verifiable Credentials Data Model gave the field a common "
     "representation for claims, proofs and subjects " + "[3]" + ". These systems typically put "
     "structured credential content - often including identifiers of the holder - into a signed "
     "artifact whose validity is checked against a ledger. SANAD takes the more restrictive "
     "route: no credential content is published at all. Only a digest computed over a "
-    "canonicalised snapshot with a secret salt is recorded, so the ledger cannot be used to "
-    "learn, correlate or enumerate anything about the holder.")
+    "canonicalised snapshot with a secret salt is recorded, so the ledger itself reveals no "
+    "claim content and does not support dictionary enumeration of claims.")
 h2("2.2   Language Access and LLM-Grounded Public Services")
 p1a("Recent surveys of code-switched and multilingual natural-language processing emphasise "
     "that monolingual assumptions systematically degrade service quality for South Asian "
@@ -194,10 +196,12 @@ h2("2.3   Positioning")
 p1a("Existing gov-tech assistants optimise for conversational breadth; existing "
     "blockchain-credential systems optimise for portability of institutional attestations. "
     "SANAD targets the intersection that matters for resident-level disputes: a multilingual "
-    "intake that is grounded by construction, and a trust artifact that is publishable without "
-    "consent risk because it contains no personally identifiable information (PII). The PDPL "
+    "intake whose outputs are constrained to a curated catalogue, and a trust artifact whose "
+    "public form contains no personally identifiable information (PII), which reduces - "
+    "though does not eliminate - consent risk (Sect. 4.4). The PDPL "
     "principles of data minimisation and purpose limitation " + "[7]" + " guide the design: "
-    "PII is confined to RLS-protected tables, and the public artifact is a hash.")
+    "PII is confined to RLS-protected tables, and the public artifact is a hash. Table 1 "
+    "compares the approaches across the four properties that matter for this use case.")
 para("table title", "Table 1.  How SANAD differs from closely related approaches across the "
      "four properties that matter for resident-level, privacy-sensitive service navigation.")
 add_table([
@@ -263,9 +267,15 @@ pn("where salt is 32 fresh random bytes per credential. The domain-separator pre
    "SHA-256, so no user-facing identifier appears on-chain either.")
 h2("4.2   Issuer-Controlled Registry")
 p1a("The on-chain component is deliberately minimal: a single contract whose issuer key is "
-   "immutable, with issue, revoke and a free status view (Listing 1). Duplicate issuance for "
+   "immutable, with issue, revoke and a free status view. Listing 1 is an abridged excerpt: "
+   "the constructor, the Revoked event and the revoke body (guarding NotIssued and "
+   "AlreadyRevoked) are omitted for space but implement exactly the semantics described here. "
+   "Duplicate issuance for "
    "an identifier is rejected; revocation is one-way; the stored record hash is never "
-   "overwritten, giving tamper-evidence against any later change of the off-chain snapshot.")
+   "overwritten, giving tamper-evidence against any later change of the off-chain snapshot. "
+   "The issuer account is the project team's deployment wallet, not a government authority: "
+   "an anchor therefore records the existence of a user-confirmed claim and must not be read "
+   "as official government verification.")
 
 for line in [
     "contract SANADCredential {",
@@ -290,7 +300,8 @@ for line in [
     "    }",
     "}"]:
     para("programcode", line)
-para("figure legend", "Listing 1.  Core of the deployed SANADCredential registry (Solidity ^0.8.24, MIT).")
+para("figure legend", "Listing 1.  Abridged excerpt of the SANADCredential registry "
+     "(Solidity ^0.8.24, MIT); complete source is in the repository.")
 
 h2("4.3   Verification Semantics and What They Do Not Prove")
 p1a("Verification composes two independent checks. Integrity: recompute h from the stored "
@@ -321,6 +332,16 @@ pn("Retention and the zero-PII scope are stated narrowly. Snapshots and salts pe
    "\u201czero-PII\u201d is a statement about the public artifact, not a legal conclusion: the "
    "design is consistent with the PDPL principles of data minimisation and purpose limitation "
    "[7], but we do not claim that it, by itself, establishes regulatory compliance.")
+pn("What the salted digest does not hide is equally important. Public transaction metadata - "
+   "the issuer address, event ordering and block timestamps - can correlate issuance activity "
+   "over time even though it reveals no claim content, and application logs, session "
+   "identifiers and the anchoring wallet address are themselves potentially personal data "
+   "under the PDPL; \u201czero-PII\u201d therefore describes the public credential artifact, "
+   "not the system's entire data footprint. Separately, situation text and documents "
+   "submitted for analysis are transmitted to the model provider for inference - a "
+   "data-handling dependency governed by that provider's retention terms rather than by our "
+   "design. A salted hash establishes a commitment to one exact representation of a snapshot; "
+   "it guarantees neither anonymity nor that the represented statement is true.")
 
 # ================= 5 Grounded language layer =================
 h1("5   Grounded Language Understanding and Honest Degradation")
@@ -330,7 +351,9 @@ p1a("Two AI endpoints carry user-visible risk: situation understanding (free tex
    "a Zod schema and a prompt that embeds the catalogue and forbids inventing services; "
    "returned identifiers are joined back to catalogue entries and any identifier not present "
    "in the catalogue is dropped before rendering. The user therefore only ever sees official, "
-   "linkable services.")
+   "linkable services. Grounding of this kind excludes invented services; it does not "
+   "guarantee that the best catalogue entry was chosen, and measuring that residual risk is "
+   "the purpose of Sect. 6.1.")
 pn("The honest-degradation policy governs failure. If no model key is configured, the endpoint "
    "returns 503 rather than pretending to work. If the provider call fails, the response is "
    "constructed from a clearly labelled SAMPLE object with confidence 0 and a source field "
@@ -353,7 +376,9 @@ pn("Static and build checks: TypeScript strict type-check passes; ESLint reports
    "Contract checks: local harnesses verify issuer-only issue and revoke, immutability of the "
    "stored hash, duplicate-issuance rejection and revocation semantics; a preflight against "
    "the Amoy testnet confirms the deployed ABI matches the client (issue(bytes32,bytes32), "
-   "revoke(bytes32), status(bytes32)). Security review remediation: previously committed "
+   "revoke(bytes32), status(bytes32)); we did not verify the deployed contract's source on a "
+   "block explorer, so local-source/deployed equivalence rests on that ABI preflight alone. "
+   "Security review remediation: previously committed "
    "credentials were removed from the working tree and HEAD, unauthenticated claim reads were "
    "closed by enforcing actor() plus per-user filtering on every claims path, and fabricated "
    "AI fallbacks were replaced by the labelled-sample policy of Sect. 5. Secrets that had "
@@ -365,35 +390,46 @@ _ev = _json.load(open("paper/eval_results.json", encoding="utf-8"))
 _s = _ev["summary"]
 p1a("To move beyond the qualitative grounding argument of Sect. 5, we exercised the live "
    "production endpoint (POST /api/services/match on the built server, same prompt, Zod schema "
-   "and 28-entry catalogue as the shipped app) over 16 free-text situations spanning five input "
-   "languages: English, Hinglish, Roman Urdu, Arabic script, Devanagari Hindi and Bengali. Each "
-   "case carries an acceptable service-id set derived from the catalogue's own situation tags, "
-   "so ground truth is reproducible from repository data rather than hand-asserted. We report "
-   "hit@1 (top match acceptable), hit@3 (any of the returned matches acceptable) and the count "
-   "of out-of-catalogue identifiers. Result: %d/%d hit@1, %d/%d hit@3, %d out-of-catalogue ids, "
-   "%.2f matches per case and a median latency of %d ms (range %d-%d ms). Every returned "
-   "identifier resolved to a real official service, confirming the structural grounding claim "
-   "end to end. We report this as a small, single-annotator, catalogue-derived benchmark: it "
-   "measures retrieval correctness against curated ground truth, not real-world user outcomes, "
-   "and two transient provider 500s observed during development (both recovered on retry) are "
-   "reported as provider-reliability noise rather than hidden."
+   "and 28-entry catalogue as the shipped app) over 16 free-text situations. The cases span "
+   "five input-language groups covering six written varieties: English (11 cases), Hinglish "
+   "and Roman Urdu (2 cases, grouped as Latin-script mixed transcriptions), Arabic script (1), "
+   "Devanagari Hindi (1) and Bengali (1). Cases were authored and annotated by one of the "
+   "authors, each carrying an acceptable service-id set derived from the catalogue's own "
+   "situation tags: ground truth is reproducible from repository data rather than "
+   "hand-asserted, but the annotation is single-annotator and the sample is deliberately "
+   "English-heavy, so per-language counts are reported descriptively and no equal coverage "
+   "across languages is claimed. We report hit@1 (top match acceptable), hit@3 (any of the "
+   "returned matches acceptable) and the count of out-of-catalogue identifiers. Result "
+   "(Figure 3): %d/%d hit@1, %d/%d hit@3, %d out-of-catalogue ids, %.2f matches per case and "
+   "a median end-to-end route latency of %d ms (range %d-%d ms); latency is measured at the "
+   "server route and therefore includes the model-provider round trip and network overhead, "
+   "but excludes client rendering. All 16 calls succeeded on the first attempt in the final "
+   "run; two transient provider 500s observed during earlier development runs (both recovered "
+   "on retry) are reported as provider-reliability noise rather than hidden. Every returned "
+   "identifier resolved to a real official service, and every top match was checked against "
+   "its case text. This is consistent with the grounding design of Sect. 5 - grounding rules "
+   "out invented services, not wrong-but-valid catalogue matches, which would require a "
+   "larger, independently annotated set including ambiguous, out-of-scope and adversarial "
+   "inputs (Sect. 7)."
    % (_s["hit_at_1"], _s["n"], _s["hit_at_3"], _s["n"], _s["out_of_catalog_ids"],
       _s["avg_matches_returned"], _s["latency_ms_median"], _s["latency_ms_min"], _s["latency_ms_max"]))
 add_figure("paper/fig3_evaluation.png",
-    "Fig. 3.  Grounded-matcher benchmark. Left: hit@1 is 100% in every input-language group "
-    "(case counts annotated). Right: per-case end-to-end latency with median line. Footer "
-    "reports the aggregate metrics from the live endpoint run.")
+    "Fig. 3.  Grounded-matcher benchmark (16 cases, single annotator). Left: hit@1 by "
+    "input-language group - English n=11, Hinglish/Roman Urdu n=2, Arabic, Devanagari Hindi "
+    "and Bengali n=1 each; the sample is not balanced across languages. Right: per-case "
+    "end-to-end route latency (includes the model-provider round trip) with median line. "
+    "Footer reports aggregate metrics from the live endpoint run.")
 
 h2("6.2   Claim Ledger")
 para("table title", "Table 2.  Validation status at submission. Rows marked \u201cnot "
      "claimed\u201d are reported to bound the paper's claims, not to criticise them.")
 add_table([
     ("Mechanism", "Evidence at submission", "Status"),
-    ("Data isolation (RLS)", "12/12 Vitest incl. live-PostgreSQL isolation tests", "Proven (prototype)"),
-    ("Registry semantics", "Issuer-only, duplicate-reject, one-way revoke, immutable hash", "Proven (tests + Amoy preflight)"),
-    ("Catalogue authenticity", "28 entries, every URL on u.ae or mohre.gov.ae", "Proven URLs; freshness unverified"),
-    ("AI grounding (retrieval)", "Schema-constrained ids; 16/16 benchmark hit@1, 0 out-of-catalogue", "Proven on curated benchmark; user outcomes untested"),
-    ("Honest degradation", "503 without key; SAMPLE at confidence 0; issuance blocked", "Proven (code + UI)"),
+    ("Data isolation (RLS)", "12/12 Vitest incl. live-PostgreSQL isolation tests", "Verified (prototype)"),
+    ("Registry semantics", "Issuer-only, duplicate-reject, one-way revoke, immutable hash", "Verified (tests + Amoy ABI preflight)"),
+    ("Catalogue authenticity", "28 entries, every URL on u.ae or mohre.gov.ae", "URLs verified; freshness unverified"),
+    ("AI grounding (retrieval)", "Schema-constrained ids; 16/16 benchmark hit@1, 0 out-of-catalogue", "Verified on small curated benchmark; user outcomes untested"),
+    ("Honest degradation", "503 without key; SAMPLE at confidence 0; issuance blocked", "Verified (code + UI)"),
     ("Factual truth of claims", "Chain attests existence/immutability only", "Not claimed"),
     ("Production operation", "Testnet only; key rotation pending", "Not claimed"),
     ("Resident usability", "No user study conducted", "Not claimed"),
@@ -407,7 +443,10 @@ p1a("We state the boundaries plainly. The chain layer runs on a public testnet w
    "a revocation policy agreed with the institutions that would honour these anchors. The AI "
    "layer's benchmark (Sect. 6.1) is small, single-annotator and scored against catalogue-derived "
    "ground truth: it evidences retrieval correctness, not real-world user outcomes, and document "
-   "extraction quality has still not been measured on real, consented documents. The credential "
+   "extraction quality has still not been measured on real, consented documents. Extending the "
+   "benchmark with independent annotation, more diverse and ambiguous cases, out-of-scope and "
+   "adversarial inputs, and a separate consented-document extraction study are the natural next "
+   "measurement steps. The credential "
    "mechanism anchors user-confirmed statements; it adds "
    "no independent verification, and an adversary with the issuer key can anchor false "
    "statements - the immutable issuer address and public events make such abuse visible and "
@@ -416,8 +455,9 @@ p1a("We state the boundaries plainly. The chain layer runs on a public testnet w
    "88% foreign-born) is indicative and cited as such; all product claims in this paper are "
    "bounded by Table 2.")
 pn("Ethically, the design follows data minimisation by construction: PII remains in "
-   "user-partitioned tables under RLS, nothing personal is sent to the blockchain or to the "
-   "model provider beyond the transient document image used for extraction, and the "
+   "user-partitioned tables under RLS, nothing personal is written to the blockchain, and "
+   "the situation text and documents that are transmitted to the model provider for "
+   "inference fall under that provider's handling terms as discussed in Sect. 4.4. The "
    "honest-degradation policy exists specifically so that a demonstration can never be "
    "mistaken for an operational service. Accessibility (WCAG 2.2, RTL support) and the "
    "PDPL-aligned storage model are treated as functional requirements rather than polish.")
@@ -429,9 +469,10 @@ p1a("SANAD shows that the three barriers residents face in using even a world-cl
    "system whose core commitments are negative: the model never invents services, the chain "
    "never sees personal data, and the product never claims more than its proofs support. The "
    "prototype passes its automated validation suite, anchors digests on a public testnet, and "
-   "ships an explicit proven/not-proven ledger as part of its public surface. Next steps are "
-   "a 90-day innovation pilot with a government partner: consented usability testing with "
-   "service-seekers, accuracy benchmarking of the grounded matcher, mainnet custody, and "
+   "ships an explicit proven/not-proven ledger as part of its public surface. The next steps "
+   "we propose, rather than claim as arranged: consented usability testing with "
+   "service-seekers, larger independently annotated accuracy benchmarking of the grounded "
+   "matcher, mainnet custody, and "
    "integration of an institutional verifier that can check anchors without access to the "
    "off-chain snapshot. We invite evaluation of the system by exactly the standard it sets "
    "for itself: every claim verifiable, and none overstated.")
@@ -439,16 +480,33 @@ p1a("SANAD shows that the three barriers residents face in using even a world-cl
 # ================= References =================
 h1("References")
 refs = [
-    "United Nations Department of Economic and Social Affairs: E-Government Survey 2024. United Nations, New York (2024)",
-    "Government of the United Arab Emirates: United Arab Emirates - e-Government Development. u.ae, https://u.ae/en/about-the-uae/digital-uae (accessed 2026)",
-    "World Wide Web Consortium: Verifiable Credentials Data Model 1.0 - W3C Recommendation. https://www.w3.org/TR/vc-data-model/ (2019)",
-    "MIT Digital Currency Initiative: Blockcerts - An Open Standard for Blockchain-Verified Academic Credentials. https://www.blockcerts.org/ (2017)",
-    "Bapat, P., et al.: Blockchain for Academic Credentials. arXiv:2006.12665 (2020)",
-    "Sheth, R., et al.: Beyond Monolingual Assumptions: A Survey of Code-Switched NLP in the Era of Large Language Models across Modalities. arXiv:2510.07037 (2025)",
-    "United Arab Emirates: Federal Decree-Law No. 45 of 2021 on the Protection of Personal Data and Privacy (2021)",
-    "World Wide Web Consortium: Web Content Accessibility Guidelines (WCAG) 2.2. https://www.w3.org/TR/WCAG22/ (2023)",
-    "Nakamoto, S.: Bitcoin: A Peer-to-Peer Electronic Cash System (2008)",
-    "UAE Ministry of Human Resources and Emiratisation: Register labour complaints for private-sector employees. https://mohre.gov.ae/en/services/register-labor-complaints-private-sector-employees-2022 (accessed 2026)",
+    "United Nations Department of Economic and Social Affairs: E-Government Survey 2024 - "
+    "Use of Digital Data to Facilitate the Future Transformation of Public Administration. "
+    "United Nations, New York (2024). "
+    "https://publicadministration.un.org/egovkb/en-us/reports/un-e-government-survey-2024",
+    "Government of the United Arab Emirates: Digital UAE - e-Government Development. u.ae, "
+    "https://u.ae/en/about-the-uae/digital-uae (accessed October 2026)",
+    "World Wide Web Consortium: Verifiable Credentials Data Model v2.0. W3C Recommendation, "
+    "15 May 2025. https://www.w3.org/TR/vc-data-model/ (2025)",
+    "MIT Media Lab and Learning Machine: Blockcerts - The Open Standard for Blockchain "
+    "Credentials. https://www.blockcerts.org/ (2017)",
+    "Bapat, C.: Blockchain for Academic Credentials. arXiv:2006.12665. arXiv (2020). "
+    "https://arxiv.org/abs/2006.12665",
+    "Sheth, R., Sinha, S.R.S., Patil, M., Beniwal, H., Singh, M.: Beyond Monolingual "
+    "Assumptions: A Survey of Code-Switched NLP in the Era of Large Language Models across "
+    "Modalities. arXiv:2510.07037 (2025)",
+    "United Arab Emirates: Federal Decree-Law No. 45 of 2021 Concerning the Protection of "
+    "Personal Data and Privacy. https://uaelegislation.gov.ae/en/legislations/1972 (2021)",
+    "World Wide Web Consortium: Web Content Accessibility Guidelines (WCAG) 2.2. W3C "
+    "Recommendation, 5 October 2023. https://www.w3.org/TR/WCAG22/ (2023)",
+    "Nakamoto, S.: Bitcoin: A Peer-to-Peer Electronic Cash System. "
+    "https://bitcoin.org/bitcoin.pdf (2008)",
+    "UAE Ministry of Human Resources and Emiratisation: Register labour complaints for "
+    "private-sector employees. https://mohre.gov.ae/en/services/register-labor-complaints-"
+    "private-sector-employees-2022 (accessed October 2026)",
+    "UAE Ministry of Foreign Affairs and International Cooperation: Facts and Figures - "
+    "Population by Nationality. https://www.mofa.gov.ae/en/the-uae/facts-and-figures "
+    "(accessed October 2026)",
 ]
 for i, text in enumerate(refs, 1):
     para("reference", "[%d]  %s" % (i, text))
