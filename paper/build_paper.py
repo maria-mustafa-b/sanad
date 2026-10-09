@@ -104,7 +104,7 @@ para("authorinfo", [
 
 para("abstract", [
     ("Abstract.  ", {"bold": True}),
-    ("The UAE is a world-leading digital government, yet its largely expatriate residents face "
+    ("The UAE is among the world's leading digital governments, yet its largely expatriate residents face "
      "three barriers to using public services: navigating them across languages, understanding "
      "which documents and rules apply, and producing privacy-safe records of unresolved "
      "complaints such as unpaid wages. We present SANAD, a prototype "
@@ -128,11 +128,12 @@ para("abstract", [
 # ================= 1 Introduction =================
 h1("1   Introduction")
 p1a("The United Arab Emirates consistently performs at the top of global digital-government "
-    "assessments: the 2024 United Nations E-Government Survey places the UAE 11th worldwide on "
-    "the E-Government Development Index with a score of 0.9533, and first in its e-Government "
+    "assessments: in the 2024 United Nations E-Government Survey it is the highest-ranked "
+    "country in Western Asia, with an E-Government Development Index score of 0.9533, and the "
+    "UAE government reports 11th place worldwide and first place in the e-Government "
     "Literacy sub-index " + "[1]" + " " + "[2]" + ". Availability of online services, however, is "
-    "not the same as accessibility of outcomes. The UAE population is majority foreign-born "
-    "(commonly cited at roughly 88%, an indicative figure " + "[11]" + "), and residents routinely interact "
+    "not the same as accessibility of outcomes. The UAE's population is majority foreign-born "
+    "on the government's own account " + "[11]" + ", a figure commonly cited at roughly 88%, and residents routinely interact "
     "with services - labour complaints, visa and status questions, wage protection, unemployment "
     "insurance, tenancy disputes - whose entry points are spread across portals such as u.ae and "
     "the Ministry of Human Resources and Emiratisation (MOHRE) " + "[10]" + ".")
@@ -278,6 +279,7 @@ p1a("The on-chain component is deliberately minimal: a single contract whose iss
    "an anchor therefore records the existence of a user-confirmed claim and must not be read "
    "as official government verification.")
 
+_codeps = []
 for line in [
     "contract SANADCredential {",
     "    address public immutable issuer;",
@@ -288,7 +290,8 @@ for line in [
     "                 address indexed issuer);",
     "    modifier onlyIssuer() {",
     "        if (msg.sender != issuer) revert NotIssuer(); _; }",
-    "    function issue(bytes32 id, bytes32 recordHash) external onlyIssuer {",
+    "    function issue(bytes32 id, bytes32 recordHash)",
+    "            external onlyIssuer {",
     "        if (records[id].issuedAt != 0) revert AlreadyIssued();",
     "        records[id] = Credential(recordHash, msg.sender,",
     "                                 uint64(block.timestamp), false);",
@@ -300,7 +303,9 @@ for line in [
     "        return (e.recordHash, e.issuedBy, e.issuedAt, e.revoked);",
     "    }",
     "}"]:
-    para("programcode", line)
+    _codeps.append(para("programcode", [(line, {"size": 8})]))
+for _cp in _codeps[-2:]:
+    _cp.paragraph_format.keep_with_next = True  # avoid orphaned closing braces
 para("figure legend", "Listing 1.  Abridged excerpt of the SANADCredential registry "
      "(Solidity ^0.8.24, MIT); complete source is in the repository.")
 
@@ -318,7 +323,7 @@ h2("4.4   Threat Model, Issuer-Key Risk and Retention")
 p1a("We make three adversary classes explicit. A chain observer sees only an opaque identifier "
    "and a 32-byte digest; because the digest is salted with a per-credential 32-byte secret held "
    "off-chain, guessing the snapshot contents is insufficient to reproduce it, so the observer "
-   "cannot recover claim content by dictionary guessing. A database adversary who defeats "
+   "cannot recover claim content through a dictionary attack. A database adversary who defeats "
    "row-level security can read snapshots and salts, but still cannot forge a valid on-chain "
    "anchor without the issuer key, and any silent edit of a stored snapshot breaks the integrity "
    "recomputation in Sect. 4.3. A holder of the issuer key can issue or revoke records; this is "
@@ -511,8 +516,10 @@ refs = [
     "Bapat, C.: Blockchain for Academic Credentials. arXiv:2006.12665. arXiv (2020). "
     "https://arxiv.org/abs/2006.12665",
     "Sheth, R., Sinha, S.R.S., Patil, M., Beniwal, H., Singh, M.: Beyond Monolingual "
-    "Assumptions: A Survey of Code-Switched NLP in the Era of Large Language Models across "
-    "Modalities. arXiv:2510.07037 (2025)",
+    "Assumptions: A Survey on Code-Switched NLP in the Era of Large Language Models across "
+    "Modalities. In: Proceedings of the 64th Annual Meeting of the Association for "
+    "Computational Linguistics (Volume 1: Long Papers). ACL (2026). "
+    "https://doi.org/10.18653/v1/2026.acl-long.386",
     "United Arab Emirates: Federal Decree-Law No. 45 of 2021 Concerning the Protection of "
     "Personal Data and Privacy. https://uaelegislation.gov.ae/en/legislations/1972 (2021)",
     "World Wide Web Consortium: Web Content Accessibility Guidelines (WCAG) 2.2. W3C "

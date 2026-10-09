@@ -1,9 +1,9 @@
 """Fig. 1 - SANAD architecture as a clean monochrome line figure (LNCS-safe).
-Rendered at S=2 (24 px/mm, ~610 dpi at 122 mm print width)."""
+Rendered at S=3 (36 px/mm, ~915 dpi at 12.2 cm print width)."""
 import math
 from PIL import Image, ImageDraw, ImageFont
 
-S = 2
+S = 3   # 36 px/mm -> ~915 dpi at 12.2 cm print width (ISDIA editorial policy: figures 800 dpi)
 W0, H0 = 1464, 660   # logical design size at 12 px/mm
 W, H = W0 * S, H0 * S
 img = Image.new("RGB", (W, H), "white")

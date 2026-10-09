@@ -1,5 +1,5 @@
 """Fig.2 = 2x2 UI montage (real screenshots at deviceScaleFactor 3, translate
-bar cropped).  Fig.3 = evaluation charts rendered at S=2 (~610 dpi at print)."""
+bar cropped).  Fig.3 = evaluation charts rendered at S=3 (~810 dpi at print)."""
 import json
 from PIL import Image, ImageDraw, ImageFont
 
@@ -48,7 +48,7 @@ d.text((PW+GAP+4,LBL+r1.height+GAP+LBL-38*K),panels[3][1],font=FL,fill=INK)
 fig2.save("paper/fig2_interfaces.png"); print("fig2",fig2.size)
 
 # ---------------- Fig 3: evaluation ----------------
-S=2
+S=3  # fig3 at 36 px/mm -> ~810 dpi at 12.2 cm print (ISDIA policy: 800 dpi)
 data=json.load(open("paper/eval_results.json",encoding="utf-8"))
 res=data["results"]; summ=data["summary"]
 CW0,CH0=1300,780; CW,CH=CW0*S,CH0*S
