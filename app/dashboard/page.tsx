@@ -10,11 +10,14 @@ import {
 export default function DashboardPage() {
   const [claims, setClaims] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [needsAuth, setNeedsAuth] = useState(false);
 
   const fetchDashboard = async () => {
     setLoading(true);
     try {
       const res = await fetch('/api/claims');
+      if (res.status === 401) { setNeedsAuth(true); setClaims([]); return; }
+      setNeedsAuth(false);
       const json = await res.json();
       if (json.data) setClaims(json.data);
     } catch (e) {
@@ -46,6 +49,12 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Your Dashboard</h1>
         <p className="text-gray-500">Here's an overview of your journey with SANAD.</p>
       </div>
+
+      {needsAuth && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-4 text-sm font-medium">
+          Sign in to see your own claims. Only you can access your data — anonymous access was removed to protect you.
+        </div>
+      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

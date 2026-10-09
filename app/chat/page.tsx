@@ -69,6 +69,11 @@ export default function ChatPage() {
       });
       
       const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || data.error || "Failed to analyze situation. Please try again.");
+        setState('IDLE');
+        return;
+      }
       setResult(data);
       setState('REVIEW');
       
@@ -200,6 +205,11 @@ export default function ChatPage() {
           <div className="mb-8">
             <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Here's what I understood</h1>
             <p className="text-gray-500">Please review the structured information before we proceed.</p>
+            {result?.source === 'sample_fallback' && (
+              <div className="mt-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-4 text-sm font-medium">
+                The AI provider is currently unavailable — the facts below are clearly-labelled sample data, not an analysis of your situation. Please go back and retry, or edit the fields yourself before confirming.
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden mb-8">
@@ -250,23 +260,45 @@ export default function ChatPage() {
             </button>
             <button 
               onClick={async () => {
+                if (result?.source === 'sample_fallback') {
+                  alert('Sample data cannot be confirmed as evidence. Go back and try again, or edit the facts.');
+                  return;
+                }
                 // 1. Save claim to database so dashboard updates dynamically
-                await fetch('/api/claims', {
+                const claimRes = await fetch('/api/claims', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ original_statement: text, structured_data: result })
                 });
+                if (claimRes.status === 401) {
+                  alert('Please sign in first — your claim must belong to your account before it can be sealed as proof.');
+                  return;
+                }
+                if (!claimRes.ok) {
+                  alert('Could not save your claim. Please try again.');
+                  return;
+                }
 
-                // 2. Issue VC on Polygon
+                // 2. Commit the confirmed content to a SHA-256 hash, then issue on Polygon
+                const payload = JSON.stringify({ statement: text, facts: result?.facts ?? null });
+                const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload));
+                const claimDataHash = '0x' + Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
                 const res = await fetch('/api/blockchain/issue', { 
                   method: 'POST', 
-                  body: JSON.stringify({ claimId: 'SANAD-VC-' + Date.now(), claimDataHash: '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b=>b.toString(16).padStart(2,'0')).join('') }) 
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ claimId: 'SANAD-VC-' + Date.now(), claimDataHash }) 
                 }); 
-                const data = await res.json(); 
-                if(data) { 
-                  alert('Success! Credential sealed on Polygon Amoy.\nTx: ' + data.transactionHash); 
-                  window.location.href = '/dashboard'; 
+                const data = await res.json();
+                if (!res.ok) {
+                  alert(data.message || data.error || 'Your claim was saved, but the credential could not be issued. Try again from your dashboard.');
+                  return;
                 }
+                if (data.mode === 'mock') {
+                  alert('Credential recorded in demo mode (mock chain). Live anchoring requires the configured issuer wallet.');
+                } else {
+                  alert('Success! Credential sealed on Polygon Amoy testnet.\nTx: ' + data.transactionHash);
+                }
+                window.location.href = '/dashboard';
               }}
               className="px-8 py-4 bg-teal-700 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 flex-[2]"
             >

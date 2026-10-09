@@ -7,9 +7,13 @@ import { Plus, ShieldCheck, Download, QrCode, ArrowRight, CheckCircle2, Clock, X
 export default function CredentialsPage() {
   const [activeTab, setActiveTab] = useState('ALL');
   const [claims, setClaims] = useState<any[]>([]);
+  const [needsAuth, setNeedsAuth] = useState(false);
 
   useEffect(() => {
-    fetch('/api/claims').then(r => r.json()).then(j => { if(j.data) setClaims(j.data) }).catch(console.error);
+    fetch('/api/claims').then(r => {
+      if (r.status === 401) { setNeedsAuth(true); return { data: null }; }
+      return r.json();
+    }).then(j => { if (j && j.data) setClaims(j.data) }).catch(console.error);
   }, []);
 
   const credentials = claims.map((c, i) => {
@@ -56,6 +60,12 @@ export default function CredentialsPage() {
           <Plus className="w-5 h-5" /> Create New
         </Link>
       </div>
+
+      {needsAuth && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-4 text-sm font-medium mb-6">
+          Sign in to see your credentials. Only you can access them — anonymous access was removed to protect you.
+        </div>
+      )}
 
       <div className="flex gap-2 p-1 bg-gray-100 rounded-xl w-fit mb-8 overflow-x-auto">
         {['All', 'Valid', 'Revoked', 'Expired'].map((tab) => (
