@@ -10,8 +10,9 @@ from docx import Document
 from docx.shared import Cm, Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
+import os
 TPL = "paper_template/Springer-Template.docx"
-OUT = "SANAD_Research_Paper.docx"
+OUT = os.environ.get("SANAD_PAPER_OUT", "SANAD_Research_Paper.docx")
 FIG = "paper/fig1_architecture.png"
 
 doc = Document(TPL)
@@ -47,6 +48,41 @@ def pn(t): return para("Normal", t)
 def cite(n):  # bracketed LNCS numeric citation
     return ("[" + str(n) + "]", {})
 
+def add_table(rows, widths_cm, font_pt=8):
+    """LNCS-style table: horizontal rules only (top, header-bottom, bottom)."""
+    from docx.oxml.ns import qn
+    from docx.oxml import OxmlElement
+    t = doc.add_table(rows=len(rows), cols=len(rows[0]))
+    for ri, row in enumerate(rows):
+        for ci, text in enumerate(row):
+            cell = t.cell(ri, ci)
+            cell.width = Cm(widths_cm[ci])
+            cp = cell.paragraphs[0]
+            r = cp.add_run(text)
+            r.font.size = Pt(font_pt)
+            if ri == 0:
+                r.bold = True
+    tblPr = t._tbl.tblPr
+    borders = OxmlElement("w:tblBorders")
+    for edge in ("top", "bottom", "insideH"):
+        e = OxmlElement("w:" + edge)
+        e.set(qn("w:val"), "single"); e.set(qn("w:sz"), "6")
+        e.set(qn("w:space"), "0"); e.set(qn("w:color"), "000000")
+        borders.append(e)
+    for edge in ("left", "right", "insideV"):
+        e = OxmlElement("w:" + edge)
+        e.set(qn("w:val"), "none"); e.set(qn("w:sz"), "0")
+        e.set(qn("w:space"), "0"); e.set(qn("w:color"), "auto")
+        borders.append(e)
+    tblPr.append(borders)
+    return t
+
+def add_figure(path, caption, width_cm=12.2):
+    fp = doc.add_paragraph()
+    fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    fp.add_run().add_picture(path, width=Cm(width_cm))
+    para("figure legend", caption)
+
 # ================= front matter =================
 para("title", "SANAD: Zero-PII Verifiable Credentials for Multilingual Government-Service Navigation in the UAE")
 
@@ -67,25 +103,20 @@ para("email", "e-mail: {to be supplied by the authors}")
 
 para("abstract", [
     ("Abstract.  ", {"bold": True}),
-    ("The United Arab Emirates ranks among the world's leading digital governments, yet "
-     "its largely expatriate resident population still faces three practical barriers when "
-     "using public services: navigating services in more than one language, understanding "
-     "which documents and eligibility rules apply, and producing trustworthy, privacy-safe "
-     "records of unresolved complaints such as unpaid wages. We present SANAD, a prototype "
-     "assistant that combines (i) a schema-constrained large-language-model front end that "
-     "maps a free-text situation to services drawn exclusively from a curated catalogue of "
-     "official UAE portals, (ii) an honest-degradation policy in which every AI output is "
-     "labelled by source and sample fallbacks can never be issued as credentials, and "
-     "(iii) a zero-personally-identifiable-information (zero-PII) verifiable-credential "
-     "mechanism that anchors each confirmed claim to a salted SHA-256 digest recorded by an "
-     "issuer-controlled smart contract on the Polygon Amoy testnet. The chain attests only "
-     "to the existence and immutability of a record, never to the truth of its content - a "
-     "distinction the design enforces in its user interface and in this paper. We describe "
-     "the architecture, threat model and an automated validation suite (12 of 12 tests "
-     "pass, including row-level-security isolation against a live PostgreSQL instance and "
-     "contract-level checks for issuer-only access, duplicate rejection and revocation), "
-     "and we report explicitly what is proven, what remains unverified, and the roadmap "
-     "toward a production pilot.", {}),
+    ("The UAE is a world-leading digital government, yet its largely expatriate residents face "
+     "three barriers to using public services: navigating them across languages, understanding "
+     "which documents and rules apply, and producing privacy-safe records of unresolved "
+     "complaints such as unpaid wages. We present SANAD, a prototype "
+     "assistant combining a schema-constrained large-language-model front end that maps "
+     "free-text situations only to services in a curated catalogue of official UAE portals; an "
+     "honest-degradation policy that labels every AI output by source and blocks sample "
+     "fallbacks from credential issuance; and a zero-personally-identifiable-information "
+     "(zero-PII) verifiable-credential mechanism that anchors each user-confirmed claim to a "
+     "salted SHA-256 digest recorded by an issuer-controlled smart contract on the Polygon Amoy "
+     "testnet. The chain attests only a record's existence and immutability, never its "
+     "truth. A validation suite passes 12 of 12 automated tests, including live-"
+     "PostgreSQL row-level-security isolation, and a grounded-matcher benchmark returns 16 of "
+     "16 correct matches with zero out-of-catalogue results.", {}),
 ])
 para("abstract", [
     ("Keywords:  ", {"bold": True}),
@@ -128,7 +159,7 @@ pn("Contributions. (1) A grounded navigation pipeline in which a large language 
    "honest-degradation policy for AI features - clearly labelled sample fallbacks at zero "
    "confidence that are blocked from credential issuance. (4) An automated validation suite, "
    "including row-level-security (RLS) tests against a live PostgreSQL instance, together with "
-   "a published taxonomy of what is and is not yet proven (Sect. 6, Table 1).")
+   "a published taxonomy of what is and is not yet proven (Sect. 6, Table 2).")
 pn("Section 2 positions the work against prior art; Sect. 3 presents the architecture; Sect. 4 "
    "formalises the credential mechanism; Sect. 5 describes the grounded language layer; Sect. 6 "
    "reports implementation and validation evidence; Sect. 7 discusses limitations and ethics; "
@@ -167,6 +198,16 @@ p1a("Existing gov-tech assistants optimise for conversational breadth; existing 
     "consent risk because it contains no personally identifiable information (PII). The PDPL "
     "principles of data minimisation and purpose limitation " + "[7]" + " guide the design: "
     "PII is confined to RLS-protected tables, and the public artifact is a hash.")
+para("table title", "Table 1.  How SANAD differs from closely related approaches across the "
+     "four properties that matter for resident-level, privacy-sensitive service navigation.")
+add_table([
+    ("Approach", "PII / content on-chain", "Grounded to official catalogue", "Honest-degradation policy", "User-confirmed anchor"),
+    ("Blockcerts / institutional VC " + "[3,4]", "Signed credential content", "No", "No", "Issuer attestation"),
+    ("Blockchain academic credentials " + "[5]", "Credential identifiers", "No", "No", "Issuer attestation"),
+    ("Generic LLM gov-assistant", "None, but no anchor", "No (hallucination risk)", "No (silent fallbacks)", "None"),
+    ("SANAD (ours)", "None (salted digest only)", "Yes (28-entry catalogue)", "Yes (labelled, 503)", "Yes (user-confirmed)"),
+], [3.0, 2.6, 2.6, 2.2, 1.8], font_pt=7.5)
+para("Normal", "")
 
 # ================= 3 Architecture =================
 h1("3   System Architecture")
@@ -177,13 +218,10 @@ p1a("SANAD is a full-stack web application: a Next.js 16 (App Router) front end 
     "schema, and ethers v6 for transaction signing against the SANADCredential contract on "
     "Polygon Amoy (chain ID 80002). Figure 1 shows the pipeline end to end.")
 
-fp = doc.add_paragraph()
-fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
-fp.add_run().add_picture(FIG, width=Cm(12.2))
-para("figure legend", "Fig. 1.  End-to-end architecture. Personal data stays left of the "
-     "dashed boundary in RLS-protected storage; only an opaque identifier and a 32-byte digest "
-     "cross onto the testnet. The public verifier reads existence and revocation status, never "
-     "content.")
+add_figure(FIG, "Fig. 1.  End-to-end architecture. Personal data stays left of the "
+    "dashed boundary in RLS-protected storage; only an opaque identifier and a 32-byte digest "
+    "cross onto the testnet. The public verifier reads existence and revocation status, never "
+    "content.")
 
 pn("A session begins either with Supabase authentication or with a signed demo cookie "
    "(HMAC-SHA-256 over an identifier and expiry, httpOnly, SameSite=Lax). Every mutating route "
@@ -199,7 +237,15 @@ pn("A session begins either with Supabase authentication or with a signed demo c
    "pre-filtering before the model is consulted.")
 pn("The interface ships with five hand-curated locales - English, Arabic (RTL), Hindi, Urdu "
    "(RTL) and Bengali - plus machine-translated coverage of additional resident languages via "
-   "an in-page translator, so the intake path is usable without English proficiency.")
+   "an in-page translator, so the intake path is usable without English proficiency. Figure 2 "
+   "shows four production screens captured from the running prototype.")
+add_figure("paper/fig2_interfaces.png",
+    "Fig. 2.  Prototype screens (captured live, not mock-ups). (a) Situation intake with voice "
+    "input and multilingual example prompts; (b) dashboard with the explicit sign-in banner "
+    "that replaced anonymous claim access and the five-stage journey tracker; (c) grounded "
+    "service list with relevance, Verified and Docs-required tags linking to official portals; "
+    "(d) the public verifier that resolves a credential ID to an on-chain existence proof.",
+    width_cm=12.2)
 
 # ================= 4 Mechanism =================
 h1("4   The Zero-PII Credential Mechanism")
@@ -256,6 +302,26 @@ p1a("Verification composes two independent checks. Integrity: recompute h from t
    "itself: verification pages and issuance dialogs state the distinction, and the paper "
    "throughout uses \u201cverifiable\u201d only in the cryptographic sense.")
 
+h2("4.4   Threat Model, Issuer-Key Risk and Retention")
+p1a("We make three adversary classes explicit. A chain observer sees only an opaque identifier "
+   "and a 32-byte digest; because the digest is salted with a per-credential 32-byte secret held "
+   "off-chain, guessing the snapshot contents is insufficient to reproduce it, so the observer "
+   "cannot learn, correlate or enumerate holders or claims. A database adversary who defeats "
+   "row-level security can read snapshots and salts, but still cannot forge a valid on-chain "
+   "anchor without the issuer key, and any silent edit of a stored snapshot breaks the integrity "
+   "recomputation in Sect. 4.3. A holder of the issuer key can issue or revoke records; this is "
+   "the principal trust assumption. It is not mitigated away - the issuer address is immutable "
+   "and every issue/revoke emits a public event, so abuse is attributable and visible rather "
+   "than impossible, and production use should replace the single key with a multisig or HSM "
+   "and a documented revocation policy.")
+pn("Retention and the zero-PII scope are stated narrowly. Snapshots and salts persist "
+   "server-side under RLS until a user deletes them; deletion removes the off-chain data, which "
+   "renders the on-chain anchor permanently unverifiable - a deliberate right-to-erasure "
+   "property that also means an anchor cannot outlive the consent that created it. Finally, "
+   "\u201czero-PII\u201d is a statement about the public artifact, not a legal conclusion: the "
+   "design is consistent with the PDPL principles of data minimisation and purpose limitation "
+   "[7], but we do not claim that it, by itself, establishes regulatory compliance.")
+
 # ================= 5 Grounded language layer =================
 h1("5   Grounded Language Understanding and Honest Degradation")
 p1a("Two AI endpoints carry user-visible risk: situation understanding (free text or voice "
@@ -278,7 +344,7 @@ pn("The honest-degradation policy governs failure. If no model key is configured
 h1("6   Implementation and Validation")
 p1a("The repository implements 24 application routes (13 statically prerendered, 11 "
    "server-rendered), the credential contract, the catalogue as typed data, and an automated "
-   "test suite. At submission time the following evidence holds, and Table 1 records what each "
+   "test suite. At submission time the following evidence holds, and Table 2 records what each "
    "result does and does not support.")
 pn("Static and build checks: TypeScript strict type-check passes; ESLint reports zero errors "
    "(ten warnings); next build completes for all 24 routes. Functional tests: the Vitest "
@@ -293,50 +359,45 @@ pn("Static and build checks: TypeScript strict type-check passes; ESLint reports
    "AI fallbacks were replaced by the labelled-sample policy of Sect. 5. Secrets that had "
    "entered git history remain a rotation obligation, tracked as pending on the authors' side.")
 
-# ---- Table 1 ----
-para("table title", "Table 1.  Validation status at submission. Rows marked \u201cnot "
-     "claimed\u201d are reported to bound the paper's claims, not to criticise them.")
+h2("6.1   Grounded-Matcher Benchmark")
+import json as _json
+_ev = _json.load(open("paper/eval_results.json", encoding="utf-8"))
+_s = _ev["summary"]
+p1a("To move beyond the qualitative grounding argument of Sect. 5, we exercised the live "
+   "production endpoint (POST /api/services/match on the built server, same prompt, Zod schema "
+   "and 28-entry catalogue as the shipped app) over 16 free-text situations spanning five input "
+   "languages: English, Hinglish, Roman Urdu, Arabic script, Devanagari Hindi and Bengali. Each "
+   "case carries an acceptable service-id set derived from the catalogue's own situation tags, "
+   "so ground truth is reproducible from repository data rather than hand-asserted. We report "
+   "hit@1 (top match acceptable), hit@3 (any of the returned matches acceptable) and the count "
+   "of out-of-catalogue identifiers. Result: %d/%d hit@1, %d/%d hit@3, %d out-of-catalogue ids, "
+   "%.2f matches per case and a median latency of %d ms (range %d-%d ms). Every returned "
+   "identifier resolved to a real official service, confirming the structural grounding claim "
+   "end to end. We report this as a small, single-annotator, catalogue-derived benchmark: it "
+   "measures retrieval correctness against curated ground truth, not real-world user outcomes, "
+   "and two transient provider 500s observed during development (both recovered on retry) are "
+   "reported as provider-reliability noise rather than hidden."
+   % (_s["hit_at_1"], _s["n"], _s["hit_at_3"], _s["n"], _s["out_of_catalog_ids"],
+      _s["avg_matches_returned"], _s["latency_ms_median"], _s["latency_ms_min"], _s["latency_ms_max"]))
+add_figure("paper/fig3_evaluation.png",
+    "Fig. 3.  Grounded-matcher benchmark. Left: hit@1 is 100% in every input-language group "
+    "(case counts annotated). Right: per-case end-to-end latency with median line. Footer "
+    "reports the aggregate metrics from the live endpoint run.")
 
-rows = [
+h2("6.2   Claim Ledger")
+para("table title", "Table 2.  Validation status at submission. Rows marked \u201cnot "
+     "claimed\u201d are reported to bound the paper's claims, not to criticise them.")
+add_table([
     ("Mechanism", "Evidence at submission", "Status"),
     ("Data isolation (RLS)", "12/12 Vitest incl. live-PostgreSQL isolation tests", "Proven (prototype)"),
     ("Registry semantics", "Issuer-only, duplicate-reject, one-way revoke, immutable hash", "Proven (tests + Amoy preflight)"),
     ("Catalogue authenticity", "28 entries, every URL on u.ae or mohre.gov.ae", "Proven URLs; freshness unverified"),
-    ("AI grounding", "Schema-constrained IDs; non-catalogue IDs dropped", "Mechanism proven; accuracy not benchmarked"),
+    ("AI grounding (retrieval)", "Schema-constrained ids; 16/16 benchmark hit@1, 0 out-of-catalogue", "Proven on curated benchmark; user outcomes untested"),
     ("Honest degradation", "503 without key; SAMPLE at confidence 0; issuance blocked", "Proven (code + UI)"),
     ("Factual truth of claims", "Chain attests existence/immutability only", "Not claimed"),
     ("Production operation", "Testnet only; key rotation pending", "Not claimed"),
     ("Resident usability", "No user study conducted", "Not claimed"),
-]
-tbl = doc.add_table(rows=len(rows), cols=3)
-widths = [Cm(3.4), Cm(5.4), Cm(3.4)]
-for ri, row in enumerate(rows):
-    for ci, text in enumerate(row):
-        cell = tbl.cell(ri, ci)
-        cell.width = widths[ci]
-        cp = cell.paragraphs[0]
-        r = cp.add_run(text)
-        r.font.size = Pt(8)
-        if ri == 0:
-            r.bold = True
-
-def set_tbl_borders(t):
-    from docx.oxml.ns import qn
-    from docx.oxml import OxmlElement
-    tblPr = t._tbl.tblPr
-    borders = OxmlElement("w:tblBorders")
-    for edge in ("top", "bottom", "insideH"):
-        e = OxmlElement("w:" + edge)
-        e.set(qn("w:val"), "single"); e.set(qn("w:sz"), "6")
-        e.set(qn("w:space"), "0"); e.set(qn("w:color"), "000000")
-        borders.append(e)
-    for edge in ("left", "right", "insideV"):
-        e = OxmlElement("w:" + edge)
-        e.set(qn("w:val"), "none"); e.set(qn("w:sz"), "0")
-        e.set(qn("w:space"), "0"); e.set(qn("w:color"), "auto")
-        borders.append(e)
-    tblPr.append(borders)
-set_tbl_borders(tbl)
+], [3.4, 5.4, 3.4], font_pt=8)
 para("Normal", "")
 
 # ================= 7 Limitations =================
@@ -344,15 +405,16 @@ h1("7   Limitations and Ethical Considerations")
 p1a("We state the boundaries plainly. The chain layer runs on a public testnet with a single "
    "issuer key; production use requires mainnet deployment, key custody (HSM or multisig), and "
    "a revocation policy agreed with the institutions that would honour these anchors. The AI "
-   "layer has no accuracy benchmark: grounding prevents invented services but cannot prevent "
-   "a wrong catalogue match, and document extraction quality has not been measured on real, "
-   "consented documents. The credential mechanism anchors user-confirmed statements; it adds "
+   "layer's benchmark (Sect. 6.1) is small, single-annotator and scored against catalogue-derived "
+   "ground truth: it evidences retrieval correctness, not real-world user outcomes, and document "
+   "extraction quality has still not been measured on real, consented documents. The credential "
+   "mechanism anchors user-confirmed statements; it adds "
    "no independent verification, and an adversary with the issuer key can anchor false "
    "statements - the immutable issuer address and public events make such abuse visible and "
    "attributable, not impossible. The demo mode's signed cookie is a hackathon convenience, "
    "not an identity system. Finally, the headline demographic figure used in outreach (about "
    "88% foreign-born) is indicative and cited as such; all product claims in this paper are "
-   "bounded by Table 1.")
+   "bounded by Table 2.")
 pn("Ethically, the design follows data minimisation by construction: PII remains in "
    "user-partitioned tables under RLS, nothing personal is sent to the blockchain or to the "
    "model provider beyond the transient document image used for extraction, and the "

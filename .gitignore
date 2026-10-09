@@ -16,3 +16,7 @@ test-ai.mjs
 test_chain*.mjs
 fix.cjs
 fix-documents.js
+
+# paper build intermediates (regenerable via paper/shots.mjs)
+paper/shot_*.png
+~$*

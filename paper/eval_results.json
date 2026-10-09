@@ -1,0 +1,326 @@
+{
+  "summary": {
+    "n": 16,
+    "errors": 0,
+    "empty": 0,
+    "hit_at_1": 16,
+    "hit_at_3": 16,
+    "hit_at_1_pct": 100,
+    "hit_at_3_pct": 100,
+    "avg_matches_returned": 2.63,
+    "out_of_catalog_ids": 0,
+    "first_attempt_api_success": "16/16",
+    "cases_needing_retry": 0,
+    "latency_ms_median": 1378,
+    "latency_ms_min": 1056,
+    "latency_ms_max": 2120,
+    "model": "gemini-flash-latest (default)"
+  },
+  "results": [
+    {
+      "id": "T01",
+      "lang": "English (UK)",
+      "text": "My company has not paid my salary for the last three months. I have salary slips as proof.",
+      "accept": [
+        "SVC-001",
+        "SVC-003",
+        "SVC-004",
+        "SVC-005",
+        "SVC-010"
+      ],
+      "ms": 2120,
+      "attempts": 1,
+      "returned": [
+        "SVC-001",
+        "SVC-004",
+        "SVC-003"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T02",
+      "lang": "English (UK)",
+      "text": "I was terminated from my private-sector job last week and want to know about my gratuity.",
+      "accept": [
+        "SVC-001",
+        "SVC-002",
+        "SVC-005",
+        "SVC-006",
+        "SVC-007",
+        "SVC-013"
+      ],
+      "ms": 1321,
+      "attempts": 1,
+      "returned": [
+        "SVC-007",
+        "SVC-006",
+        "SVC-002"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T03",
+      "lang": "Hinglish",
+      "text": "Employer ne 4 mahine se salary nahi di, main kya karu?",
+      "accept": [
+        "SVC-001",
+        "SVC-003",
+        "SVC-004",
+        "SVC-005",
+        "SVC-010"
+      ],
+      "ms": 1374,
+      "attempts": 1,
+      "returned": [
+        "SVC-001",
+        "SVC-003",
+        "SVC-004"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T04",
+      "lang": "Arabic",
+      "text": "لم يدفع لي صاحب العمل راتبي منذ شهرين وأريد تقديم شكوى",
+      "accept": [
+        "SVC-001",
+        "SVC-003",
+        "SVC-004",
+        "SVC-005"
+      ],
+      "ms": 1715,
+      "attempts": 1,
+      "returned": [
+        "SVC-001",
+        "SVC-004",
+        "SVC-003"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T05",
+      "lang": "Roman Urdu",
+      "text": "Meri salary do mahine se nahi aayi aur company mera passport rakh leti hai",
+      "accept": [
+        "SVC-001",
+        "SVC-003",
+        "SVC-004",
+        "SVC-005"
+      ],
+      "ms": 1196,
+      "attempts": 1,
+      "returned": [
+        "SVC-001",
+        "SVC-003",
+        "SVC-004"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T06",
+      "lang": "Hindi (Devanagari)",
+      "text": "मेरी नौकरी छूट गई है और वीज़ा की स्थिति क्या होगी?",
+      "accept": [
+        "SVC-002",
+        "SVC-005",
+        "SVC-006",
+        "SVC-007",
+        "SVC-013"
+      ],
+      "ms": 1450,
+      "attempts": 1,
+      "returned": [
+        "SVC-013",
+        "SVC-002",
+        "SVC-006"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T07",
+      "lang": "English (UK)",
+      "text": "My landlord increased the rent and wants me to leave before my contract ends.",
+      "accept": [
+        "SVC-023",
+        "SVC-024"
+      ],
+      "ms": 1449,
+      "attempts": 1,
+      "returned": [
+        "SVC-024",
+        "SVC-023",
+        "SVC-025"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T08",
+      "lang": "English (UK)",
+      "text": "I want to register my tenancy contract with Ejari.",
+      "accept": [
+        "SVC-023"
+      ],
+      "ms": 1249,
+      "attempts": 1,
+      "returned": [
+        "SVC-023",
+        "SVC-024"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T09",
+      "lang": "Bengali",
+      "text": "আমার চাকরি গেছে, আমি বেকার বীমার দাবি করতে চাই।",
+      "accept": [
+        "SVC-002",
+        "SVC-006",
+        "SVC-007",
+        "SVC-013"
+      ],
+      "ms": 1428,
+      "attempts": 1,
+      "returned": [
+        "SVC-002",
+        "SVC-006",
+        "SVC-007"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T10",
+      "lang": "English (UK)",
+      "text": "I bought a phone online that turned out to be fake and the shop refuses a refund.",
+      "accept": [
+        "SVC-026"
+      ],
+      "ms": 1687,
+      "attempts": 1,
+      "returned": [
+        "SVC-026"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T11",
+      "lang": "English (UK)",
+      "text": "I cannot afford to pay my accumulated rent and need emergency financial help.",
+      "accept": [
+        "SVC-019",
+        "SVC-027"
+      ],
+      "ms": 1379,
+      "attempts": 1,
+      "returned": [
+        "SVC-027",
+        "SVC-019",
+        "SVC-024"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T12",
+      "lang": "English (UK)",
+      "text": "How do I sponsor my wife's residence visa in Dubai?",
+      "accept": [
+        "SVC-013",
+        "SVC-016"
+      ],
+      "ms": 1223,
+      "attempts": 1,
+      "returned": [
+        "SVC-016",
+        "SVC-013",
+        "SVC-014"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T13",
+      "lang": "English (UK)",
+      "text": "I want to start a small business in Dubai and need the licence steps.",
+      "accept": [
+        "SVC-011",
+        "SVC-028"
+      ],
+      "ms": 1056,
+      "attempts": 1,
+      "returned": [
+        "SVC-028"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T14",
+      "lang": "English (UK)",
+      "text": "My employer terminated me without notice and I want to file a case at MOHRE.",
+      "accept": [
+        "SVC-001",
+        "SVC-004",
+        "SVC-005",
+        "SVC-006",
+        "SVC-009"
+      ],
+      "ms": 1274,
+      "attempts": 1,
+      "returned": [
+        "SVC-001",
+        "SVC-006",
+        "SVC-004"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T15",
+      "lang": "English (UK)",
+      "text": "What documents do I need for my Emirates ID renewal?",
+      "accept": [
+        "SVC-013",
+        "SVC-014",
+        "SVC-015"
+      ],
+      "ms": 1378,
+      "attempts": 1,
+      "returned": [
+        "SVC-015",
+        "SVC-013",
+        "SVC-014"
+      ],
+      "hit1": true,
+      "hit3": true
+    },
+    {
+      "id": "T16",
+      "lang": "English (UK)",
+      "text": "As a domestic helper, my agency took my passport and refuses weekly rest days.",
+      "accept": [
+        "SVC-005",
+        "SVC-010",
+        "SVC-022",
+        "SVC-025"
+      ],
+      "ms": 1290,
+      "attempts": 1,
+      "returned": [
+        "SVC-022",
+        "SVC-005"
+      ],
+      "hit1": true,
+      "hit3": true
+    }
+  ]
+}
