@@ -43,10 +43,11 @@ revision was written to evade detection; a clean report is the authors' evidence
 
 ## 5. Submission logistics — by 15 October 2026
 
-- Locate the ISDIA submission portal (CMT) link on isdia.org — it was **not** present
-  on the important-dates, editorial-policy or call-for-papers pages checked; confirm
-  the actual upload URL and whether review is single- or double-blind (if blind, the
-  conference page will say whether to strip author names).
+- Submission is via **Microsoft CMT — `cmt3.research.microsoft.com/ISDIA2027`** (found
+  on the ISDIA site during the round-1 audit; it was not repeated on the
+  important-dates/editorial-policy/call-for-papers pages re-checked this round).
+  Confirm you can open the CMT page and check whether review is single- or
+  double-blind (if blind, the conference page will say whether to strip author names).
 - Upload `SANAD_ISDIA_2027_Final.docx` (Word, LNCS template — not the PDF, unless the
   portal asks otherwise). Do **not** submit the older `SANAD_ISDIA_2027_Revised_v2.docx`.
 - After acceptance (final notices are rolling; final acceptance 15 Dec 2026): produce

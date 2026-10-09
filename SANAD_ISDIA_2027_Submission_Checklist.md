@@ -40,7 +40,8 @@ Checked against: isdia.org — *important-dates*, *editorial-policy*, *call-for-
 | At least one author registers and presents (hybrid event 9–10 Jan 2027) | ⚠️ author commitment needed |
 | Final accepted (CRC) version must **not** be uploaded to the conference portal | ⚠️ applies at camera-ready stage |
 | Similarity check before acceptance | ⚠️ run Turnitin/iThenticate before upload |
-| Submission portal (CMT) URL and review anonymity (single/double-blind) | ❓ not stated on the three pages checked — confirm on isdia.org main/submission page |
+| Submission portal | ✅ identified | Microsoft CMT: `cmt3.research.microsoft.com/ISDIA2027` (from the ISDIA site in the round-1 audit; re-confirm access before upload) |
+| Review anonymity (single/double-blind) | ❓ not stated on the three pages checked (important-dates, editorial-policy, call-for-papers) — confirm on the CMT/conference main page |
 
 ## Files to submit
 
