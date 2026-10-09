@@ -21,11 +21,25 @@ ESLint 0 errors / 10 warnings; Vitest 12/12 incl. live-PostgreSQL RLS isolation
   `app/api/services/match/route.ts`)
 - Honest degradation: 503 without key; sample fallback labelled
   `sample_fallback` at confidence 0; issuance blocked for sample sources.
-- Benchmark numbers in Sect. 6.1 and Fig. 3 match `paper/eval_results.json`
-  exactly: 16 cases, hit@1 16/16, hit@3 16/16, 0 out-of-catalogue ids, 2.63
-  avg matches, median 1378 ms, range 1056–2120 ms, 16/16 first-try in the
-  final run, model gemini-flash-latest. Language counts (11/2/1/1/1) match
-  per-case `lang` fields.
+- Benchmark: two genuine live runs, both raw files shipped. Run 1
+  (`paper/eval_results_run1_saved.json`): 16/16 hit@1, 16/16 hit@3, 0
+  out-of-catalogue, 2.63 avg matches, median 1378 ms, range 1056–2120 ms.
+  Run 2 (`paper/eval_results.json`, re-run shortly before submission and
+  reported as the headline in Sect. 6.1/Fig. 3): identical hit@1/hit@3/
+  out-of-catalogue results; 2.69 avg matches, median 1468 ms, range
+  1217–1910 ms. Language counts (11/2/1/1/1) match per-case `lang` fields
+  in both runs. Both runs used model `gemini-flash-latest` with 16/16
+  first-try API success. No number was hand-edited.
+- Deployed contract (round 2): live read-only checks against Amoy via
+  `https://polygon-amoy-bor-rpc.publicnode.com` — code exists at
+  `0x13798285e9fa1aCd15930e8D510A34BB983F1484` (1009 bytes), `issuer()`
+  returns `0x09ae9a82d13ac708ffe68ed4e7139ea68554da50`, and a
+  **bytecode-equivalence check** (`node scripts/verify-bytecode.mjs
+  <address> <rpc>`) confirms the deployed runtime is a substring of the
+  locally compiled `SANADCredential.sol` creation code after stripping the
+  CBOR metadata hash and normalising the immutable-issuer PUSH32 literal.
+  (`rpc-amoy.polygon.technology` was unresolvable from this network; the
+  publicnode endpoint was used instead.)
 - RLS isolation, route counts, lint/typecheck/build status (re-run today).
 - Voice intake exists (browser SpeechRecognition in `app/chat/page.tsx`);
   5 hand-curated locales + extended machine-translated languages
@@ -40,9 +54,10 @@ ESLint 0 errors / 10 warnings; Vitest 12/12 incl. live-PostgreSQL RLS isolation
   (Sect. 4.4, new paragraph.)
 - Grounding — prevents invented services reaching the user; does not prevent
   a wrong-but-valid catalogue match. (Sects. 1, 2.3, 5, 6.1 wording fixed.)
-- Deployed contract — ABI preflight on Amoy confirms interface agreement;
-  **on-chain source verification was not performed**, so local/deployed
-  equivalence rests on the preflight. (Disclosed in Sect. 6.)
+- Deployed contract — interface agreement (ABI preflight) **and** runtime
+  bytecode equivalence are verified (see above); what remains unperformed is
+  third-party **source verification on a block explorer**, which Sect. 6 of
+  the paper discloses explicitly.
 - Listing 1 — abridged excerpt (constructor, Revoked event, revoke body,
   NotIssued/AlreadyRevoked omitted). (Labelled in Sect. 4.2 + caption.)
 - Reference [3] updated to VC Data Model **v2.0** (2025 Recommendation; the
@@ -62,7 +77,37 @@ ESLint 0 errors / 10 warnings; Vitest 12/12 incl. live-PostgreSQL RLS isolation
 - Demo-mode signed cookie as an identity mechanism (hackathon convenience).
 
 ## NOT VERIFIABLE THIS SESSION
-- Whether the Amoy deployment still holds issued records right now (preflight
-  was run at audit time; no block-explorer source check).
+- Whether specific credential IDs still hold issued records on Amoy (the
+  contract's existence, interface and bytecode are re-verified today; a
+  per-credential status sweep was not re-run).
 - ISDIA review anonymity (double/single-blind): not stated anywhere on
   isdia.org; author details are required, suggesting non-blinded.
+
+## ROUND 2 — checks added for the external review (2026-10-09, later run)
+- **Page count (review item 1).** The "15 pages" is Word's
+  `ComputeStatistics(2)` pre-layout estimate. The authoritative fixed-layout
+  render (Word `ExportAsFixedFormat` → PDF) is **12 pages**, confirmed by two
+  independent PDF readers with clean per-page content flow. 12 ≤ ISDIA's
+  stated 10–12 camera-ready window.
+- **Deletion semantics (item 4).** Code inspection: the only implemented
+  user-facing deletion is document deletion (`deleteDocument` in
+  `lib/api/domain-router.ts`); no claim/snapshot/salt deletion path exists.
+  Sect. 4.4 now states this and the resulting semantics (anchor becomes
+  unverifiable, not deleted).
+- **Provider data flow (item 5).** Situation text and documents are sent to
+  Google's Gemini API through the Vercel AI SDK (`@ai-sdk/google`,
+  `generateObject`); confirmed in `app/api/services/match/route.ts` and
+  `lib/api/*`. Sect. 4.4 names the provider and states this is outside RLS.
+- **Benchmark integrity (item 7).** Run 2 was executed against the live
+  local endpoint (server started from the committed build, port 3111);
+  raw JSON preserved; paper text generated from the JSON, never hand-typed.
+- **Figures (item 8).** Effective print resolution recomputed from final
+  PNG pixel sizes at 12.2 cm column width: fig1 ~610 dpi, fig2 ~800 dpi,
+  fig3 ~540 dpi — all above Springer's 300 dpi guidance; ISDIA's site itself
+  states no dpi rule. Fig. 2 crop bug (translate-toolbar border and a
+  half-sliced nav on the verifier panel) fixed; all four panels visually
+  re-inspected.
+- **Mocked vs live (item 11).** Vitest 12/12 runs against a live local
+  PostgreSQL for the RLS isolation tests; the ABI preflight and benchmark
+  hit the live Amoy RPC and live local API respectively; the bytecode check
+  is a code check, not a security audit — the paper says so.

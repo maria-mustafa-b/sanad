@@ -90,3 +90,42 @@ the same `paper/build_paper.py` (extended), same LNCS template, same figures.
   0 out-of-catalogue, 2.63 avg, median 1378 ms, range 1056–2120 ms).
 - Figures 1–3, Tables 1–2 content, section structure, LNCS styling.
 - Screenshots reviewed: no keys, tokens or personal data visible.
+
+## Round 2 — external review (scored 8.2/10) addressed in `SANAD_ISDIA_2027_Revised_v2.docx`
+- **Page-count mystery resolved.** The reviewer saw 15 pages: that is Word's
+  `ComputeStatistics` pre-layout estimate. The fixed-layout export
+  (Word → PDF, cross-checked with two independent PDF readers) is **12 pages**
+  — inside ISDIA's 10–12 camera-ready window. No content was cut for pagination.
+- **Sect. 2.1** "reveals no claim content" → "the design is intended to prevent
+  direct disclosure of claim contents through the public artifact and to resist
+  dictionary enumeration", cross-referenced to the Sect. 4.4 caveats.
+- **Sect. 4.4 observer** "cannot learn, correlate or enumerate holders or
+  claims" → narrowed to "cannot recover claim content by dictionary guessing"
+  (metadata correlation is explicitly conceded in the same paragraph).
+- **Sect. 4.4 deletion semantics** corrected against the code: the only
+  user-facing deletion implemented is document deletion
+  (`lib/api/domain-router.ts`, `deleteDocument`); claim-level deletion of
+  snapshots/salts is labelled a designed control the prototype does not yet
+  ship, with the exact semantics stated (deletion removes nothing on-chain; it
+  only withdraws recompute ability, making the anchor unverifiable).
+- **Sect. 4.4 provider flow** named: Google's Gemini API reached through the
+  Vercel AI SDK, and stated to be outside RLS's protection entirely.
+- **Sect. 6 deployment verification upgraded**: from "ABI preflight alone" to
+  a read-only **bytecode-equivalence check** (`scripts/verify-bytecode.mjs`):
+  deployed runtime at `0x13798285e9fa1aCd15930e8D510A34BB983F1484` (Amoy
+  80002) is identical to the locally compiled `SANADCredential.sol` once solc
+  CBOR metadata and the deploy-time immutable-issuer literal are normalised
+  out. Block-explorer source verification is still disclosed as not performed.
+- **Benchmark genuinely re-run** before submission (review item 7): run 2
+  reproduces 16/16 hit@1, 16/16 hit@3, 0 out-of-catalogue ids; aggregates
+  shifted slightly (2.69 vs 2.63 matches/case; median 1468 vs 1378 ms; range
+  1217–1910 vs 1056–2120 ms). Sect. 6.1 and Fig. 3 now report run 2, and a new
+  reproducibility sentence reports the delta honestly and notes both raw JSON
+  files ship with the harness (`eval_results.json`,
+  `eval_results_run1_saved.json`). No numbers were hand-edited.
+- **Figure resolution** (review item 8): all three figures re-rendered at 2×
+  raster scale — fig1 2928×1320 (~610 dpi at 12.2 cm), fig2 3879×2759 from
+  device-scale-factor-3 screenshots (~800 dpi effective), fig3 2600×1560
+  (~540 dpi). ISDIA's site states no dpi rule (defers to Springer); all
+  figures now exceed Springer's 300 dpi guidance. Fig. 2 toolbar crop fixed
+  (translate bar fully removed, app headers intact).

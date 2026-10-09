@@ -9,13 +9,13 @@ cmt3.research.microsoft.com/ISDIA2027.
 | # | Requirement (official) | Status | Note |
 |---|---|---|---|
 | 1 | Springer format / official template | PASS | Built on the Springer LNCS Word template. ISDIA's proceedings series is LNNCS, not LNCS — confirm the camera-ready uses the LNNCS template if a different one is linked on CMT. |
-| 2 | 10–12 pages (camera-ready) | PASS | Rendered PDF = **12 pages**. Short papers (<10 pp) may not be considered; we are at the top of the range. |
+| 2 | 10–12 pages (camera-ready) | PASS | Fixed-layout render = **12 pages** (Word→PDF export, cross-checked with two PDF readers). Note: Word's own page *estimate* shows 15 — that is a pre-layout artifact an external reviewer may also see; trust the PDF export. |
 | 3 | 3–5 keywords after abstract | PASS | Exactly 5. |
 | 4 | Abstract, no sub-headings, no disconnected words | PASS | 147 words, single justified block, no headings. |
 | 5 | All author names, affiliations, **mail ids**; no designations | **BLOCKED** | Names + affiliations present, no designations. E-mails are mandatory and must be supplied by the authors (see action list #1). No placeholder is printed in the copy. |
 | 6 | Complete references (year, vol., issue, pages where applicable) | PASS* | 11 references, all live-verified; numbered LNCS style, every in-text cite maps to a reference and vice-versa. Web-first sources carry URLs + access dates instead of vol/pages (appropriate). |
 | 7 | Original work, **not machine generated** | **AUTHOR RISK** | ISDIA drops papers traced as AI-generated; no disclosure path exists. Authors must review/own the text. See action list #2. |
-| 8 | Figures legible at paper size | PASS | Fig 1 at 12.2 cm, Fig 2 montage ~305 dpi source, Fig 3 charts legible; captions self-contained. |
+| 8 | Figures legible at paper size | PASS | All three re-rendered at 2× raster scale: fig1 ~610 dpi, fig2 ~800 dpi (DSF-3 screenshots), fig3 ~540 dpi effective at 12.2 cm — above Springer's 300 dpi guidance; ISDIA states no separate dpi rule. Fig. 2 crop artifacts (translate toolbar, sliced nav) fixed and panels re-inspected. |
 | 9 | No PII / secrets in screenshots | PASS | Reviewed all four panels: no keys, tokens, emails or personal data. |
 | 10 | Submission window | NOTE | Phase-I 15 Sep 2026 (passed); **Phase-II 15 Oct 2026**; notices rolling; final acceptance 15 Dec 2026. |
 
@@ -32,10 +32,13 @@ cmt3.research.microsoft.com/ISDIA2027.
    additions could push to 13; trim Sect. 7 first if needed.
 
 ## Files
-- Manuscript: `SANAD_ISDIA_2027_Revised.docx` (root)
-- Rendered PDF: `paper/SANAD_ISDIA_2027_Revised.pdf`
+- Manuscript (current build): `SANAD_ISDIA_2027_Revised_v2.docx` (root) —
+  rename to `SANAD_ISDIA_2027_Revised.docx` once the old copy is closed in
+  Word (it was locked during this rebuild).
+- Rendered PDF: `paper/SANAD_ISDIA_2027_Revised.pdf` (generated from the v2 build)
 - Previews: `paper/preview_isdia/p01..p12.png`
 - Builder: `paper/build_paper.py` (set `SANAD_PAPER_OUT` to change output name)
+- Deployment check: `node scripts/verify-bytecode.mjs <address> <rpc>` (read-only)
 - Change log: `paper/CHANGELOG_ISDIA.md`
 - Verification: `paper/VERIFICATION_REPORT.md`
 - Author actions: `paper/AUTHOR_ACTION_LIST.md`

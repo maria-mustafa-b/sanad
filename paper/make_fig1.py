@@ -1,19 +1,39 @@
-"""Fig. 1 - SANAD architecture as a clean monochrome line figure (LNCS-safe)."""
+"""Fig. 1 - SANAD architecture as a clean monochrome line figure (LNCS-safe).
+Rendered at S=2 (24 px/mm, ~610 dpi at 122 mm print width)."""
 import math
 from PIL import Image, ImageDraw, ImageFont
 
-W, H = 1464, 660   # 122 mm wide at 12 px/mm (~305 dpi)
+S = 2
+W0, H0 = 1464, 660   # logical design size at 12 px/mm
+W, H = W0 * S, H0 * S
 img = Image.new("RGB", (W, H), "white")
-d = ImageDraw.Draw(img)
+
 
 def font(sz, bold=False):
     names = ["segoeui-bold.ttf" if bold else "segoeui.ttf",
              "arialbd.ttf" if bold else "arial.ttf", "calibrib.ttf" if bold else "calibri.ttf"]
     for n in names:
-        try: return ImageFont.truetype("C:/Windows/Fonts/" + n, sz)
+        try: return ImageFont.truetype("C:/Windows/Fonts/" + n, sz * S)
         except Exception: pass
     return ImageFont.load_default()
 
+
+class SD:
+    """Scale positional coordinates by S; scale the line `width` kwarg; pass the rest."""
+    def __init__(self, dr): self.dr = dr
+    def _p(self, a):
+        if isinstance(a, (int, float)): return a * S
+        if isinstance(a, (tuple, list)): return type(a)(self._p(x) for x in a)
+        return a
+    def __getattr__(self, name):
+        attr = getattr(self.dr, name)
+        def call(*args, **kw):
+            kw = {k: (self._p(v) if k == "width" else v) for k, v in kw.items()}
+            return attr(*[self._p(a) for a in args], **kw)
+        return call
+
+
+d = SD(ImageDraw.Draw(img))
 FT, FS, FL = font(28, True), font(22), font(20, True)
 INK = (25, 25, 25)
 
@@ -35,8 +55,8 @@ def arrow(x1, y1, x2, y2, label=None):
 # dashed off-chain / on-chain boundary
 BX = 1220
 yy = 4
-while yy < H-4:
-    d.line([BX, yy, BX, min(yy+10, H-4)], fill=(110, 110, 110), width=2)
+while yy < H0-4:
+    d.line([BX, yy, BX, min(yy+10, H0-4)], fill=(110, 110, 110), width=2)
     yy += 18
 
 # pipeline row
@@ -65,8 +85,9 @@ box(VX, VY, VW, VH2, "Public verifier (/verify)", ["status(id) -> hash, issuer,"
 arrow(xs[5]+BW/2, Y1+BH+2, xs[5]+BW/2, VY-2, "reads")
 
 # boundary labels
-d.text((BX-8, H-14), "off-chain: PII stays in RLS tables", font=font(18), fill=(70, 70, 70), anchor="rs")
-d.text((BX+8, H-14), "on-chain: opaque id + 32-byte hash only", font=font(18), fill=(70, 70, 70), anchor="ls")
+d.text((BX-8, H0-14), "off-chain: PII stays in RLS tables", font=font(18), fill=(70, 70, 70), anchor="rs")
+d.text((BX+8, H0-32), "on-chain: opaque id +", font=font(18), fill=(70, 70, 70), anchor="ls")
+d.text((BX+8, H0-10), "32-byte hash only", font=font(18), fill=(70, 70, 70), anchor="ls")
 
 img.save("paper/fig1_architecture.png")
 print("saved paper/fig1_architecture.png", img.size)

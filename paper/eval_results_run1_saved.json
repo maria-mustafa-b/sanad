@@ -7,13 +7,13 @@
     "hit_at_3": 16,
     "hit_at_1_pct": 100,
     "hit_at_3_pct": 100,
-    "avg_matches_returned": 2.69,
+    "avg_matches_returned": 2.63,
     "out_of_catalog_ids": 0,
     "first_attempt_api_success": "16/16",
     "cases_needing_retry": 0,
-    "latency_ms_median": 1468,
-    "latency_ms_min": 1217,
-    "latency_ms_max": 1910,
+    "latency_ms_median": 1378,
+    "latency_ms_min": 1056,
+    "latency_ms_max": 2120,
     "model": "gemini-flash-latest (default)"
   },
   "results": [
@@ -28,12 +28,12 @@
         "SVC-005",
         "SVC-010"
       ],
-      "ms": 1910,
+      "ms": 2120,
       "attempts": 1,
       "returned": [
         "SVC-001",
-        "SVC-003",
-        "SVC-004"
+        "SVC-004",
+        "SVC-003"
       ],
       "hit1": true,
       "hit3": true
@@ -50,7 +50,7 @@
         "SVC-007",
         "SVC-013"
       ],
-      "ms": 1432,
+      "ms": 1321,
       "attempts": 1,
       "returned": [
         "SVC-007",
@@ -71,7 +71,7 @@
         "SVC-005",
         "SVC-010"
       ],
-      "ms": 1526,
+      "ms": 1374,
       "attempts": 1,
       "returned": [
         "SVC-001",
@@ -91,7 +91,7 @@
         "SVC-004",
         "SVC-005"
       ],
-      "ms": 1396,
+      "ms": 1715,
       "attempts": 1,
       "returned": [
         "SVC-001",
@@ -111,7 +111,7 @@
         "SVC-004",
         "SVC-005"
       ],
-      "ms": 1592,
+      "ms": 1196,
       "attempts": 1,
       "returned": [
         "SVC-001",
@@ -132,7 +132,7 @@
         "SVC-007",
         "SVC-013"
       ],
-      "ms": 1472,
+      "ms": 1450,
       "attempts": 1,
       "returned": [
         "SVC-013",
@@ -150,7 +150,7 @@
         "SVC-023",
         "SVC-024"
       ],
-      "ms": 1467,
+      "ms": 1449,
       "attempts": 1,
       "returned": [
         "SVC-024",
@@ -167,7 +167,7 @@
       "accept": [
         "SVC-023"
       ],
-      "ms": 1289,
+      "ms": 1249,
       "attempts": 1,
       "returned": [
         "SVC-023",
@@ -186,12 +186,12 @@
         "SVC-007",
         "SVC-013"
       ],
-      "ms": 1468,
+      "ms": 1428,
       "attempts": 1,
       "returned": [
         "SVC-002",
-        "SVC-007",
-        "SVC-006"
+        "SVC-006",
+        "SVC-007"
       ],
       "hit1": true,
       "hit3": true
@@ -203,7 +203,7 @@
       "accept": [
         "SVC-026"
       ],
-      "ms": 1217,
+      "ms": 1687,
       "attempts": 1,
       "returned": [
         "SVC-026"
@@ -219,12 +219,12 @@
         "SVC-019",
         "SVC-027"
       ],
-      "ms": 1596,
+      "ms": 1379,
       "attempts": 1,
       "returned": [
         "SVC-027",
         "SVC-019",
-        "SVC-023"
+        "SVC-024"
       ],
       "hit1": true,
       "hit3": true
@@ -237,7 +237,7 @@
         "SVC-013",
         "SVC-016"
       ],
-      "ms": 1447,
+      "ms": 1223,
       "attempts": 1,
       "returned": [
         "SVC-016",
@@ -255,7 +255,7 @@
         "SVC-011",
         "SVC-028"
       ],
-      "ms": 1486,
+      "ms": 1056,
       "attempts": 1,
       "returned": [
         "SVC-028"
@@ -274,7 +274,7 @@
         "SVC-006",
         "SVC-009"
       ],
-      "ms": 1346,
+      "ms": 1274,
       "attempts": 1,
       "returned": [
         "SVC-001",
@@ -293,7 +293,7 @@
         "SVC-014",
         "SVC-015"
       ],
-      "ms": 1445,
+      "ms": 1378,
       "attempts": 1,
       "returned": [
         "SVC-015",
@@ -313,12 +313,11 @@
         "SVC-022",
         "SVC-025"
       ],
-      "ms": 1595,
+      "ms": 1290,
       "attempts": 1,
       "returned": [
         "SVC-022",
-        "SVC-005",
-        "SVC-004"
+        "SVC-005"
       ],
       "hit1": true,
       "hit3": true

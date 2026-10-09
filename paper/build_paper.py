@@ -179,8 +179,9 @@ p1a("Since Nakamoto's proposal of an append-only, trust-minimised ledger " + "[9
     "structured credential content - often including identifiers of the holder - into a signed "
     "artifact whose validity is checked against a ledger. SANAD takes the more restrictive "
     "route: no credential content is published at all. Only a digest computed over a "
-    "canonicalised snapshot with a secret salt is recorded, so the ledger itself reveals no "
-    "claim content and does not support dictionary enumeration of claims.")
+    "canonicalised snapshot with a secret salt is recorded, so the design is intended to "
+    "prevent direct disclosure of claim contents through the public artifact and to resist "
+    "dictionary enumeration of claims; metadata-level caveats are given in Sect. 4.4.")
 h2("2.2   Language Access and LLM-Grounded Public Services")
 p1a("Recent surveys of code-switched and multilingual natural-language processing emphasise "
     "that monolingual assumptions systematically degrade service quality for South Asian "
@@ -230,8 +231,8 @@ add_figure(FIG, "Fig. 1.  End-to-end architecture. Personal data stays left of t
 pn("A session begins either with Supabase authentication or with a signed demo cookie "
    "(HMAC-SHA-256 over an identifier and expiry, httpOnly, SameSite=Lax). Every mutating route "
    "handler resolves the caller through a single actor() helper before touching data; "
-   "unauthenticated requests receive 401 and the interface responds with an explicit "
-   "sign-in prompt rather than silently showing another user's data. The user describes a "
+   "unauthenticated requests receive 401 and the interface prompts for sign-in rather than "
+   "silently showing another user's data. The user describes a "
    "situation in their own language; the AI layer extracts structured facts and matches the "
    "situation against the official-services catalogue; document analysis (e.g. a wage slip or "
    "contract photo) can attach evidence summaries; the user then confirms or edits the "
@@ -317,7 +318,7 @@ h2("4.4   Threat Model, Issuer-Key Risk and Retention")
 p1a("We make three adversary classes explicit. A chain observer sees only an opaque identifier "
    "and a 32-byte digest; because the digest is salted with a per-credential 32-byte secret held "
    "off-chain, guessing the snapshot contents is insufficient to reproduce it, so the observer "
-   "cannot learn, correlate or enumerate holders or claims. A database adversary who defeats "
+   "cannot recover claim content by dictionary guessing. A database adversary who defeats "
    "row-level security can read snapshots and salts, but still cannot forge a valid on-chain "
    "anchor without the issuer key, and any silent edit of a stored snapshot breaks the integrity "
    "recomputation in Sect. 4.3. A holder of the issuer key can issue or revoke records; this is "
@@ -326,9 +327,13 @@ p1a("We make three adversary classes explicit. A chain observer sees only an opa
    "than impossible, and production use should replace the single key with a multisig or HSM "
    "and a documented revocation policy.")
 pn("Retention and the zero-PII scope are stated narrowly. Snapshots and salts persist "
-   "server-side under RLS until a user deletes them; deletion removes the off-chain data, which "
-   "renders the on-chain anchor permanently unverifiable - a deliberate right-to-erasure "
-   "property that also means an anchor cannot outlive the consent that created it. Finally, "
+   "server-side under RLS. User-facing deletion is currently implemented for uploaded "
+   "documents; claim-level deletion of snapshots and salts is a designed control that the "
+   "prototype does not yet ship. Its semantics matter: deletion removes nothing from the "
+   "chain - digests and events are immutable - it only withdraws the data with which the "
+   "application could recompute the digest, so the anchor becomes unverifiable rather than "
+   "deleted. That is the intended right-to-erasure property, ensuring an anchor cannot "
+   "outlive the consent that created it once deletion ships. Finally, "
    "\u201czero-PII\u201d is a statement about the public artifact, not a legal conclusion: the "
    "design is consistent with the PDPL principles of data minimisation and purpose limitation "
    "[7], but we do not claim that it, by itself, establishes regulatory compliance.")
@@ -338,9 +343,11 @@ pn("What the salted digest does not hide is equally important. Public transactio
    "identifiers and the anchoring wallet address are themselves potentially personal data "
    "under the PDPL; \u201czero-PII\u201d therefore describes the public credential artifact, "
    "not the system's entire data footprint. Separately, situation text and documents "
-   "submitted for analysis are transmitted to the model provider for inference - a "
-   "data-handling dependency governed by that provider's retention terms rather than by our "
-   "design. A salted hash establishes a commitment to one exact representation of a snapshot; "
+   "submitted for analysis are transmitted to the model provider (Google's Gemini API, "
+   "reached through the AI SDK) for inference; while in flight or in the provider's systems "
+   "they are outside our database and therefore outside RLS's protection entirely, governed "
+   "by the provider's API terms rather than by our design. A salted hash establishes a "
+   "commitment to one exact representation of a snapshot; "
    "it guarantees neither anonymity nor that the represented statement is true.")
 
 # ================= 5 Grounded language layer =================
@@ -376,11 +383,13 @@ pn("Static and build checks: TypeScript strict type-check passes; ESLint reports
    "Contract checks: local harnesses verify issuer-only issue and revoke, immutability of the "
    "stored hash, duplicate-issuance rejection and revocation semantics; a preflight against "
    "the Amoy testnet confirms the deployed ABI matches the client (issue(bytes32,bytes32), "
-   "revoke(bytes32), status(bytes32)); we did not verify the deployed contract's source on a "
-   "block explorer, so local-source/deployed equivalence rests on that ABI preflight alone. "
-   "Security review remediation: previously committed "
-   "credentials were removed from the working tree and HEAD, unauthenticated claim reads were "
-   "closed by enforcing actor() plus per-user filtering on every claims path, and fabricated "
+   "revoke(bytes32), status(bytes32)), and a read-only bytecode comparison shows the deployed "
+   "runtime code is identical to the locally compiled source once solc metadata and the "
+   "deploy-time issuer literal are normalised out; we did not run third-party source "
+   "verification on a block explorer. "
+   "Security review remediation: committed credentials were removed from the working tree and "
+   "HEAD, unauthenticated claim reads were closed (actor() plus per-user filtering on every "
+   "claims path), and fabricated "
    "AI fallbacks were replaced by the labelled-sample policy of Sect. 5. Secrets that had "
    "entered git history remain a rotation obligation, tracked as pending on the authors' side.")
 
@@ -388,6 +397,10 @@ h2("6.1   Grounded-Matcher Benchmark")
 import json as _json
 _ev = _json.load(open("paper/eval_results.json", encoding="utf-8"))
 _s = _ev["summary"]
+try:
+    _r1 = _json.load(open("paper/eval_results_run1_saved.json", encoding="utf-8"))["summary"]
+except FileNotFoundError:
+    _r1 = _s
 p1a("To move beyond the qualitative grounding argument of Sect. 5, we exercised the live "
    "production endpoint (POST /api/services/match on the built server, same prompt, Zod schema "
    "and 28-entry catalogue as the shipped app) over 16 free-text situations. The cases span "
@@ -410,15 +423,21 @@ p1a("To move beyond the qualitative grounding argument of Sect. 5, we exercised 
    "its case text. This is consistent with the grounding design of Sect. 5 - grounding rules "
    "out invented services, not wrong-but-valid catalogue matches, which would require a "
    "larger, independently annotated set including ambiguous, out-of-scope and adversarial "
-   "inputs (Sect. 7)."
+   "inputs (Sect. 7). Re-running the full benchmark against the same build shortly before "
+   "submission reproduced identical hit@1, hit@3 and out-of-catalogue counts; the two runs "
+   "differed slightly in aggregate (%.2f vs %.2f matches per case, median latency %d vs %d "
+   "ms), which we attribute to provider-side variance, and both raw result files ship with "
+   "the harness."
    % (_s["hit_at_1"], _s["n"], _s["hit_at_3"], _s["n"], _s["out_of_catalog_ids"],
-      _s["avg_matches_returned"], _s["latency_ms_median"], _s["latency_ms_min"], _s["latency_ms_max"]))
+      _s["avg_matches_returned"], _s["latency_ms_median"], _s["latency_ms_min"], _s["latency_ms_max"],
+      _s["avg_matches_returned"], _r1["avg_matches_returned"],
+      _s["latency_ms_median"], _r1["latency_ms_median"]))
 add_figure("paper/fig3_evaluation.png",
     "Fig. 3.  Grounded-matcher benchmark (16 cases, single annotator). Left: hit@1 by "
     "input-language group - English n=11, Hinglish/Roman Urdu n=2, Arabic, Devanagari Hindi "
     "and Bengali n=1 each; the sample is not balanced across languages. Right: per-case "
     "end-to-end route latency (includes the model-provider round trip) with median line. "
-    "Footer reports aggregate metrics from the live endpoint run.")
+    "Footer reports aggregate metrics from the later of the two live endpoint runs.")
 
 h2("6.2   Claim Ledger")
 para("table title", "Table 2.  Validation status at submission. Rows marked \u201cnot "
@@ -454,13 +473,12 @@ p1a("We state the boundaries plainly. The chain layer runs on a public testnet w
    "not an identity system. Finally, the headline demographic figure used in outreach (about "
    "88% foreign-born) is indicative and cited as such; all product claims in this paper are "
    "bounded by Table 2.")
-pn("Ethically, the design follows data minimisation by construction: PII remains in "
-   "user-partitioned tables under RLS, nothing personal is written to the blockchain, and "
-   "the situation text and documents that are transmitted to the model provider for "
-   "inference fall under that provider's handling terms as discussed in Sect. 4.4. The "
-   "honest-degradation policy exists specifically so that a demonstration can never be "
-   "mistaken for an operational service. Accessibility (WCAG 2.2, RTL support) and the "
-   "PDPL-aligned storage model are treated as functional requirements rather than polish.")
+pn("Ethically, the design follows data minimisation by construction: PII stays in "
+   "user-partitioned RLS tables, nothing personal is written to the chain, and provider-side "
+   "processing is scoped in Sect. 4.4. The honest-degradation policy exists so that a "
+   "demonstration can never be mistaken for an operational service, and accessibility "
+   "(WCAG 2.2, RTL support) and the PDPL-aligned storage model are treated as functional "
+   "requirements rather than polish.")
 
 # ================= 8 Conclusion =================
 h1("8   Conclusion")

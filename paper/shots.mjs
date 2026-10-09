@@ -9,7 +9,7 @@ const shots = [
   ['/verify', 'shot_verify', 1280, 820],
 ];
 const browser = await chromium.launch({ executablePath: EXE, headless: true });
-const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2 });
+const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 3 });
 for (const [path, name, w, h] of shots) {
   await page.setViewportSize({ width: w, height: h });
   await page.goto(B + path, { waitUntil: 'networkidle', timeout: 30000 }).catch(e => console.log('nav warn', path, e.message));
