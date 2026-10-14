@@ -63,7 +63,7 @@ for (const c of CASES) {
   if (h1) hit1++;
   if (h3) hit3++;
   if (ids.length === 0) empty++;
-  results.push({ ...c, ms, attempts: attempt, returned: ids, hit1: h1, hit3: h3 });
+  results.push({ ...c, ms, attempts: attempt, returned: ids, hit1: h1, hit3: h3, raw_response: json.data });
   console.log(`${c.id} ${h3 ? "HIT@3" : "MISS"} ${h1 ? "HIT@1" : "   - "} ${ms}ms x${attempt} ${ids.join(",")}`);
 }
 

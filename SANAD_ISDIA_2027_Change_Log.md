@@ -1,6 +1,73 @@
-# SANAD — ISDIA 2027 Final Submission: Change Log (Round 3)
+# SANAD — ISDIA 2027 Final Submission: Change Log
 
-Date: 2026-10-09
+## Round 4 (2026-10-14): external audit pass
+
+An external editorial audit (8.2/10-style review, scored Technical 8 / Evaluation 6 /
+Security 8 / Impact 4) was executed as a work order. Note: the audit reviewed an **older
+16-page copy** (`SANAD_ISDIA_2027_Reviewed.docx`), so several of its items (page count,
+[1, 2] citation merging, UN-ranking attribution, separated §6 check categories) were
+already satisfied in the 12-page Final. Items that applied were fixed:
+
+- **Zero-PII scope in the abstract.** The abstract was rebuilt into design /
+  implementation / evaluation sentences (reviewer's structure request) and now states
+  "Zero-PII scopes to the public anchor; application data remains personal and
+  access-controlled." Still 150 words (LNCS cap).
+- **Identifier linkability (overclaim removed).** §4.1 previously said hex-padding meant
+  "no user-facing identifier appears on-chain" — wrong per `lib/blockchain/chain.ts`
+  (UUIDs are zero-left-padded, not hashed, and correlatable). Now states the on-chain
+  identifier is deliberately linkable to its credential record, and that the salt
+  protects the snapshot digest, not the identifier.
+- **Canonicalisation defined precisely.** §4.1 now spells out the encoder (sorted object
+  keys, recursive array normalisation, JSON-escaped strings, JSON forms for
+  numbers/booleans/nulls) and adds the honest caveat that recomputation is server-side
+  through the same code path, so byte-for-byte reproduction by a third-party verifier is
+  not guaranteed.
+- **Three-property separation.** §5 now distinguishes catalogue validity, recommendation
+  relevance and eligibility correctness: first evidenced, second preliminarily tested,
+  third not established. Also: confidence values are declared as model scores, not
+  calibrated probabilities (matches code: the match route returns High/Medium/Low
+  relevance, no calibrated number).
+- **Out-of-catalogue metric honesty.** The harness's `out_of_catalog_ids: 0` is a
+  by-product of the route filtering non-catalogue ids before responding
+  (`paper/eval_match.mjs:78`). §6.1, the abstract and Table 2 now say "0
+  out-of-catalogue identifiers delivered (route filter)" and state the result evidences
+  the filter, not the model's hallucination rate.
+- **Benchmark statistics recomputed from raw observations.** Verified against
+  `paper/eval_results.json` and `paper/eval_results_run1_saved.json`: 16/16 hit@1 and
+  hit@3, 0 errors, all first-try. Mean services returned per case 2.69 (run 2) / 2.63
+  (run 1) confirmed; the paper now also reports that on average 2.38 of the returned
+  services per case lie within the acceptable set. Medians are now computed with the
+  standard definition from the 16 per-case latencies: 1468 ms (run 2, from 1467.5) and
+  **1376 ms** (run 1; the saved summary's 1378 was an upper-middle convention). Fig. 3
+  footer updated to match ("0 out-of-catalog IDs delivered", "2.69 services/case");
+  chart, footer and caption still describe run 2.
+- **Reproducibility artifacts.** Confirmed the saved files contain all 16 inputs,
+  acceptable-id label sets, returned ids and per-case timings; `eval_match.mjs` now also
+  archives the full raw model response per case for future runs. Limitation unchanged:
+  the two already-saved runs do not contain raw response bodies.
+- **Contract test coverage extended.** The audit's checks were verified against
+  `contracts/SANADCredential.sol`: immutable constructor-assigned issuer, revoke guards
+  (NotIssued/AlreadyRevoked), one-way revocation, hash never overwritten, issuedAt==0
+  sentinel safe (no caller-supplied timestamps). Two claims were only partly covered by
+  tests (revoking an unknown id; digest immutability asserted after revoke) — both tests
+  were added and the suite passes (`node tests/contract/registry.mjs`, 8 checks).
+- **Citation and terminology polish.** Multi-citations merged to LNCS form ([1, 2],
+  [3, 4]); ref [5] corrected to Bapat, C.P. per the arXiv record; "live production
+  endpoint" → "live application endpoint" (testnet prototype); introduction gap wording
+  softened from asserted prevalence to design motivation; spelling audit confirmed
+  consistent British -ise forms + "artifact" throughout.
+- **Prose pass used the humanizer skill** (AI-tell removal without content change):
+  long abstract sentence split; no staging contrasts, closers or triads added; all
+  numbers, citations and caveats preserved.
+- **Rebuilt and revalidated:** `SANAD_ISDIA_2027_Final.docx` / `.pdf` — **12 pages**
+  (Word-exported PDF, PyMuPDF count), Listing 1 break still clean, abstract 150 words,
+  figures unchanged at ≥800 dpi.
+- **Open author item surfaced by the audit:** the reviewed copy spells the fourth author
+  "Haitham **Yaish**"; every project artifact says "Haitham **Yash**". The repo spelling
+  was kept — authors must confirm the correct legal spelling before upload.
+
+## Rounds 1–3 (2026-10-09)
+
 Deliverables created (existing manuscript files were **not** overwritten):
 
 - `SANAD_ISDIA_2027_Final.docx` — final manuscript, Springer LNCS template

@@ -1,4 +1,13 @@
-# SANAD — ISDIA 2027 Submission Checklist (Final, Round 3)
+# SANAD — ISDIA 2027 Submission Checklist (Final, Rounds 3–4)
+
+Round 4 (2026-10-14, external audit pass): abstract restructured with explicit
+Zero-PII scope; identifier-linkability and canonicalisation claims corrected to match
+code; confidence declared as uncalibrated model score; out-of-catalogue "0" restated as
+"delivered (route filter)" in abstract, §6.1, Table 2 and Fig. 3; medians recomputed
+with the standard definition (1468 / 1376 ms); contract test suite extended to 8 checks
+(unknown-id revoke, post-revoke digest immutability) and passing; multi-citations merged
+to LNCS form; ref [5] = Bapat, C.P. Rebuilt Final DOCX/PDF: still **12 pages**,
+abstract 150 words, figures ≥800 dpi. See the Change Log for full detail.
 
 Manuscript: `SANAD_ISDIA_2027_Final.docx` / `SANAD_ISDIA_2027_Final.pdf`
 Checked against: isdia.org — *important-dates*, *editorial-policy*, *call-for-papers*
@@ -35,7 +44,7 @@ Checked against: isdia.org — *important-dates*, *editorial-policy*, *call-for-
 
 | Requirement | Status |
 |---|---|
-| Phase-II submission deadline **15 October 2026** (today is 9 Oct — 6 days left) | ⚠️ upload by authors |
+| Phase-II submission deadline **15 October 2026** (1 day left as of 14 Oct) | ⚠️ upload by authors |
 | Rolling review notices; final acceptance 15 December 2026 | ❓ dates noted; process is external |
 | At least one author registers and presents (hybrid event 9–10 Jan 2027) | ⚠️ author commitment needed |
 | Final accepted (CRC) version must **not** be uploaded to the conference portal | ⚠️ applies at camera-ready stage |

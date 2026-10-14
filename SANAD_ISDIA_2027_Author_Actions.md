@@ -1,8 +1,20 @@
 # SANAD — ISDIA 2027 Author Actions (blocking items before upload)
 
+**UPDATE 2026-10-14 (round 4): the Phase-II deadline is TOMORROW, 15 October.**
+The manuscript is current at 12 pages after the external-audit revision pass. Two
+new confirmations were added by that review:
+
+- **Author-name spelling:** the externally reviewed copy spelled the fourth author
+  "Haitham **Yaish**"; every project artifact (and the current manuscript) says
+  "Haitham **Yash**". Confirm the correct spelling with the author before upload —
+  a misspelled author name on proceedings is hard to fix later.
+- **Rebuild needed after adding e-mails:** adding four e-mail lines plus the
+  corresponding-author asterisk can change pagination; re-export the PDF and verify
+  the count stays ≤12 pages (extra pages beyond 12 incur fees).
+
 Manuscript is build-complete and template-compliant (`SANAD_ISDIA_2027_Final.docx`,
 12 pages). The items below need human decisions or accounts and could not be done by
-tooling. Deadline: **Phase-II submissions close 15 October 2026** (6 days from 9 Oct).
+tooling. Deadline: **Phase-II submissions close 15 October 2026**.
 
 ## 1. Author e-mails (required by ISDIA editorial policy) — BLOCKING
 

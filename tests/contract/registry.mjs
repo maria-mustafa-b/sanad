@@ -49,10 +49,13 @@ assert.ok(status[2] > 0n);
 assert.equal(status[3], false);
 await assert.rejects(contract.issue.staticCall(id, hash));
 await assert.rejects(contract.connect(outsider).revoke.staticCall(id));
+const unknownId = keccak256(toUtf8Bytes("never-issued"));
+await assert.rejects(contract.revoke.staticCall(unknownId));
 await (await contract.revoke(id)).wait();
 status = await contract.status(id);
+assert.equal(status[0], hash);
 assert.equal(status[3], true);
 await assert.rejects(contract.revoke.staticCall(id));
 console.log(
-  "Contract checks passed: issuer-only issue/revoke, immutable hash, duplicate rejection and revocation.",
+  "Contract checks passed: issuer-only issue/revoke, immutable hash (incl. after revoke), duplicate rejection, revoke guards (unknown, already-revoked).",
 );

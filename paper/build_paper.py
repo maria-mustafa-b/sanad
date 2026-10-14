@@ -105,19 +105,20 @@ para("authorinfo", [
 para("abstract", [
     ("Abstract.  ", {"bold": True}),
     ("The UAE is among the world's leading digital governments, yet its largely expatriate residents face "
-     "three barriers to using public services: navigating them across languages, understanding "
-     "which documents and rules apply, and producing privacy-safe records of unresolved "
-     "complaints such as unpaid wages. We present SANAD, a prototype "
-     "assistant combining a schema-constrained large-language-model front end that maps "
-     "free-text situations only to services in a curated catalogue of official UAE portals; an "
-     "honest-degradation policy that labels every AI output by source and blocks sample "
-     "fallbacks from credential issuance; and a zero-personally-identifiable-information "
-     "(zero-PII) verifiable-credential mechanism that anchors each user-confirmed claim to a "
-     "salted SHA-256 digest recorded by an issuer-controlled smart contract on the Polygon Amoy "
-     "testnet. The chain attests only a record's existence and immutability, never its "
-     "truth. Twelve automated tests pass, including live-"
-     "PostgreSQL row-level-security isolation, and a 16-case grounded-matcher benchmark "
-     "returns 16 of 16 acceptable top matches with zero out-of-catalogue identifiers.", {}),
+     "three barriers: cross-language navigation, understanding which documents and rules "
+     "apply, and producing privacy-safe records of unresolved complaints. We present SANAD, "
+     "a prototype assistant. It combines a schema-constrained large-language-model front "
+     "end, which maps free-text situations only to services in a curated catalogue of "
+     "official UAE portals, with a zero-personally-identifiable-information (zero-PII) "
+     "credential mechanism that anchors each user-confirmed claim as a salted SHA-256 "
+     "digest recorded by an issuer-controlled smart contract on the Polygon Amoy testnet. "
+     "An honest-degradation policy labels every AI output by source and blocks sample "
+     "fallbacks from credential issuance. Zero-PII scopes to the public anchor; application "
+     "data remains personal and access-controlled. The chain attests only a record's "
+     "existence and immutability, never its truth. Twelve automated tests pass, including "
+     "live-PostgreSQL row-level-security isolation, and a 16-case grounded-matcher "
+     "benchmark returns 16/16 acceptable top matches with every delivered identifier "
+     "catalogue-valid.", {}),
 ])
 para("abstract", [
     ("Keywords:  ", {"bold": True}),
@@ -131,16 +132,17 @@ p1a("The United Arab Emirates consistently performs at the top of global digital
     "assessments: in the 2024 United Nations E-Government Survey it is the highest-ranked "
     "country in Western Asia, with an E-Government Development Index score of 0.9533, and the "
     "UAE government reports 11th place worldwide and first place in the e-Government "
-    "Literacy sub-index " + "[1]" + " " + "[2]" + ". Availability of online services, however, is "
+    "Literacy sub-index " + "[1, 2]" + ". Availability of online services, however, is "
     "not the same as accessibility of outcomes. The UAE's population is majority foreign-born "
     "on the government's own account " + "[11]" + ", a figure commonly cited at roughly 88%, and residents routinely interact "
     "with services - labour complaints, visa and status questions, wage protection, unemployment "
     "insurance, tenancy disputes - whose entry points are spread across portals such as u.ae and "
     "the Ministry of Human Resources and Emiratisation (MOHRE) " + "[10]" + ".")
-pn("Three gaps persist at the point of use. First, a language gap: official information exists "
-   "in several languages, but guidance quality and user confidence diverge sharply for residents "
+pn("Three gaps at the point of use motivate the design. First, a language gap: official "
+   "information exists "
+   "in several languages, but guidance quality and user confidence can diverge for residents "
    "whose strongest language is Hindi, Urdu or Bengali rather than Arabic or English. Second, an "
-   "evidence and eligibility gap: residents frequently cannot tell which document proves what, "
+   "evidence and eligibility gap: residents often cannot tell which document proves what, "
    "which scheme they qualify for, or what a rejected application means. Third, a trust gap: "
    "when a dispute such as unpaid wages escalates, the worker's own records are informal, "
    "scattered and unverifiable to a third party, while any centralised attempt to build "
@@ -208,7 +210,7 @@ para("table title", "Table 1.  How SANAD differs from closely related approaches
      "four properties that matter for resident-level, privacy-sensitive service navigation.")
 add_table([
     ("Approach", "PII / content on-chain", "Grounded to official catalogue", "Honest-degradation policy", "User-confirmed anchor"),
-    ("Blockcerts / institutional VC " + "[3,4]", "Signed credential content", "No", "No", "Issuer attestation"),
+    ("Blockcerts / institutional VC " + "[3, 4]", "Signed credential content", "No", "No", "Issuer attestation"),
     ("Blockchain academic credentials " + "[5]", "Credential identifiers", "No", "No", "Issuer attestation"),
     ("Generic LLM gov-assistant", "None, but no anchor", "No (hallucination risk)", "No (silent fallbacks)", "None"),
     ("SANAD (ours)", "None (salted digest only)", "Yes (28-entry catalogue)", "Yes (labelled, 503)", "Yes (user-confirmed)"),
@@ -258,15 +260,20 @@ h1("4   The Zero-PII Credential Mechanism")
 h2("4.1   Canonicalisation and Salted Digest")
 p1a("When a user confirms a claim, the server builds an immutable snapshot (statement, "
    "extracted facts, provenance flag USER_CONFIRMED), serialises it with a canonical encoder "
-   "that sorts object keys and recursively normalises arrays and scalars, and computes")
+   "that sorts object keys, recursively normalises arrays, JSON-escapes strings and leaves "
+   "numbers, booleans and null in their JSON forms, and computes")
 para("p1a", [("h = SHA-256( \u201cSANAD:v1:\u201d \u2016 salt \u2016 \u201c:\u201d \u2016 canonical(snapshot) )", {"italic": True})], align=WD_ALIGN_PARAGRAPH.CENTER)
 pn("where salt is 32 fresh random bytes per credential. The domain-separator prefix "
    "(\u201cSANAD:v1:\u201d) prevents cross-protocol collisions; the salt makes the digest "
    "non-malleable and non-dictionary-matchable, since an observer who guesses the snapshot "
    "contents still cannot reproduce h without the salt. Both snapshot and salt are stored only "
    "in RLS-protected off-chain tables; the pair (credential identifier, h) is what crosses the "
-   "trust boundary. A UUID is mapped to a bytes32 identifier by hex-padding or, failing that, "
-   "SHA-256, so no user-facing identifier appears on-chain either.")
+   "trust boundary. A UUID credential identifier is mapped to a bytes32 by left-padding its "
+   "hex digits (SHA-256 only for non-hex identifiers), so the on-chain identifier is "
+   "deliberately linkable to its credential record while revealing no personal data: the salt "
+   "protects the snapshot digest, not the identifier. Integrity recomputation runs server-side "
+   "through the same code path; we do not specify a standalone encoding standard, so "
+   "byte-for-byte reproduction by a third-party verifier is not guaranteed.")
 h2("4.2   Issuer-Controlled Registry")
 p1a("The on-chain component is deliberately minimal: a single contract whose issuer key is "
    "immutable, with issue, revoke and a free status view. Listing 1 is an abridged excerpt: "
@@ -363,7 +370,12 @@ p1a("Two AI endpoints carry user-visible risk: situation understanding (free tex
    "a Zod schema and a prompt that embeds the catalogue and forbids inventing services; "
    "returned identifiers are joined back to catalogue entries and any identifier not present "
    "in the catalogue is dropped before rendering. The user therefore only ever sees official, "
-   "linkable services. Grounding of this kind excludes invented services; it does not "
+   "linkable services. Three properties must stay separate: catalogue validity (the entry is "
+   "a real official service), recommendation relevance (it suits the resident's situation) and "
+   "eligibility correctness (the resident qualifies under current rules). The pipeline "
+   "evidences the first, tests the second preliminarily, and does not establish the third. "
+   "Where responses carry a confidence value, it is a model-declared score, not a calibrated "
+   "probability of correctness. Grounding of this kind excludes invented services; it does not "
    "guarantee that the best catalogue entry was chosen, and measuring that residual risk is "
    "the purpose of Sect. 6.1.")
 pn("The honest-degradation policy governs failure. If no model key is configured, the endpoint "
@@ -403,11 +415,22 @@ import json as _json
 _ev = _json.load(open("paper/eval_results.json", encoding="utf-8"))
 _s = _ev["summary"]
 try:
-    _r1 = _json.load(open("paper/eval_results_run1_saved.json", encoding="utf-8"))["summary"]
+    _r1full = _json.load(open("paper/eval_results_run1_saved.json", encoding="utf-8"))
 except FileNotFoundError:
-    _r1 = _s
+    _r1full = _ev
+_r1 = _r1full["summary"]
+
+def _stats(ev):
+    rs = ev["results"]
+    v = sorted(r["ms"] for r in rs if isinstance(r.get("ms"), (int, float)))
+    med = (v[len(v) // 2 - 1] + v[len(v) // 2]) / 2 if len(v) % 2 == 0 else v[len(v) // 2]
+    inter = sum(len(set(r["returned"]) & set(r["accept"])) for r in rs) / len(rs)
+    return int(round(med)), inter
+
+_med2, _inter2 = _stats(_ev)
+_med1, _inter1 = _stats(_r1full)
 p1a("To move beyond the qualitative grounding argument of Sect. 5, we exercised the live "
-   "production endpoint (POST /api/services/match on the built server, same prompt, Zod schema "
+   "application endpoint (POST /api/services/match on the built server, same prompt, Zod schema "
    "and 28-entry catalogue as the shipped app) over 16 free-text situations. The cases span "
    "five input-language groups covering six written varieties: English (11 cases), Hinglish "
    "and Roman Urdu (2 cases, grouped as Latin-script mixed transcriptions), Arabic script (1), "
@@ -416,12 +439,20 @@ p1a("To move beyond the qualitative grounding argument of Sect. 5, we exercised 
    "situation tags: ground truth is reproducible from repository data rather than "
    "hand-asserted, but the annotation is single-annotator and the sample is deliberately "
    "English-heavy, so per-language counts are reported descriptively and no equal coverage "
-   "across languages is claimed. We report hit@1 (top match acceptable), hit@3 (any of the "
-   "returned matches acceptable) and the count of out-of-catalogue identifiers. Result "
-   "(Figure 3): %d/%d hit@1, %d/%d hit@3, %d out-of-catalogue ids, %.2f matches per case and "
-   "a median end-to-end route latency of %d ms (range %d-%d ms); latency is measured at the "
+   "across languages is claimed. Because the labels come from the catalogue's own tags, the "
+   "benchmark measures agreement with the catalogue, not independent judgement of what is "
+   "most appropriate for a resident. We report hit@1 (top match acceptable), hit@3 (any "
+   "returned match acceptable) and the count of out-of-catalogue identifiers in delivered "
+   "responses. Result "
+   "(Figure 3): %d/%d hit@1, %d/%d hit@3, %d out-of-catalogue identifiers delivered, %.2f "
+   "catalogue services returned per case (on average %.2f of them within the acceptable set) "
+   "and a median end-to-end route latency of %d ms (range %d-%d ms); latency is measured at the "
    "server route and therefore includes the model-provider round trip and network overhead, "
-   "but excludes client rendering. All 16 calls succeeded on the first attempt in the final "
+   "but excludes client rendering. The delivered out-of-catalogue count is zero by "
+   "construction, since the route filters non-catalogue identifiers before responding: the "
+   "result evidences the filter, not the model's hallucination rate on this sample, although "
+   "all 16 first-attempt responses did parse against the schema. All 16 calls succeeded on the "
+   "first attempt in the final "
    "run; two transient provider 500s observed during earlier development runs (both recovered "
    "on retry) are reported as provider-reliability noise rather than hidden. Every returned "
    "identifier resolved to a real official service, and every top match was checked against "
@@ -430,13 +461,14 @@ p1a("To move beyond the qualitative grounding argument of Sect. 5, we exercised 
    "larger, independently annotated set including ambiguous, out-of-scope and adversarial "
    "inputs (Sect. 7). Re-running the full benchmark against the same build shortly before "
    "submission reproduced identical hit@1, hit@3 and out-of-catalogue counts; the two runs "
-   "differed slightly in aggregate (%.2f vs %.2f matches per case, median latency %d vs %d "
+   "differed slightly in aggregate (%.2f vs %.2f services per case, median of the 16 "
+   "per-case latencies %d vs %d "
    "ms), which we attribute to provider-side variance, and both raw result files ship with "
    "the harness."
    % (_s["hit_at_1"], _s["n"], _s["hit_at_3"], _s["n"], _s["out_of_catalog_ids"],
-      _s["avg_matches_returned"], _s["latency_ms_median"], _s["latency_ms_min"], _s["latency_ms_max"],
+      _s["avg_matches_returned"], _inter2, _med2, _s["latency_ms_min"], _s["latency_ms_max"],
       _s["avg_matches_returned"], _r1["avg_matches_returned"],
-      _s["latency_ms_median"], _r1["latency_ms_median"]))
+      _med2, _med1))
 add_figure("paper/fig3_evaluation.png",
     "Fig. 3.  Grounded-matcher benchmark (16 cases, single annotator). Left: hit@1 by "
     "input-language group - English n=11, Hinglish/Roman Urdu n=2, Arabic, Devanagari Hindi "
@@ -452,7 +484,7 @@ add_table([
     ("Data isolation (RLS)", "12/12 Vitest incl. live-PostgreSQL isolation tests", "Verified (prototype)"),
     ("Registry semantics", "Issuer-only, duplicate-reject, one-way revoke, immutable hash", "Verified (tests + Amoy ABI preflight)"),
     ("Catalogue authenticity", "28 entries, every URL on u.ae or mohre.gov.ae", "URLs verified; freshness unverified"),
-    ("AI grounding (retrieval)", "Schema-constrained ids; 16/16 benchmark hit@1, 0 out-of-catalogue", "Verified on small curated benchmark; user outcomes untested"),
+    ("AI grounding (retrieval)", "Schema-constrained ids; 16/16 benchmark hit@1; 0 out-of-catalogue delivered (route filter)", "Verified on small curated benchmark; user outcomes untested"),
     ("Honest degradation", "503 without key; SAMPLE at confidence 0; issuance blocked", "Verified (code + UI)"),
     ("Factual truth of claims", "Chain attests existence/immutability only", "Not claimed"),
     ("Production operation", "Testnet only; key rotation pending", "Not claimed"),
@@ -513,7 +545,7 @@ refs = [
     "15 May 2025. https://www.w3.org/TR/vc-data-model/ (2025)",
     "MIT Media Lab and Learning Machine: Blockcerts - The Open Standard for Blockchain "
     "Credentials. https://www.blockcerts.org/ (2017)",
-    "Bapat, C.: Blockchain for Academic Credentials. arXiv:2006.12665. arXiv (2020). "
+    "Bapat, C.P.: Blockchain for Academic Credentials. arXiv:2006.12665. arXiv (2020). "
     "https://arxiv.org/abs/2006.12665",
     "Sheth, R., Sinha, S.R.S., Patil, M., Beniwal, H., Singh, M.: Beyond Monolingual "
     "Assumptions: A Survey on Code-Switched NLP in the Era of Large Language Models across "

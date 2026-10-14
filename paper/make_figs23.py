@@ -105,8 +105,8 @@ d.text((RX,base2+8),"T01",font=font(18,False,S),fill=INK); d.text((RX+RW-30,base
 d.line([660,110,660,620],fill=(200,200,200),width=2)
 # footer stat strip
 d.rectangle([40,CH0-92,CW0-40,CH0-24],outline=INK,width=2,fill=(247,248,251))
-stat=(f"16/16 hit@1 & hit@3   |   0 out-of-catalog IDs   |   "
-      f"{summ['avg_matches_returned']} matches/case   |   "
+stat=(f"16/16 hit@1 & hit@3   |   0 out-of-catalog IDs delivered   |   "
+      f"{summ['avg_matches_returned']} services/case   |   "
       f"{summ['first_attempt_api_success']} first-try API success")
 d.text((CW0/2,CH0-58),stat,font=font(24,True,S),fill=INK,anchor="mm")
 fig3.save("paper/fig3_evaluation.png"); print("fig3",fig3.size)
