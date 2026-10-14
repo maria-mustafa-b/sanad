@@ -1,5 +1,34 @@
 # SANAD — ISDIA 2027 Final Submission: Change Log
 
+## Round 6 (2026-10-14): reference re-audit against live sources
+
+All 11 references were checked against their publisher or official pages. All 11 exist.
+Seven needed metadata fixes, and one Introduction claim was wrong:
+
+- **Intro claim removed:** "highest-ranked country in Western Asia" was false. In the
+  UN 2024 survey Saudi Arabia ranks 6th (EGDI 0.9602) and the UAE 11th (0.9533). The
+  sentence now says the UAE ranks 11th of 193 with EGDI 0.9533 [1], and that the UAE
+  government reports 1st place globally in the E-Government Literacy sub-index [2].
+- **[1]** Wrong subtitle. Now uses the correct 2024
+  title ("Accelerating Digital Transformation for Sustainable Development - With the
+  Addendum on Artificial Intelligence") and DOI 10.18356/9789211067286.
+- **[2]** The cited u.ae page did not contain the ranking claims. Replaced with the
+  u.ae page "The UAE in the UN E-Government Development Index", which states 11th,
+  0.9533 and 1st in the E-Government Literacy sub-index.
+- **[5]** Author initials are "Bapat, C." per arXiv 2006.12665 (was "C.P.").
+- **[6]** Author initials are "Sinha, S.R." per the ACL Anthology (was "S.R.S."); added
+  pages 8519-8566.
+- **[7]** Official title is "Federal Decree by Law No. (45) of 2021 Concerning the
+  Protection of Personal Data" (uaelegislation.gov.ae); "and Privacy" removed.
+- **[8]** WCAG 2.2 current Recommendation is dated 12 December 2024 (was 5 October 2023,
+  the superseded edition).
+- **[11]** The MOFA page says expatriates outnumber nationals; it does not say
+  "foreign-born". The wording is now "majority expatriate" (Sect. 1) and "88% expatriate"
+  (Sect. 7).
+- [3], [4], [9], [10] verified unchanged.
+
+Result: still 12 pages (PyMuPDF count of the Word-exported PDF); abstract 150 words.
+
 ## Round 5 (2026-10-14): authors' architecture diagram, name fix, humanizer pass
 
 - **Fig. 1 replaced with the authors' own system-architecture diagram** (the one embedded

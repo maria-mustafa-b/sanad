@@ -136,11 +136,11 @@ para("abstract", [
 # ================= 1 Introduction =================
 h1("1   Introduction")
 p1a("The United Arab Emirates consistently performs at the top of global digital-government "
-    "assessments: in the 2024 United Nations E-Government Survey it is the highest-ranked "
-    "country in Western Asia, with an E-Government Development Index score of 0.9533, and the "
-    "UAE government reports 11th place worldwide and first place in the e-Government "
-    "Literacy sub-index " + "[1, 2]" + ". Availability of online services, however, is "
-    "not the same as accessibility of outcomes. The UAE's population is majority foreign-born "
+    "assessments: in the 2024 United Nations E-Government Survey it ranks 11th of 193 "
+    "countries, with an E-Government Development Index score of 0.9533 " + "[1]" + ", and the "
+    "UAE government reports first place worldwide in the E-Government "
+    "Literacy sub-index " + "[2]" + ". Availability of online services, however, is "
+    "not the same as accessibility of outcomes. The UAE's population is majority expatriate "
     "on the government's own account " + "[11]" + ", a figure commonly cited at roughly 88%, and residents routinely interact "
     "with services such as labour complaints, visa and status questions, wage protection, "
     "unemployment insurance and tenancy disputes, whose entry points are spread across portals such as u.ae and "
@@ -517,7 +517,7 @@ p1a("We state the boundaries plainly. The chain layer runs on a public testnet w
    "statements. The immutable issuer address and public events make such abuse visible and "
    "attributable, but they do not prevent it. The demo mode's signed cookie is a hackathon convenience, "
    "not an identity system. Finally, the headline demographic figure used in outreach (about "
-   "88% foreign-born) is indicative and cited as such; all product claims in this paper are "
+   "88% expatriate) is indicative and cited as such; all product claims in this paper are "
    "bounded by Table 2.")
 pn("Ethically, the design follows data minimisation by construction: PII stays in "
    "user-partitioned RLS tables, nothing personal is written to the chain, and provider-side "
@@ -543,27 +543,28 @@ p1a("SANAD shows that one small system can address three barriers residents face
 # ================= References =================
 h1("References")
 refs = [
-    "United Nations Department of Economic and Social Affairs: E-Government Survey 2024 - "
-    "Use of Digital Data to Facilitate the Future Transformation of Public Administration. "
-    "United Nations, New York (2024). "
-    "https://publicadministration.un.org/egovkb/en-us/reports/un-e-government-survey-2024",
-    "Government of the United Arab Emirates: Digital UAE - e-Government Development. u.ae, "
-    "https://u.ae/en/about-the-uae/digital-uae (accessed October 2026)",
+    "United Nations Department of Economic and Social Affairs: United Nations E-Government "
+    "Survey 2024: Accelerating Digital Transformation for Sustainable Development - With the "
+    "Addendum on Artificial Intelligence. United Nations, New York (2024). "
+    "https://doi.org/10.18356/9789211067286",
+    "Government of the United Arab Emirates: The UAE in the UN E-Government Development "
+    "Index. u.ae, https://u.ae/en/about-the-uae/uae-competitiveness/"
+    "the-uae-in-egovernment-development-index (accessed October 2026)",
     "World Wide Web Consortium: Verifiable Credentials Data Model v2.0. W3C Recommendation, "
     "15 May 2025. https://www.w3.org/TR/vc-data-model/ (2025)",
     "MIT Media Lab and Learning Machine: Blockcerts - The Open Standard for Blockchain "
     "Credentials. https://www.blockcerts.org/ (2017)",
-    "Bapat, C.P.: Blockchain for Academic Credentials. arXiv:2006.12665. arXiv (2020). "
+    "Bapat, C.: Blockchain for Academic Credentials. arXiv:2006.12665. arXiv (2020). "
     "https://arxiv.org/abs/2006.12665",
-    "Sheth, R., Sinha, S.R.S., Patil, M., Beniwal, H., Singh, M.: Beyond Monolingual "
+    "Sheth, R., Sinha, S.R., Patil, M., Beniwal, H., Singh, M.: Beyond Monolingual "
     "Assumptions: A Survey on Code-Switched NLP in the Era of Large Language Models across "
     "Modalities. In: Proceedings of the 64th Annual Meeting of the Association for "
-    "Computational Linguistics (Volume 1: Long Papers). ACL (2026). "
+    "Computational Linguistics (Volume 1: Long Papers), pp. 8519-8566. ACL (2026). "
     "https://doi.org/10.18653/v1/2026.acl-long.386",
-    "United Arab Emirates: Federal Decree-Law No. 45 of 2021 Concerning the Protection of "
-    "Personal Data and Privacy. https://uaelegislation.gov.ae/en/legislations/1972 (2021)",
+    "United Arab Emirates: Federal Decree by Law No. (45) of 2021 Concerning the Protection "
+    "of Personal Data. https://uaelegislation.gov.ae/en/legislations/1972 (2021)",
     "World Wide Web Consortium: Web Content Accessibility Guidelines (WCAG) 2.2. W3C "
-    "Recommendation, 5 October 2023. https://www.w3.org/TR/WCAG22/ (2023)",
+    "Recommendation, 12 December 2024. https://www.w3.org/TR/WCAG22/ (2024)",
     "Nakamoto, S.: Bitcoin: A Peer-to-Peer Electronic Cash System. "
     "https://bitcoin.org/bitcoin.pdf (2008)",
     "UAE Ministry of Human Resources and Emiratisation: Register labour complaints for "
