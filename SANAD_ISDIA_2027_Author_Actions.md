@@ -4,10 +4,9 @@
 The manuscript is current at 12 pages after the external-audit revision pass. Two
 new confirmations were added by that review:
 
-- **Author-name spelling:** the externally reviewed copy spelled the fourth author
-  "Haitham **Yaish**"; every project artifact (and the current manuscript) says
-  "Haitham **Yash**". Confirm the correct spelling with the author before upload —
-  a misspelled author name on proceedings is hard to fix later.
+- **Author-name spelling: RESOLVED (round 5).** The authors confirmed "Haitham
+  **Yaish**"; the manuscript now uses that spelling. Use the same spelling in the CMT
+  author fields.
 - **Rebuild needed after adding e-mails:** adding four e-mail lines plus the
   corresponding-author asterisk can change pagination; re-export the PDF and verify
   the count stays ≤12 pages (extra pages beyond 12 incur fees).
@@ -25,7 +24,7 @@ invented. Actions:
   repository's git history) is the address you want published.
 - **Maria Mustafa** — confirm `mariabaranwala@gmail.com` (found in git history).
 - **Sakshi Himpalnerkar** — provide e-mail (no project evidence exists).
-- **Haitham Yash** — provide e-mail (no project evidence exists).
+- **Haitham Yaish** — provide e-mail (no project evidence exists).
 
 Then add the e-mail line to the title page in `paper/build_paper.py` (authorinfo block),
 rebuild (`PYTHONIOENCODING=utf-8 SANAD_PAPER_OUT="SANAD_ISDIA_2027_Final.docx" python

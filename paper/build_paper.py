@@ -13,7 +13,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 import os
 TPL = "paper_template/Springer-Template.docx"
 OUT = os.environ.get("SANAD_PAPER_OUT", "SANAD_Research_Paper.docx")
-FIG = "paper/fig1_architecture.png"
+FIG = "paper/fig1_architecture_user.png"  # authors' diagram, redrawn by paper/make_fig1_user.py
 
 doc = Document(TPL)
 
@@ -52,14 +52,19 @@ def add_table(rows, widths_cm, font_pt=8):
     """LNCS-style table: horizontal rules only (top, header-bottom, bottom)."""
     from docx.oxml.ns import qn
     from docx.oxml import OxmlElement
+    doc.paragraphs[-1].paragraph_format.keep_with_next = True  # title stays with table
     t = doc.add_table(rows=len(rows), cols=len(rows[0]))
     for ri, row in enumerate(rows):
         for ci, text in enumerate(row):
             cell = t.cell(ri, ci)
             cell.width = Cm(widths_cm[ci])
             cp = cell.paragraphs[0]
+            cp.alignment = WD_ALIGN_PARAGRAPH.LEFT          # no justified gaps in narrow cells
+            cp.paragraph_format.first_line_indent = Cm(0)
             r = cp.add_run(text)
             r.font.size = Pt(font_pt)
+            if ri < len(rows) - 1:
+                cp.paragraph_format.keep_with_next = True   # keep the table on one page
             if ri == 0:
                 r.bold = True
     tblPr = t._tbl.tblPr
@@ -81,7 +86,9 @@ def add_figure(path, caption, width_cm=12.2):
     fp = doc.add_paragraph()
     fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
     fp.add_run().add_picture(path, width=Cm(width_cm))
+    fp.paragraph_format.keep_with_next = True          # image stays with its caption
     para("figure legend", caption)
+    doc.paragraphs[-1].paragraph_format.keep_with_next = False  # but not with what follows
 
 # ================= front matter =================
 para("title", "SANAD: Zero-PII Verifiable Credentials for Multilingual Government-Service Navigation in the UAE")
@@ -90,7 +97,7 @@ para("author", [
     ("Sanmeet Singh Kohli", {}), ("1", {"sup": True}),
     (", Maria Mustafa", {}), ("1", {"sup": True}),
     (", Sakshi Himpalnerkar", {}), ("2", {"sup": True}),
-    (", and Haitham Yash", {}), ("1", {"sup": True}),
+    (", and Haitham Yaish", {}), ("1", {"sup": True}),
 ])
 
 para("authorinfo", [
@@ -135,8 +142,8 @@ p1a("The United Arab Emirates consistently performs at the top of global digital
     "Literacy sub-index " + "[1, 2]" + ". Availability of online services, however, is "
     "not the same as accessibility of outcomes. The UAE's population is majority foreign-born "
     "on the government's own account " + "[11]" + ", a figure commonly cited at roughly 88%, and residents routinely interact "
-    "with services - labour complaints, visa and status questions, wage protection, unemployment "
-    "insurance, tenancy disputes - whose entry points are spread across portals such as u.ae and "
+    "with services such as labour complaints, visa and status questions, wage protection, "
+    "unemployment insurance and tenancy disputes, whose entry points are spread across portals such as u.ae and "
     "the Ministry of Human Resources and Emiratisation (MOHRE) " + "[10]" + ".")
 pn("Three gaps at the point of use motivate the design. First, a language gap: official "
    "information exists "
@@ -148,12 +155,12 @@ pn("Three gaps at the point of use motivate the design. First, a language gap: o
    "scattered and unverifiable to a third party, while any centralised attempt to build "
    "verifiable records collides with the UAE Federal Decree-Law No. 45 of 2021 on the Protection "
    "of Personal Data (PDPL) " + "[7]" + ".")
-pn("This paper describes SANAD, a working prototype that addresses all three gaps with one "
-   "deliberately conservative architectural decision: personal data never leaves the user's "
-   "own database partition, and what is published anywhere public - a blockchain - is only a "
-   "salted cryptographic digest of a user-confirmed claim. SANAD is not a claim-detection "
-   "system and does not assert that anything on-chain is factually true; it provides existence, "
-   "immutability and timestamping proofs for records whose accuracy the user confirms.")
+pn("This paper describes SANAD, a working prototype that addresses the three gaps through one "
+   "conservative design decision: personal data never leaves the user's own database "
+   "partition, and the only thing written to a public blockchain is a salted cryptographic "
+   "digest of a user-confirmed claim. SANAD does not detect false claims, and it does not "
+   "assert that anything on-chain is factually true. It provides existence, immutability and "
+   "timestamping proofs for records whose accuracy the user confirms.")
 pn("Contributions. (1) A grounded navigation pipeline in which a large language model (LLM) "
    "may only select service identifiers from a curated catalogue of official portals, so that "
    "out-of-catalogue services cannot reach the user; an incorrect match to a valid catalogue "
@@ -161,8 +168,8 @@ pn("Contributions. (1) A grounded navigation pipeline in which a large language 
    "zero-PII verifiable-credential mechanism: canonical serialisation, a 32-byte random salt "
    "and a domain-separated SHA-256 digest, anchored by an issuer-controlled Solidity registry, "
    "with verification that recomputes integrity off-chain and existence on-chain. (3) An "
-   "honest-degradation policy for AI features - clearly labelled sample fallbacks at zero "
-   "confidence that are blocked from credential issuance. (4) An automated validation suite, "
+   "honest-degradation policy for AI features: sample fallbacks are clearly labelled, carry "
+   "zero confidence and are blocked from credential issuance. (4) An automated validation suite, "
    "including row-level-security (RLS) tests against a live PostgreSQL instance, together with "
    "a published taxonomy of what is and is not yet proven (Sect. 6, Table 2).")
 pn("Section 2 positions the work against prior art; Sect. 3 presents the architecture; Sect. 4 "
@@ -179,7 +186,7 @@ p1a("Since Nakamoto's proposal of an append-only, trust-minimised ledger " + "[9
     "and later work examined blockchain approaches specifically for academic credentials "
     "beyond the issuing institution " + "[5]" + ". The W3C Verifiable Credentials Data Model gave the field a common "
     "representation for claims, proofs and subjects " + "[3]" + ". These systems typically put "
-    "structured credential content - often including identifiers of the holder - into a signed "
+    "structured credential content, often including identifiers of the holder, into a signed "
     "artifact whose validity is checked against a ledger. SANAD takes the more restrictive "
     "route: no credential content is published at all. Only a digest computed over a "
     "canonicalised snapshot with a secret salt is recorded, so the design is intended to "
@@ -188,7 +195,7 @@ p1a("Since Nakamoto's proposal of an append-only, trust-minimised ledger " + "[9
 h2("2.2   Language Access and LLM-Grounded Public Services")
 p1a("Recent surveys of code-switched and multilingual natural-language processing emphasise "
     "that monolingual assumptions systematically degrade service quality for South Asian "
-    "language communities, precisely the populations that dominate the UAE's expatriate "
+    "language communities, the same groups that dominate the UAE's expatriate "
     "workforce " + "[6]" + ". LLM assistants can lower the language barrier, but unconstrained "
     "generative systems are unsuitable for public-service guidance because they can invent "
     "plausible but non-existent schemes. SANAD constrains generation at the schema level: the "
@@ -201,8 +208,8 @@ p1a("Existing gov-tech assistants optimise for conversational breadth; existing 
     "blockchain-credential systems optimise for portability of institutional attestations. "
     "SANAD targets the intersection that matters for resident-level disputes: a multilingual "
     "intake whose outputs are constrained to a curated catalogue, and a trust artifact whose "
-    "public form contains no personally identifiable information (PII), which reduces - "
-    "though does not eliminate - consent risk (Sect. 4.4). The PDPL "
+    "public form contains no personally identifiable information (PII), which reduces, "
+    "though does not eliminate, consent risk (Sect. 4.4). The PDPL "
     "principles of data minimisation and purpose limitation " + "[7]" + " guide the design: "
     "PII is confined to RLS-protected tables, and the public artifact is a hash. Table 1 "
     "compares the approaches across the four properties that matter for this use case.")
@@ -224,12 +231,14 @@ p1a("SANAD is a full-stack web application: a Next.js 16 (App Router) front end 
     "Supabase (PostgreSQL with row-level security and the @supabase/ssr session helper) for "
     "persistence, Gemini accessed through the Vercel AI SDK's generateObject call with a Zod "
     "schema, and ethers v6 for transaction signing against the SANADCredential contract on "
-    "Polygon Amoy (chain ID 80002). Figure 1 shows the pipeline end to end.")
+    "Polygon Amoy (chain ID 80002). Figure 1 shows the four layers and the flows between them.")
 
-add_figure(FIG, "Fig. 1.  End-to-end architecture. Personal data stays left of the "
-    "dashed boundary in RLS-protected storage; only an opaque identifier and a 32-byte digest "
-    "cross onto the testnet. The public verifier reads existence and revocation status, never "
-    "content.")
+add_figure(FIG, "Fig. 1.  System architecture in four layers: (1) user interface and input; "
+    "(2) application backend with RLS-protected PostgreSQL; (3) AI processing grounded in the "
+    "curated catalogue, with Gemini as an external service; (4) storage, credential issuance and "
+    "offline evaluation. The claim snapshot and salt stay off-chain. Only an opaque identifier and "
+    "a SHA-256 commitment reach the testnet contract, which attests existence and revocation "
+    "status, never content or truth.")
 
 pn("A session begins either with Supabase authentication or with a signed demo cookie "
    "(HMAC-SHA-256 over an identifier and expiry, httpOnly, SameSite=Lax). Every mutating route "
@@ -239,13 +248,13 @@ pn("A session begins either with Supabase authentication or with a signed demo c
    "situation in their own language; the AI layer extracts structured facts and matches the "
    "situation against the official-services catalogue; document analysis (e.g. a wage slip or "
    "contract photo) can attach evidence summaries; the user then confirms or edits the "
-   "resulting claim statement. Only a confirmed claim is snapshotted, hashed and - in real "
-   "mode - issued on-chain. The catalogue itself is data, not model memory: 28 curated entries, "
+   "resulting claim statement. Only a confirmed claim is snapshotted, hashed and, in real "
+   "mode, issued on-chain. The catalogue itself is data, not model memory: 28 curated entries, "
    "each linking to u.ae or mohre.gov.ae, with supported-situation tags used for deterministic "
    "pre-filtering before the model is consulted.")
-pn("The interface ships with five hand-curated locales - English, Arabic (RTL), Hindi, Urdu "
-   "(RTL) and Bengali - plus machine-translated coverage of additional resident languages via "
-   "an in-page translator, so the intake path is usable without English proficiency. Figure 2 "
+pn("The interface ships with five hand-curated locales: English, Arabic and Urdu (both "
+   "right-to-left), Hindi and Bengali. An in-page machine translator covers further resident "
+   "languages, so the intake path works without English proficiency. Figure 2 "
    "shows four production screens captured from the running prototype.")
 add_figure("paper/fig2_interfaces.png",
     "Fig. 2.  Prototype screens (captured live, not mock-ups). (a) Situation intake with voice "
@@ -311,7 +320,7 @@ for line in [
     "    }",
     "}"]:
     _codeps.append(para("programcode", [(line, {"size": 8})]))
-for _cp in _codeps[-2:]:
+for _cp in _codeps[-6:]:  # status() moves as one block
     _cp.paragraph_format.keep_with_next = True  # avoid orphaned closing braces
 para("figure legend", "Listing 1.  Abridged excerpt of the SANADCredential registry "
      "(Solidity ^0.8.24, MIT); complete source is in the repository.")
@@ -320,8 +329,8 @@ h2("4.3   Verification Semantics and What They Do Not Prove")
 p1a("Verification composes two independent checks. Integrity: recompute h from the stored "
    "snapshot and salt and compare with the stored record hash. Existence: read status(id) on "
    "the chain and confirm the returned hash matches, the timestamp is present and the revoked "
-   "flag is false. A credential is VALID only if both hold. Crucially, the chain attests that "
-   "a given digest existed at a given time and has not been altered - it cannot attest that "
+   "flag is false. A credential is VALID only if both hold. The chain attests only that "
+   "a given digest existed at a given time and has not been altered. It cannot attest that "
    "the underlying statement about the world is true. SANAD encodes this limit in the product "
    "itself: verification pages and issuance dialogs state the distinction, and the paper "
    "throughout uses \u201cverifiable\u201d only in the cryptographic sense.")
@@ -334,23 +343,23 @@ p1a("We make three adversary classes explicit. A chain observer sees only an opa
    "row-level security can read snapshots and salts, but still cannot forge a valid on-chain "
    "anchor without the issuer key, and any silent edit of a stored snapshot breaks the integrity "
    "recomputation in Sect. 4.3. A holder of the issuer key can issue or revoke records; this is "
-   "the principal trust assumption. It is not mitigated away - the issuer address is immutable "
-   "and every issue/revoke emits a public event, so abuse is attributable and visible rather "
-   "than impossible, and production use should replace the single key with a multisig or HSM "
-   "and a documented revocation policy.")
+   "the principal trust assumption, and we do not claim to remove it. The issuer address is "
+   "immutable and every issue or revoke emits a public event, so abuse stays possible but is "
+   "visible and attributable. Production use should replace the single key with a multisig or "
+   "HSM and a documented revocation policy.")
 pn("Retention and the zero-PII scope are stated narrowly. Snapshots and salts persist "
    "server-side under RLS. User-facing deletion is currently implemented for uploaded "
    "documents; claim-level deletion of snapshots and salts is a designed control that the "
-   "prototype does not yet ship. Its semantics matter: deletion removes nothing from the "
-   "chain - digests and events are immutable - it only withdraws the data with which the "
-   "application could recompute the digest, so the anchor becomes unverifiable rather than "
-   "deleted. That is the intended right-to-erasure property, ensuring an anchor cannot "
-   "outlive the consent that created it once deletion ships. Finally, "
+   "prototype does not yet ship. Deletion would remove nothing from the "
+   "chain, where digests and events are immutable. It withdraws the data the application "
+   "needs to recompute the digest, so the anchor stays on-chain but can no longer be "
+   "verified. This is the intended right-to-erasure behaviour once deletion ships: an anchor "
+   "cannot be verified after the consent behind it is withdrawn. Finally, "
    "\u201czero-PII\u201d is a statement about the public artifact, not a legal conclusion: the "
    "design is consistent with the PDPL principles of data minimisation and purpose limitation "
    "[7], but we do not claim that it, by itself, establishes regulatory compliance.")
-pn("What the salted digest does not hide is equally important. Public transaction metadata - "
-   "the issuer address, event ordering and block timestamps - can correlate issuance activity "
+pn("The salted digest does not hide everything. Public transaction metadata (the issuer "
+   "address, event ordering and block timestamps) can correlate issuance activity "
    "over time even though it reveals no claim content, and application logs, session "
    "identifiers and the anchoring wallet address are themselves potentially personal data "
    "under the PDPL; \u201czero-PII\u201d therefore describes the public credential artifact, "
@@ -379,11 +388,11 @@ p1a("Two AI endpoints carry user-visible risk: situation understanding (free tex
    "guarantee that the best catalogue entry was chosen, and measuring that residual risk is "
    "the purpose of Sect. 6.1.")
 pn("The honest-degradation policy governs failure. If no model key is configured, the endpoint "
-   "returns 503 rather than pretending to work. If the provider call fails, the response is "
+   "returns 503 instead of a fabricated answer. If the provider call fails, the response is "
    "constructed from a clearly labelled SAMPLE object with confidence 0 and a source field "
    "set to sample_fallback; the UI renders a visible warning banner, and the issuance path "
-   "refuses to anchor a credential whose analysis source is sample_fallback. This converts a "
-   "common demo shortcut - fabricated output indistinguishable from real output - into a "
+   "refuses to anchor a credential whose analysis source is sample_fallback. This turns a "
+   "common demo shortcut, fabricated output that looks identical to real output, into a "
    "state that is machine-blocked and human-visible, which we consider a minimum ethical bar "
    "for civic AI prototypes.")
 
@@ -454,10 +463,10 @@ p1a("To move beyond the qualitative grounding argument of Sect. 5, we exercised 
    "all 16 first-attempt responses did parse against the schema. All 16 calls succeeded on the "
    "first attempt in the final "
    "run; two transient provider 500s observed during earlier development runs (both recovered "
-   "on retry) are reported as provider-reliability noise rather than hidden. Every returned "
+   "on retry) are reported here as provider-reliability noise. Every returned "
    "identifier resolved to a real official service, and every top match was checked against "
-   "its case text. This is consistent with the grounding design of Sect. 5 - grounding rules "
-   "out invented services, not wrong-but-valid catalogue matches, which would require a "
+   "its case text. This is consistent with the grounding design of Sect. 5: grounding rules "
+   "out invented services but not wrong-but-valid catalogue matches. Measuring those requires a "
    "larger, independently annotated set including ambiguous, out-of-scope and adversarial "
    "inputs (Sect. 7). Re-running the full benchmark against the same build shortly before "
    "submission reproduced identical hit@1, hit@3 and out-of-catalogue counts; the two runs "
@@ -505,8 +514,8 @@ p1a("We state the boundaries plainly. The chain layer runs on a public testnet w
    "measurement steps. The credential "
    "mechanism anchors user-confirmed statements; it adds "
    "no independent verification, and an adversary with the issuer key can anchor false "
-   "statements - the immutable issuer address and public events make such abuse visible and "
-   "attributable, not impossible. The demo mode's signed cookie is a hackathon convenience, "
+   "statements. The immutable issuer address and public events make such abuse visible and "
+   "attributable, but they do not prevent it. The demo mode's signed cookie is a hackathon convenience, "
    "not an identity system. Finally, the headline demographic figure used in outreach (about "
    "88% foreign-born) is indicative and cited as such; all product claims in this paper are "
    "bounded by Table 2.")
@@ -515,22 +524,21 @@ pn("Ethically, the design follows data minimisation by construction: PII stays i
    "processing is scoped in Sect. 4.4. The honest-degradation policy exists so that a "
    "demonstration can never be mistaken for an operational service, and accessibility "
    "(WCAG 2.2, RTL support) and the PDPL-aligned storage model are treated as functional "
-   "requirements rather than polish.")
+   "requirements.")
 
 # ================= 8 Conclusion =================
 h1("8   Conclusion")
-p1a("SANAD shows that the three barriers residents face in using even a world-class "
-   "e-government - language, evidence clarity and trust - can be attacked together by a small "
-   "system whose core commitments are negative: the model never invents services, the chain "
+p1a("SANAD shows that one small system can address three barriers residents face even in a "
+   "world-class e-government: language, evidence clarity and trust. Its core commitments are "
+   "negative: the model never invents services, the chain "
    "never sees personal data, and the product never claims more than its proofs support. The "
    "prototype passes its automated validation suite, anchors digests on a public testnet, and "
-   "ships an explicit proven/not-proven ledger as part of its public surface. The next steps "
-   "we propose, rather than claim as arranged: consented usability testing with "
+   "ships an explicit proven/not-proven ledger as part of its public surface. We propose, but have "
+   "not yet arranged, these next steps: consented usability testing with "
    "service-seekers, larger independently annotated accuracy benchmarking of the grounded "
    "matcher, mainnet custody, and "
    "integration of an institutional verifier that can check anchors without access to the "
-   "off-chain snapshot. We invite evaluation of the system by exactly the standard it sets "
-   "for itself: every claim verifiable, and none overstated.")
+   "off-chain snapshot.")
 
 # ================= References =================
 h1("References")

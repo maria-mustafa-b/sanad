@@ -1,5 +1,10 @@
 # SANAD — ISDIA 2027 Submission Checklist (Final, Rounds 3–4)
 
+Round 5 (2026-10-14): Fig. 1 is now the authors' own architecture diagram, redrawn at
+914 dpi (the embedded Mermaid image was ~220 dpi with unrendered icon codes); fourth
+author renamed Haitham Yaish; second humanizer pass; tables kept on one page. Still
+**12 pages**, abstract 150 words.
+
 Round 4 (2026-10-14, external audit pass): abstract restructured with explicit
 Zero-PII scope; identifier-linkability and canonicalisation claims corrected to match
 code; confidence declared as uncalibrated model score; out-of-catalogue "0" restated as
@@ -28,7 +33,7 @@ Checked against: isdia.org — *important-dates*, *editorial-policy*, *call-for-
 | Keywords | ✅ | 5 LNCS keywords |
 | Tables must be editable (not images) | ✅ | Tables 1–2 are native Word tables (DOCX contains 2 `<w:tbl>` objects) |
 | Equations MathType-compatible | ✅ | No display equations; all math is inline text |
-| Figures at 800 dpi | ✅ | Measured embedded pixels: Fig.1 914 dpi, Fig.2 808 dpi, Fig.3 812 dpi effective at 12.2 cm width |
+| Figures at 800 dpi | ✅ | Measured embedded pixels: Fig.1 914 dpi (4392 px, authors' diagram redrawn), Fig.2 808 dpi, Fig.3 812 dpi effective at 12.2 cm width |
 
 ## Scientific and editorial integrity
 

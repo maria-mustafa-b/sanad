@@ -1,5 +1,34 @@
 # SANAD — ISDIA 2027 Final Submission: Change Log
 
+## Round 5 (2026-10-14): authors' architecture diagram, name fix, humanizer pass
+
+- **Fig. 1 replaced with the authors' own system-architecture diagram** (the one embedded
+  in `SANAD_ISDIA_2027_Reviewed.docx`). The embedded image was a Mermaid render
+  1055 px wide (about 220 dpi at the 12.2 cm column, below ISDIA's 800 dpi rule) on a
+  black background, with icon codes printed as literal text ("fa:fa-shield-halved",
+  "fa:fa-robot", ...). It was redrawn, not pasted: same four numbered groups (User
+  Interface & Input; Application Backend; AI Processing & Gov.-Service Navigation;
+  Storage, Credential Issuance & Evaluation), same nodes, flows, legend (solid = runtime,
+  dotted = non-runtime, dashed border = external boundary, cylinder = storage) and the
+  same five notes. Laid out landscape so it fits the column without adding a page.
+  Source: `paper/make_fig1_user.py` -> `paper/fig1_architecture_user.png`,
+  4392x1920 px = 914 dpi at 12.2 cm. The extracted original is kept at
+  `paper/reviewed_media/image1.png`.
+- **Fig. 1 caption and the Sect. 3 lead-in** rewritten to describe the four layers. The
+  caption keeps the boundary facts: snapshot and salt stay off-chain; only an opaque
+  identifier and a SHA-256 commitment reach the testnet contract, which attests existence
+  and revocation status, never content or truth.
+- **Fourth author renamed "Haitham Yaish"** (was "Yash"), as instructed by the authors.
+- **Humanizer pass 2** (humanizer skill invoked explicitly). Removed every spaced-hyphen
+  dash in the prose, the "Crucially" opener, staged contrasts ("not mitigated away",
+  "rather than polish", "rather than hidden"), the "what ... does not hide is equally
+  important" run-up, and the closing send-off line of the Conclusion ("We invite
+  evaluation ... none overstated"). No number, citation, caveat or claim was changed.
+- **Layout fixes:** table cells are now left-aligned (Table 1 had justified gaps such as
+  "PII  /  content"); tables are kept on one page (Table 2 had split across pages 10-11);
+  Listing 1 now breaks before `status()` instead of orphaning two closing braces.
+- **Result:** 12 pages (PyMuPDF on the exported PDF), abstract 150 words.
+
 ## Round 4 (2026-10-14): external audit pass
 
 An external editorial audit (8.2/10-style review, scored Technical 8 / Evaluation 6 /

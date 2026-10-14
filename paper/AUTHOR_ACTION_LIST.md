@@ -26,7 +26,7 @@ older copy in Word.
    The site does not define a corresponding-author convention; if the CMT form or
    the camera-ready template asks for one, designate it among the authors.
 
-4. **Confirm the affiliation of Prof. Haitham Yash** as currently printed
+4. **Confirm the affiliation of Prof. Haitham Yaish** as currently printed
    ("University of Wollongong in Dubai") and that all four author names are spelled
    exactly as the authors want them published (no designations, per guidelines).
 
