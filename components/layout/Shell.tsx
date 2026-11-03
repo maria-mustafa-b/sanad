@@ -14,7 +14,8 @@ import {
   Settings,
   Bell,
   Menu,
-  X
+  X,
+  ArrowLeft,
 } from "lucide-react";
 
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -51,7 +52,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       
       {/* Mobile Header */}
       <div className="md:hidden bg-white border-b border-[#ECEFEA] px-5 py-3.5 flex items-center justify-between sticky top-0 z-50">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2" aria-label="SANAD home">
           <Image 
             src="/sanad-brand-logo.jpg" 
             alt="SANAD Logo" 
@@ -78,7 +79,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         {/* Top: Official SANAD Logo + Tagline */}
         <div>
           <div className="px-3 pb-6 pt-1">
-            <Link href="/dashboard" className="inline-block relative w-36 h-20">
+            <Link href="/" className="inline-block relative w-36 h-20" aria-label="SANAD home">
               <Image 
                 src="/sanad-brand-logo.jpg" 
                 alt="SANAD Logo" 
@@ -114,6 +115,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
         {/* Bottom Utility Items */}
         <div className="pt-4 border-t border-[#ECEFEA] px-2 space-y-2">
+          <Link 
+            href="/"
+            className="flex items-center gap-2.5 text-xs font-semibold text-[#5C6661] hover:text-[#153D32] transition"
+          >
+            <ArrowLeft className="w-4 h-4 text-[#7B8580]" />
+            <span>Back to home</span>
+          </Link>
           <Link 
             href="/help"
             className="flex items-center gap-2.5 text-xs font-semibold text-[#5C6661] hover:text-[#153D32] transition"
