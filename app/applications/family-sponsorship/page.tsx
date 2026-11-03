@@ -20,7 +20,6 @@ import {
 import { useSituation } from "@/lib/context/SituationContext";
 
 const DRAFT_KEY = "sanad_application_draft_family";
-const OFFICIAL_URL = "https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/residence-visa-for-family-members";
 
 export default function ApplicationAssistancePage() {
   const router = useRouter();
@@ -74,12 +73,34 @@ export default function ApplicationAssistancePage() {
   const [submitted, setSubmitted] = useState(false);
   const handleSubmit = () => setSubmitted(true);
 
+  // The application follows the service SANAD matched in conversation, not a fixed visa.
+  const service = profile?.services?.[0];
+  const isFamily = !!service && /family|sponsor/i.test(service.title);
+  const OFFICIAL_URL = service?.url || "";
+  const authority = (() => { try { return new URL(OFFICIAL_URL).hostname; } catch { return ""; } })();
+
   const stepsList = [
     { num: 1, label: "Personal Details" },
-    { num: 2, label: "Family Details" },
+    { num: 2, label: isFamily ? "Family Details" : "Details" },
     { num: 3, label: "Documents" },
     { num: 4, label: "Review & Submit" }
   ];
+
+  if (!service) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+        <div className="bg-white rounded-3xl p-10 border border-[#ECEFEA] shadow-sm text-center space-y-4">
+          <h1 className="text-2xl font-black text-[#153D32]">Application Assistance</h1>
+          <p className="text-sm text-[#68716D] max-w-md mx-auto">
+            Tell SANAD about your situation first. SANAD will find the right official service, then help you prepare that application.
+          </p>
+          <Link href="/chat" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#153D32] text-white text-xs font-bold">
+            Talk to SANAD <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
@@ -94,7 +115,7 @@ export default function ApplicationAssistancePage() {
             Application Assistance
           </h1>
           <p className="text-xs sm:text-sm text-[#68716D] mt-0.5">
-            Let SANAD help you complete your Family Sponsorship application.
+            Prepare your application for <b>{service.title}</b>. You submit it yourself on the official portal.
           </p>
         </div>
       </div>
@@ -215,7 +236,7 @@ export default function ApplicationAssistancePage() {
             </Link>
 
             <button
-              onClick={() => setStep(2)}
+              onClick={() => setStep(isFamily ? 2 : 3)}
               className="px-6 py-3 rounded-xl bg-[#153D32] hover:bg-[#103027] text-white text-xs font-bold transition shadow-sm flex items-center gap-2"
             >
               <span>Continue</span>
@@ -342,7 +363,7 @@ export default function ApplicationAssistancePage() {
 
           <div className="flex items-center justify-between pt-4 border-t border-[#F0F3EE]">
             <button
-              onClick={() => setStep(2)}
+              onClick={() => setStep(isFamily ? 2 : 1)}
               className="text-xs font-bold text-[#5C6661] hover:text-[#153D32] transition flex items-center gap-1.5"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -414,15 +435,17 @@ export default function ApplicationAssistancePage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#6E7873]">Service:</span>
-                    <span className="font-bold text-[#153D32]">Family Sponsorship (Parents Visa)</span>
+                    <span className="font-bold text-[#153D32]">{service.title}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-[#6E7873]">Target:</span>
-                    <span className="font-bold text-[#153D32]">{sponsorTarget} ({fatherName}, {motherName})</span>
-                  </div>
+                  {isFamily && (
+                    <div className="flex justify-between">
+                      <span className="text-[#6E7873]">Sponsoring:</span>
+                      <span className="font-bold text-[#153D32]">{[sponsorTarget, fatherName, motherName].filter(Boolean).join(", ") || "Not provided"}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-[#6E7873]">Authority:</span>
-                    <span className="font-bold text-[#153D32]">ICP (Federal Authority)</span>
+                    <span className="font-bold text-[#153D32]">{authority || "See official portal"}</span>
                   </div>
                 </div>
 
