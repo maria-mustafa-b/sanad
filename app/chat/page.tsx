@@ -1,312 +1,446 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Mic, Square, Loader2, Send, X, CheckCircle2, ChevronRight, AlertCircle, Edit2 } from "lucide-react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { 
+  Sparkles, 
+  Bell, 
+  Mic, 
+  MicOff,
+  Send, 
+  Plus, 
+  ChevronRight,
+  ArrowRight,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  Loader2,
+  RefreshCw
+} from "lucide-react";
+import { useSituation } from "@/lib/context/SituationContext";
 
-type IntakeState = 'IDLE' | 'RECORDING' | 'PROCESSING' | 'REVIEW';
+function ChatVoiceInner() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams?.get("q") || "";
 
-export default function ChatPage() {
-  const [text, setText] = useState("");
-  const [state, setState] = useState<IntakeState>('IDLE');
-  const [result, setResult] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'VOICE' | 'CHAT'>('VOICE');
-  
+  const { profile, messages, addMessage, updateProfile, clearChat } = useSituation();
+  const [speakingId, setSpeakingId] = useState<string | null>(null);
+
+  // Read a reply aloud in the script it was written in.
+  const speak = (id: string, text: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    if (speakingId === id) { setSpeakingId(null); return; }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = /[؀-ۿ]/.test(text) ? (/[ٹڈڑںھہے]/.test(text) ? "ur-PK" : "ar-AE")
+      : /[ऀ-ॿ]/.test(text) ? "hi-IN"
+      : /[ঀ-৿]/.test(text) ? "bn-IN"
+      : /[ഀ-ൿ]/.test(text) ? "ml-IN"
+      : "en-US";
+    u.onend = () => setSpeakingId(null);
+    u.onerror = () => setSpeakingId(null);
+    setSpeakingId(id);
+    window.speechSynthesis.speak(u);
+  };
+  const [inputText, setInputText] = useState(initialQuery);
+  const [isRecording, setIsRecording] = useState(false);
+  const [autoSendVoice, setAutoSendVoice] = useState(false);
+  const [isAiProcessing, setIsAiProcessing] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("sanad_user");
+      if (stored) {
+        try { setUserProfile(JSON.parse(stored)); } catch (e) {}
+      }
+    }
+  }, []);
+
+  // Web Speech API
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
-        recognition.continuous = true;
+        recognition.continuous = false;
         recognition.interimResults = true;
-        
         recognition.onresult = (event: any) => {
-          let currentTranscript = "";
+          let transcript = "";
           for (let i = 0; i < event.results.length; i++) {
-            currentTranscript += event.results[i][0].transcript;
+            transcript += event.results[i][0].transcript;
           }
-          setText(currentTranscript);
+          setInputText(transcript);
         };
-
         recognition.onend = () => {
-          if (state === 'RECORDING') setState('IDLE');
+          setIsRecording(false);
+          setAutoSendVoice(true);
         };
-
         recognitionRef.current = recognition;
       }
     }
-    return () => {
-      if (recognitionRef.current) recognitionRef.current.stop();
-    };
   }, []);
 
   const toggleRecording = () => {
-    if (state === 'RECORDING') {
-      recognitionRef.current?.stop();
-      setState('IDLE');
+    if (!recognitionRef.current) {
+      alert("Speech recognition is not supported in this browser. Please use text input or Chrome/Edge.");
+      return;
+    }
+    if (isRecording) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
     } else {
-      setText("");
-      recognitionRef.current?.start();
-      setState('RECORDING');
+      setIsRecording(true);
+      recognitionRef.current.start();
     }
   };
 
-  const handleSubmit = async () => {
-    if (!text.trim()) return;
-    
-    if (state === 'RECORDING') {
-      recognitionRef.current?.stop();
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isAiProcessing]);
+
+  // When the user stops speaking, send what was transcribed.
+  useEffect(() => {
+    if (autoSendVoice) {
+      setAutoSendVoice(false);
+      if (inputText.trim()) handleSend();
     }
-    
-    setState('PROCESSING');
-    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoSendVoice]);
+
+  // Voice/typed query handed over from the dashboard: send it once.
+  const autoSent = useRef(false);
+  useEffect(() => {
+    if (!autoSent.current && initialQuery && searchParams?.get("send") === "1") {
+      autoSent.current = true;
+      router.replace("/chat");
+      handleSend(initialQuery);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSend = async (textToSend?: string) => {
+    const text = (textToSend || inputText).trim();
+    if (!text || isAiProcessing) return;
+
+    // 1. Add user message
+    addMessage({
+      sender: "user",
+      text: text,
+    });
+    setInputText("");
+    setIsAiProcessing(true);
+
     try {
-      const res = await fetch("/api/ai/understand", {
+      // 2. Send the whole conversation so the assistant keeps context and language
+      const history = [...messages, { sender: "user" as const, text }].map((m) => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        content: m.text,
+      }));
+      const knownFacts = Object.fromEntries(
+        Object.values(profile?.facts || {}).map((f) => [f.label, f.value])
+      );
+
+      const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ messages: history, profile: knownFacts }),
       });
-      
       const data = await res.json();
+
       if (!res.ok) {
-        alert(data.message || data.error || "Failed to analyze situation. Please try again.");
-        setState('IDLE');
+        addMessage({
+          sender: "sanad",
+          text: data?.message || "SANAD could not answer right now. Nothing was saved. Please try again.",
+        });
         return;
       }
-      setResult(data);
-      setState('REVIEW');
-      
-    } catch (err) {
-      console.error(err);
-      alert("Failed to analyze situation");
-      setState('IDLE');
+
+      // 3. Store only facts the user explicitly stated
+      const facts = { ...(profile?.facts || {}) };
+      // New or changed values need the user's confirmation on My Situation.
+      for (const f of data.facts || []) {
+        const prev = facts[f.key];
+        facts[f.key] = { label: f.label, value: f.value, source: "Conversation", confirmed: prev?.value === f.value && prev.confirmed };
+      }
+      updateProfile({
+        facts,
+        services: data.services || [],
+        missing_info: data.missing_info || [],
+        target_service: data.services?.[0]?.title || profile?.target_service || "",
+        service_category: data.services?.[0]?.category || profile?.service_category || "",
+      });
+
+      // 4. Assistant reply in the user's language, with at most one follow-up question
+      addMessage({
+        sender: "sanad",
+        text: data.next_question ? `${data.reply}\n\n${data.next_question}` : data.reply,
+        quickActions: [
+          { label: "View My Situation", href: "/situation" },
+          ...(data.services || []).slice(0, 2).map((s: { title: string; url: string }) => ({
+            label: s.title,
+            href: s.url,
+          })),
+        ],
+      });
+    } catch (e) {
+      addMessage({
+        sender: "sanad",
+        text: "Network error: SANAD could not reach the assistant. Nothing was saved. Please try again.",
+      });
+    } finally {
+      setIsAiProcessing(false);
     }
   };
 
-  const exampleMessages = [
-    "Mer job chali gayi hai aur August ki salary nahi mili",
-    "I haven't received my salary for 3 months",
-    "Visa cancellation issue",
-    "Housing eviction problem"
-  ];
-
   return (
-    <div className="w-full max-w-3xl mx-auto flex flex-col min-h-[80vh] animate-in fade-in duration-500">
+    <div className="flex flex-col h-[calc(100vh-2rem)] max-w-5xl mx-auto px-4 sm:px-6 py-4 animate-in fade-in duration-300">
       
-      {state !== 'REVIEW' ? (
-        <>
-          <div className="mb-8">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Tell us about your situation</h1>
-            <p className="text-gray-500">Speak naturally in your native language. We will legally structure your claim.</p>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex p-1 bg-gray-100 rounded-xl w-fit mb-8">
-            <button 
-              onClick={() => setActiveTab('VOICE')}
-              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'VOICE' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              Voice Input
-            </button>
-            <button 
-              onClick={() => setActiveTab('CHAT')}
-              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'CHAT' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              Chat
-            </button>
-          </div>
-
-          <div className="flex-1 bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden flex flex-col">
-            
-            {activeTab === 'VOICE' ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-12 min-h-[400px]">
-                {state === 'RECORDING' ? (
-                  <div className="flex flex-col items-center animate-in zoom-in duration-300">
-                    <div className="relative w-32 h-32 flex items-center justify-center mb-8">
-                      <div className="absolute inset-0 bg-red-100 rounded-full animate-ping opacity-75"></div>
-                      <div className="absolute inset-4 bg-red-50 rounded-full"></div>
-                      <Mic className="w-10 h-10 text-red-600 relative z-10 animate-pulse" />
-                    </div>
-                    <div className="text-gray-900 font-bold text-xl mb-4 max-w-md text-center line-clamp-3">
-                      "{text || 'Listening...'}"
-                    </div>
-                    <p className="text-red-500 font-semibold mb-8">Listening...</p>
-                    <div className="flex gap-4">
-                      <button onClick={() => {setState('IDLE'); setText(''); recognitionRef.current?.stop();}} className="px-6 py-3 rounded-full font-bold text-gray-600 bg-gray-100 hover:bg-gray-200">
-                        Cancel
-                      </button>
-                      <button onClick={handleSubmit} disabled={!text} className="px-6 py-3 rounded-full font-bold text-white bg-teal-600 hover:bg-teal-700 disabled:opacity-50 flex items-center gap-2">
-                        Continue <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ) : state === 'PROCESSING' ? (
-                  <div className="flex flex-col items-center text-teal-700">
-                    <Loader2 className="w-12 h-12 animate-spin mb-4" />
-                    <h3 className="text-xl font-bold">Structuring your situation...</h3>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <button 
-                      onClick={toggleRecording}
-                      className="w-24 h-24 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mb-6 transition-all hover:scale-105"
-                    >
-                      <Mic className="w-10 h-10" />
-                    </button>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Tap to speak</h3>
-                    <p className="text-gray-500 mb-8">or choose an example below</p>
-                    
-                    <div className="flex flex-wrap justify-center gap-2 max-w-lg">
-                      {exampleMessages.map((msg, i) => (
-                        <button key={i} onClick={() => setText(msg)} className="px-4 py-2 bg-gray-50 border border-gray-100 rounded-full text-sm text-gray-600 hover:bg-gray-100 transition-colors">
-                          "{msg}"
-                        </button>
-                      ))}
-                    </div>
-                    {text && (
-                      <div className="mt-8">
-                        <button onClick={handleSubmit} className="px-8 py-3 bg-teal-600 text-white font-bold rounded-full hover:bg-teal-700 shadow-md">
-                          Continue with text
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col p-6 min-h-[400px]">
-                <div className="flex-1 overflow-y-auto mb-4">
-                  {/* Chat history would go here */}
-                </div>
-                <div className="relative">
-                  <textarea
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Type your message..."
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 pr-16 resize-none outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                    rows={3}
-                  />
-                  <button 
-                    onClick={handleSubmit}
-                    disabled={!text || state === 'PROCESSING'}
-                    className="absolute bottom-4 right-4 p-2 bg-teal-600 text-white rounded-xl hover:bg-teal-700 disabled:opacity-50 transition-colors"
-                  >
-                    {state === 'PROCESSING' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </>
-      ) : (
-        /* SITUATION UNDERSTANDING (REVIEW STATE) */
-        <div className="animate-in slide-in-from-right-8 duration-500">
-          <div className="mb-8">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Here's what I understood</h1>
-            <p className="text-gray-500">Please review the structured information before we proceed.</p>
-            {result?.source === 'sample_fallback' && (
-              <div className="mt-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-4 text-sm font-medium">
-                The AI provider is currently unavailable — the facts below are clearly-labelled sample data, not an analysis of your situation. Please go back and retry, or edit the fields yourself before confirming.
-              </div>
-            )}
-          </div>
-
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden mb-8">
-            <div className="p-8">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Structured Facts</h3>
-              
-              <div className="grid md:grid-cols-2 gap-y-6 gap-x-12">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Situation type</p>
-                  <p className="font-bold text-gray-900">{result?.category || 'Employment issue'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Employment status</p>
-                  <p className="font-bold text-gray-900">{result?.facts?.employment_status || 'Lost job'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Issue</p>
-                  <p className="font-bold text-gray-900">{result?.facts?.issue || 'Unpaid wages'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Salary period</p>
-                  <p className="font-bold text-gray-900">{result?.facts?.salary_period || 'August 2026'}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <p className="text-sm text-gray-500 mb-1">Employer</p>
-                  <p className="font-bold text-gray-900">{result?.facts?.employer || 'Not specified'}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-amber-50/50 p-8 border-t border-amber-100/50">
-              <h3 className="flex items-center gap-2 text-sm font-bold text-amber-700 uppercase tracking-widest mb-4">
-                <AlertCircle className="w-4 h-4" /> Information still needed
-              </h3>
-              <ul className="list-disc list-inside text-amber-900 space-y-2">
-                <li>Employment end date</li>
-                <li>Location (Emirate)</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button 
-              onClick={() => setState('IDLE')}
-              className="px-8 py-4 bg-white border border-gray-200 text-gray-700 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition flex-1"
-            >
-              <Edit2 className="w-5 h-5 text-gray-400" /> Edit
-            </button>
-            <button 
-              onClick={async () => {
-                if (result?.source === 'sample_fallback') {
-                  alert('Sample data cannot be confirmed as evidence. Go back and try again, or edit the facts.');
-                  return;
-                }
-                // 1. Save claim to database so dashboard updates dynamically
-                const claimRes = await fetch('/api/claims', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ original_statement: text, structured_data: result })
-                });
-                if (claimRes.status === 401) {
-                  alert('Please sign in first — your claim must belong to your account before it can be sealed as proof.');
-                  return;
-                }
-                if (!claimRes.ok) {
-                  alert('Could not save your claim. Please try again.');
-                  return;
-                }
-
-                // 2. Commit the confirmed content to a SHA-256 hash, then issue on Polygon
-                const payload = JSON.stringify({ statement: text, facts: result?.facts ?? null });
-                const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload));
-                const claimDataHash = '0x' + Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
-                const res = await fetch('/api/blockchain/issue', { 
-                  method: 'POST', 
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ claimId: 'SANAD-VC-' + Date.now(), claimDataHash }) 
-                }); 
-                const data = await res.json();
-                if (!res.ok) {
-                  alert(data.message || data.error || 'Your claim was saved, but the credential could not be issued. Try again from your dashboard.');
-                  return;
-                }
-                if (data.mode === 'mock') {
-                  alert('Credential recorded in demo mode (mock chain). Live anchoring requires the configured issuer wallet.');
-                } else {
-                  alert('Success! Credential sealed on Polygon Amoy testnet.\nTx: ' + data.transactionHash);
-                }
-                window.location.href = '/dashboard';
-              }}
-              className="px-8 py-4 bg-teal-700 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 flex-[2]"
-            >
-              Confirm and Continue <CheckCircle2 className="w-5 h-5" />
-            </button>
+      {/* ================= TOP HEADER (Matching Screen 3) ================= */}
+      <header className="flex items-center justify-between pb-4 border-b border-[#ECEFEA] shrink-0">
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard" className="p-2 rounded-xl bg-white border border-[#E3E7E0] text-[#153D32] hover:bg-[#F4F6F2] transition text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+            <span>← Ask SANAD</span>
+          </Link>
+          <div>
+            <h1 className="text-lg sm:text-xl font-black text-[#153D32] tracking-tight">
+              Conversation with SANAD
+            </h1>
+            <p className="text-[11px] text-[#6E7873]">
+              Explain your situation naturally. SANAD understands and creates your profile.
+            </p>
           </div>
         </div>
-      )}
+
+        <div className="flex items-center gap-2.5">
+          {messages.length > 0 && (
+            <button
+              onClick={() => { window.speechSynthesis?.cancel(); clearChat(); }}
+              className="px-3 py-1.5 rounded-full bg-white border border-[#E3E7E0] text-[11px] font-bold text-[#153D32] hover:bg-[#F4F6F2]"
+            >
+              New conversation
+            </button>
+          )}
+          <Link 
+            href="/notifications"
+            className="relative p-2 rounded-full bg-white border border-[#E3E7E0] text-[#202A27] hover:text-[#153D32] shadow-2xs transition"
+          >
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#E53E3E] ring-2 ring-white"></span>
+          </Link>
+          <div className="w-8 h-8 rounded-full bg-[#E3ECE7] border border-[#CCD8D1] text-[#153D32] font-bold text-xs flex items-center justify-center shadow-2xs">
+            {userProfile?.name ? userProfile.name.slice(0, 2).toUpperCase() : "SK"}
+          </div>
+        </div>
+      </header>
+
+      {/* ================= CHAT MESSAGES SCROLL AREA (Screen 3) ================= */}
+      <div className="flex-1 overflow-y-auto py-6 space-y-6 pr-2">
+        {messages.length === 0 && !isAiProcessing && (
+          <div className="text-center py-16 space-y-3">
+            <p className="text-lg font-black text-[#153D32]">Tell SANAD what you need.</p>
+            <p className="text-xs text-[#68716D] max-w-md mx-auto">
+              Type or tap the mic and speak in any language. SANAD asks one question at a time and remembers your answers.
+            </p>
+          </div>
+        )}
+        {isRecording && (
+          <div className="flex justify-end">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-800">
+              <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+              {inputText || "Listening..."}
+            </div>
+          </div>
+        )}
+        {messages.map((msg, idx) => {
+          const isUser = msg.sender === "user";
+
+          return (
+            <div
+              key={msg.id || idx}
+              className={`flex flex-col ${isUser ? "items-end" : "items-start"} space-y-1.5 animate-in fade-in duration-200`}
+            >
+              {/* Message Bubble Container */}
+              <div className="flex items-start gap-3 max-w-[85%] sm:max-w-[75%]">
+                
+                {/* Assistant Brand Avatar */}
+                {!isUser && (
+                  <div className="w-9 h-9 rounded-2xl bg-[#153D32] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
+                    سند
+                  </div>
+                )}
+
+                <div className={`space-y-3 ${isUser ? "items-end" : "items-start"}`}>
+                  
+                  {/* User Bubble */}
+                  {isUser ? (
+                    <div className="bg-[#EBF5EF] text-[#153D32] border border-[#BCE1CA] px-5 py-3.5 rounded-2xl rounded-tr-xs shadow-2xs flex items-center gap-3">
+                      <Mic className="w-4 h-4 text-[#153D32] shrink-0" />
+                      <p className="text-xs sm:text-sm font-medium leading-relaxed">
+                        {msg.text}
+                      </p>
+                    </div>
+                  ) : (
+                    /* SANAD Bubble */
+                    <div className="bg-white text-[#202A27] border border-[#ECEFEA] p-5 rounded-2xl rounded-tl-xs shadow-2xs space-y-4">
+                      <p className="text-xs sm:text-sm text-[#202A27] font-medium leading-relaxed whitespace-pre-line">
+                        {msg.text}
+                      </p>
+
+                      {/* Numbered Structured Questions (Screen 3) */}
+                      {msg.structuredQuestions && msg.structuredQuestions.length > 0 && (
+                        <div className="bg-[#FAFBF9] rounded-xl p-4 border border-[#ECEFEA] space-y-2.5">
+                          {msg.structuredQuestions.map((q, qIdx) => (
+                            <div key={qIdx} className="flex items-start gap-2.5 text-xs text-[#3A4540]">
+                              <span className="w-4 h-4 rounded-full bg-[#153D32] text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                                {qIdx + 1}
+                              </span>
+                              <span className="font-medium">{q}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Quick Action Navigation Buttons */}
+                      {msg.quickActions && (
+                        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#F0F3EE]">
+                          {msg.quickActions.map((act, aIdx) => (
+                            <Link
+                              key={aIdx}
+                              href={act.href}
+                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#153D32] text-white text-xs font-bold hover:bg-[#103027] transition shadow-2xs"
+                            >
+                              <span>{act.label}</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Timestamp + read aloud */}
+                  <div className={`flex items-center gap-2 px-1 ${isUser ? "justify-end" : "justify-start"}`}>
+                    <span className="text-[10px] text-[#8C9691]">{msg.timestamp || "Just now"}</span>
+                    {!isUser && (
+                      <button
+                        onClick={() => speak(msg.id, msg.text)}
+                        className="text-[10px] font-bold text-[#153D32] hover:underline"
+                        aria-label={speakingId === msg.id ? "Stop reading" : "Read reply aloud"}
+                      >
+                        {speakingId === msg.id ? "■ Stop" : "🔊 Listen"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* User Avatar */}
+                {isUser && (
+                  <div className="w-9 h-9 rounded-2xl bg-[#E3ECE7] border border-[#CCD8D1] text-[#153D32] font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                    {userProfile?.name ? userProfile.name.slice(0, 2).toUpperCase() : "SK"}
+                  </div>
+                )}
+
+              </div>
+            </div>
+          );
+        })}
+
+        {isAiProcessing && (
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-[#153D32] text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
+              سند
+            </div>
+            <div className="bg-white border border-[#ECEFEA] p-4 rounded-2xl rounded-tl-xs flex items-center gap-3 text-xs text-[#5C6661] shadow-2xs">
+              <Loader2 className="w-4 h-4 animate-spin text-[#153D32]" />
+              <span>SANAD is analyzing your situation and official regulations...</span>
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* ================= FIXED BOTTOM INPUT BAR (Matching Screen 3) ================= */}
+      <div className="shrink-0 pt-2 pb-2">
+        <div className="bg-white rounded-2xl border border-[#DDE2D9] p-2 flex items-center gap-2 shadow-[0_8px_30px_rgba(21,61,50,0.06)]">
+          
+          {/* Plus icon */}
+          <button 
+            type="button" 
+            className="p-2 text-[#8C9691] hover:text-[#153D32] hover:bg-[#FAFBF9] rounded-xl transition"
+            title="Attach Document"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+
+          {/* Voice Wave Icon */}
+          <div className="flex items-center text-[#8C9691] px-1">
+            <span className="text-xs">|||</span>
+          </div>
+
+          {/* Text Input */}
+          <input
+            type="text"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSend();
+            }}
+            placeholder={isRecording ? "Listening to your voice..." : "Speak or type a message..."}
+            className="flex-1 bg-transparent border-none text-xs sm:text-sm text-[#202A27] placeholder:text-[#8C9691] focus:outline-none"
+          />
+
+          {/* Big Green Mic Button (Screen 3) */}
+          <button
+            type="button"
+            onClick={toggleRecording}
+            className={`p-3 rounded-full text-white transition shadow-sm ${
+              isRecording 
+                ? "bg-red-600 animate-pulse ring-4 ring-red-100" 
+                : "bg-[#153D32] hover:bg-[#103027] ring-4 ring-[#EAF5EF]"
+            }`}
+            title={isRecording ? "Stop Recording" : "Speak to SANAD"}
+          >
+            {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          </button>
+
+          {/* Send Button */}
+          {inputText.trim() && (
+            <button
+              type="button"
+              onClick={() => handleSend()}
+              className="p-3 rounded-full bg-[#153D32] hover:bg-[#103027] text-white transition shadow-2xs"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          )}
+
+        </div>
+      </div>
+
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-[#153D32]" />
+      </div>
+    }>
+      <ChatVoiceInner />
+    </Suspense>
   );
 }

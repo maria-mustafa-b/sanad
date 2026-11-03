@@ -1,0 +1,16 @@
+# Keep CLI deploys to the app source: no videos, papers or local scratch output.
+brag-output-*
+videos/
+vibe_images/
+paper/
+paper_template/
+test-results/
+stitch_sanad_multilingual_worker_portal/
+/*.mp4
+/*.mp3
+/*.wav
+/*.raw
+/*.docx
+/*.pdf
+/*.pptx
+.sanad-demo/

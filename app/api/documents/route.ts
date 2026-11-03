@@ -39,11 +39,17 @@ export async function POST(request: Request) {
       - Dates (Expiry dates, salary periods)
       - Any illegal clauses (e.g., passport surrender, illegal fee deduction)
       
+      Only report what is actually legible. Never guess missing values.
+
       Respond in strict JSON format:
       {
         "documentType": "String",
         "extractedText": "String (Summary of the most important text)",
+        "fields": [{ "label": "String", "value": "String" }],
+        "unreadableFields": ["Fields that are missing, blurred or unreadable"],
+        "expiryDate": "YYYY-MM-DD or empty string if none is visible",
         "flags": ["Array of strings highlighting risks or illegal clauses"],
+        "readable": true,
         "confidence": 0.95
       }
     `;

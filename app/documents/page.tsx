@@ -1,223 +1,246 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Upload, FileText, CheckCircle, AlertTriangle, Loader2, XCircle, ShieldCheck } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { FolderOpen, Upload, CheckCircle2, FileText, AlertTriangle, Loader2, Trash2 } from "lucide-react";
+import { useSituation } from "@/lib/context/SituationContext";
 
-type DocumentState = "UPLOADED" | "PROCESSING" | "ANALYZED" | "USER_REVIEW_REQUIRED" | "CONFIRMED" | "REJECTED";
+type Extraction = {
+  documentType?: string;
+  extractedText?: string;
+  fields?: { label: string; value: string }[];
+  unreadableFields?: string[];
+  expiryDate?: string;
+  flags?: string[];
+  readable?: boolean;
+  confidence?: number;
+  source?: string;
+};
+
+type Doc = {
+  id: string;
+  name: string;
+  uploadedAt: string;
+  status: "ANALYZING" | "NEEDS_CONFIRMATION" | "CONFIRMED" | "FAILED";
+  error?: string;
+  extraction?: Extraction;
+};
+
+const STORAGE_KEY = "sanad_documents";
+const MAX_BYTES = 10 * 1024 * 1024;
+const ACCEPTED = ["application/pdf", "image/jpeg", "image/png"];
 
 export default function DocumentsPage() {
-  const [file, setFile] = useState<File | null>(null);
-  const [docState, setDocState] = useState<DocumentState | null>(null);
-  const [analysis, setAnalysis] = useState<any | null>(null);
-  const [vaultDocs, setVaultDocs] = useState<any[]>([]);
-  useEffect(() => { const v = localStorage.getItem('sanad_vault'); if (v) setVaultDocs(JSON.parse(v)); }, []);
+  const { profile, updateProfile } = useSituation();
+  const [documents, setDocuments] = useState<Doc[]>([]);
+  const [consent, setConsent] = useState(false);
+  const [query, setQuery] = useState("");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      setDocState("UPLOADED");
-      setAnalysis(null);
-    }
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) setDocuments(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  const persist = (next: Doc[]) => {
+    setDocuments(next);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
   };
+  const patch = (id: string, p: Partial<Doc>) =>
+    setDocuments((prev) => {
+      const next = prev.map((d) => (d.id === id ? { ...d, ...p } : d));
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
 
-  const handleUpload = async () => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
-    setDocState("PROCESSING");
+    const id = "doc-" + Date.now();
+    const base: Doc = { id, name: file.name, uploadedAt: new Date().toLocaleString(), status: "ANALYZING" };
 
-    const formData = new FormData();
-    formData.append("file", file);
+    if (!ACCEPTED.includes(file.type) || file.size > MAX_BYTES) {
+      persist([{ ...base, status: "FAILED", error: "Only PDF, JPG or PNG files up to 10 MB are supported." }, ...documents]);
+      return;
+    }
+    persist([base, ...documents]);
 
     try {
-      const res = await fetch("/api/documents", {
-        method: "POST",
-        body: formData,
-      });
-
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/documents", { method: "POST", body: form });
       const json = await res.json();
-      if (json.data) {
-        setAnalysis(json.data);
-        setDocState("USER_REVIEW_REQUIRED");
-      } else {
-        setDocState("REJECTED");
+      if (!res.ok) {
+        patch(id, { status: "FAILED", error: json.message || json.error || "Analysis failed." });
+        return;
       }
-    } catch (e) {
-      console.error(e);
-      setDocState("REJECTED");
-      alert("Failed to analyze document");
+      const ex: Extraction = json.data;
+      if (ex.source === "sample_fallback") {
+        patch(id, { status: "FAILED", error: "The AI could not read this document right now. Nothing was extracted. Please try again." });
+      } else if (ex.readable === false) {
+        patch(id, { status: "FAILED", extraction: ex, error: "The document is unreadable or incomplete. Upload a clearer copy." });
+      } else {
+        patch(id, { status: "NEEDS_CONFIRMATION", extraction: ex });
+      }
+    } catch {
+      patch(id, { status: "FAILED", error: "Network error during upload. Nothing was saved." });
     }
   };
 
-  const handleConfirm = () => {
-    setDocState("CONFIRMED");
-    const newDocs = [...vaultDocs, {
-      name: file?.name || "Uploaded Document",
-      type: analysis?.documentType || "Document",
-      date: new Date().toLocaleDateString(),
-      status: "Verified"
-    }];
-    setVaultDocs(newDocs);
-    localStorage.setItem('sanad_vault', JSON.stringify(newDocs));
+  // Only after the user confirms do extracted details reach My Situation.
+  const confirmDoc = (doc: Doc) => {
+    const type = doc.extraction?.documentType || doc.name;
+    const facts = { ...(profile?.facts || {}) };
+    for (const f of doc.extraction?.fields || []) {
+      facts[`doc_${doc.id}_${f.label}`] = { label: f.label, value: f.value, confirmed: true, source: `${type} (OCR)` };
+    }
+    updateProfile({
+      facts,
+      documents_ready: Array.from(new Set([...(profile?.documents_ready || []), type])),
+    });
+    patch(doc.id, { status: "CONFIRMED" });
   };
 
+  const visible = documents.filter((d) =>
+    `${d.name} ${d.extraction?.documentType || ""}`.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
-    <div className="flex-1 w-full max-w-4xl mx-auto px-4 pt-24 pb-12 flex flex-col">
-      <div className="mb-10">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Secure Document Vault</h1>
-        <p className="text-gray-600">
-          Upload employment contracts, salary slips, or visas. SANAD's AI will automatically read and extract details for your verification.
-        </p>
-      </div>
-
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 mb-8">
-        <div className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition">
-          <input
-            type="file"
-            id="file-upload"
-            className="hidden"
-            accept="image/*,application/pdf"
-            onChange={handleFileChange}
-          />
-          <label
-            htmlFor="file-upload"
-            className="cursor-pointer flex flex-col items-center w-full"
-          >
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors ${file ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600'}`}>
-              {file ? <FileText className="w-8 h-8" /> : <Upload className="w-8 h-8" />}
-            </div>
-            <span className="text-lg font-bold text-gray-900 mb-1">
-              {file ? file.name : "Select a document to upload"}
-            </span>
-            <span className="text-sm text-gray-500">
-              {file ? "Click to change file" : "Supports JPEG, PNG, or PDF up to 5MB"}
-            </span>
-          </label>
-
-          {docState === "UPLOADED" && (
-            <div className="mt-8 w-full flex justify-center">
-              <button
-                onClick={handleUpload}
-                className="px-8 py-4 bg-teal-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-teal-700 transition shadow-md"
-              >
-                <ShieldCheck className="w-5 h-5" />
-                Run AI Analysis
-              </button>
-            </div>
-          )}
-
-
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-in fade-in duration-300">
+      <div className="flex items-start gap-3 pb-2 border-b border-[#ECEFEA]">
+        <div className="w-10 h-10 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shrink-0">
+          <FolderOpen className="w-5 h-5" />
         </div>
-
-        {docState === "PROCESSING" && (
-          <div className="mt-8 flex flex-col items-center justify-center space-y-4 p-8 bg-blue-50 rounded-xl border border-blue-100">
-            <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-            <div className="text-center">
-              <h3 className="font-bold text-blue-900 text-lg">Analyzing Document with Gemini Vision...</h3>
-              <p className="text-blue-700 text-sm">Extracting entities, checking for illegal clauses, and classifying document type.</p>
-            </div>
-          </div>
-        )}
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-[#153D32] tracking-tight">My Documents</h1>
+          <p className="text-xs sm:text-sm text-[#68716D] mt-0.5">
+            Upload a document, review what SANAD read, and confirm before it is used. The list is kept in this browser.
+          </p>
+        </div>
       </div>
 
-      {analysis && (docState === "USER_REVIEW_REQUIRED" || docState === "CONFIRMED") && (
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${docState === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}`}>
-                {docState === 'CONFIRMED' ? <CheckCircle className="w-6 h-6" /> : <AlertTriangle className="w-6 h-6" />}
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">
-                  {docState === 'CONFIRMED' ? 'Document Confirmed' : 'Review Required'}
-                </h2>
-                <p className="text-sm text-gray-500">AI Confidence Score: {(analysis.confidence * 100 || 95).toFixed(0)}%</p>
-              </div>
-            </div>
-            <div className="inline-flex px-3 py-1 bg-gray-100 text-gray-700 font-bold text-xs rounded-full uppercase tracking-wider">
-              {analysis.documentType || "Document"}
-            </div>
-          </div>
+      <div className="bg-white rounded-3xl p-6 border border-[#ECEFEA] shadow-sm space-y-4">
+        <label className="flex items-start gap-2 text-xs text-[#3A4540]">
+          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5" />
+          <span>I consent to SANAD sending this document to its AI provider to read it. Avoid uploading real identity documents unless needed.</span>
+        </label>
+        <label
+          className={`flex flex-col items-center justify-center gap-2 p-8 rounded-2xl border-2 border-dashed text-center ${
+            consent ? "border-[#C2DCD0] cursor-pointer hover:border-[#153D32]" : "border-[#E4E7E1] opacity-50 cursor-not-allowed"
+          }`}
+        >
+          <Upload className="w-6 h-6 text-[#153D32]" />
+          <span className="text-sm font-bold text-[#153D32]">Upload a Document</span>
+          <span className="text-xs text-[#68716D]">PDF, JPG or PNG, up to 10 MB</span>
+          <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" disabled={!consent} onChange={handleFileUpload} />
+        </label>
+      </div>
 
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">Extracted Information</h3>
-              <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 text-gray-800 whitespace-pre-wrap leading-relaxed">
-                {analysis.extractedText}
-              </div>
-            </div>
+      {documents.length > 0 && (
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search documents..."
+          className="w-full px-4 py-2.5 rounded-xl border border-[#DDE2D9] text-sm bg-white"
+        />
+      )}
 
-            {analysis.flags && analysis.flags.length > 0 && (
-              <div>
-                <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">Automated Flags (Risks)</h3>
-                <div className="space-y-3">
-                  {analysis.flags.map((flag: string, i: number) => (
-                    <div key={i} className="flex items-start gap-3 bg-red-50 border border-red-100 p-4 rounded-xl">
-                      <AlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                      <p className="text-red-900 text-sm font-medium">{flag}</p>
-                    </div>
-                  ))}
+      {documents.length === 0 ? (
+        <p className="text-sm text-[#68716D] text-center py-8">No documents yet.</p>
+      ) : (
+        <div className="space-y-4">
+          {visible.map((doc) => (
+            <div key={doc.id} className="bg-white rounded-2xl p-5 border border-[#ECEFEA] shadow-sm space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <FileText className="w-5 h-5 text-[#153D32] shrink-0" />
+                  <div className="min-w-0">
+                    <p className="font-bold text-sm text-[#153D32] truncate">{doc.extraction?.documentType || doc.name}</p>
+                    <p className="text-[11px] text-[#68716D]">{doc.name} · {doc.uploadedAt}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <StatusBadge status={doc.status} />
+                  <button
+                    onClick={() => persist(documents.filter((d) => d.id !== doc.id))}
+                    className="p-1.5 text-[#8C9691] hover:text-red-600"
+                    aria-label={`Remove ${doc.name}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-            )}
 
-            {docState === "USER_REVIEW_REQUIRED" && (
-              <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4 justify-end">
-                <button 
-                  onClick={() => { setFile(null); setAnalysis(null); setDocState(null); }}
-                  className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2"
-                >
-                  <XCircle className="w-5 h-5" />
-                  Reject Analysis
-                </button>
-                <button 
-                  onClick={handleConfirm}
-                  className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition flex items-center justify-center gap-2 shadow-sm"
-                >
-                  <CheckCircle className="w-5 h-5" />
-                  Confirm Accuracy
-                </button>
-              </div>
-            )}
-            
-            {docState === "CONFIRMED" && (
-              <div className="pt-6 border-t border-gray-100 text-center">
-                <p className="text-emerald-700 font-medium">This document has been confirmed and saved to your SANAD vault.</p>
-              </div>
-            )}
-          </div>
+              {doc.error && (
+                <p className="text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl p-3 flex gap-2">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  {doc.error}
+                </p>
+              )}
+
+              {doc.extraction && doc.status !== "ANALYZING" && (
+                <div className="text-xs space-y-2">
+                  {!!doc.extraction.fields?.length && (
+                    <div className="grid sm:grid-cols-2 gap-2">
+                      {doc.extraction.fields.map((f, i) => (
+                        <div key={i} className="p-2.5 rounded-lg bg-[#FAFBF9] border border-[#ECEFEA]">
+                          <span className="text-[#68716D]">{f.label}</span>
+                          <p className="font-bold text-[#202A27]">{f.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {doc.extraction.expiryDate && <p className="text-[#3A4540]">Expiry date: <b>{doc.extraction.expiryDate}</b></p>}
+                  {!!doc.extraction.unreadableFields?.length && (
+                    <p className="text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2.5">
+                      Unreadable or missing: {doc.extraction.unreadableFields.join(", ")}
+                    </p>
+                  )}
+                  {!!doc.extraction.flags?.length && (
+                    <p className="text-[#92400E]">Flags: {doc.extraction.flags.join("; ")}</p>
+                  )}
+                </div>
+              )}
+
+              {doc.status === "NEEDS_CONFIRMATION" && (
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => persist(documents.filter((d) => d.id !== doc.id))}
+                    className="px-4 py-2 rounded-xl border border-[#DDE2D9] text-xs font-bold text-[#153D32]"
+                  >
+                    Discard
+                  </button>
+                  <button onClick={() => confirmDoc(doc)} className="px-4 py-2 rounded-xl bg-[#153D32] text-white text-xs font-bold">
+                    Confirm and add to My Situation
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
 
-      {vaultDocs.length > 0 && (
-        <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h2 className="text-xl font-extrabold text-gray-900 mb-6">Your Vault History</h2>
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="divide-y divide-gray-100">
-              {vaultDocs.map((doc, idx) => (
-                <div key={idx} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                      <FileText className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900">{doc.name}</h3>
-                      <p className="text-sm text-gray-500">{doc.type} • {doc.date}</p>
-                    </div>
-                  </div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-full uppercase tracking-wider border border-emerald-200">
-                    <ShieldCheck className="w-4 h-4" />
-                    {doc.status}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="flex justify-between items-center pt-2">
+        <Link href="/situation" className="text-xs font-bold text-[#153D32] hover:underline">← My Situation</Link>
+        <Link href="/chat" className="text-xs font-bold text-[#153D32] hover:underline">Ask SANAD →</Link>
+      </div>
     </div>
   );
 }
 
-
-
-
-
+function StatusBadge({ status }: { status: Doc["status"] }) {
+  const map = {
+    ANALYZING: { cls: "bg-blue-50 text-blue-800", text: "Analyzing...", icon: <Loader2 className="w-3 h-3 animate-spin" /> },
+    NEEDS_CONFIRMATION: { cls: "bg-amber-50 text-amber-800", text: "Needs your confirmation", icon: null },
+    CONFIRMED: { cls: "bg-[#EBF7EE] text-[#166534]", text: "Confirmed by you", icon: <CheckCircle2 className="w-3 h-3" /> },
+    FAILED: { cls: "bg-red-50 text-red-700", text: "Not extracted", icon: null },
+  }[status];
+  return (
+    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${map.cls}`}>
+      {map.icon}
+      {map.text}
+    </span>
+  );
+}

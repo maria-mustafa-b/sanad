@@ -5,13 +5,18 @@ import { cookies } from "next/headers";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/understand";
+  // Same-origin paths only: "//evil.com" or "@evil.com" must not leave the site.
+  const requested = searchParams.get("redirect") || "";
+  const redirectTarget = /^\/(?![/\\])/.test(requested) ? requested : "/dashboard";
 
-  if (code) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (code && supabaseUrl && supabaseKey) {
     const jar = await cookies();
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      supabaseUrl,
+      supabaseKey,
       {
         cookies: {
           getAll: () => jar.getAll(),
@@ -28,12 +33,12 @@ export async function GET(request: NextRequest) {
       },
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error && data?.user) {
+      return NextResponse.redirect(`${origin}${redirectTarget}`);
     }
   }
 
-  // Auth exchange completed or failed — redirect to understand or onboarding
-  return NextResponse.redirect(`${origin}${next}`);
+  // Redirect to dashboard
+  return NextResponse.redirect(`${origin}${redirectTarget}`);
 }

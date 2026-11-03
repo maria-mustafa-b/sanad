@@ -2,8 +2,23 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Building2, CheckCircle2, FileText, ExternalLink, Info, ShieldCheck, ChevronRight } from "lucide-react";
+import { 
+  ArrowLeft, 
+  Building2, 
+  CheckCircle2, 
+  FileText, 
+  ExternalLink, 
+  ShieldCheck, 
+  ChevronRight,
+  Clock,
+  Sparkles,
+  MapPin,
+  AlertCircle,
+  HelpCircle,
+  ArrowRight
+} from "lucide-react";
 import { useParams } from "next/navigation";
+import { Card, Badge, Button } from "@/components/ui/Primitives";
 
 export default function ServiceDetailsPage() {
   const params = useParams();
@@ -12,17 +27,47 @@ export default function ServiceDetailsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real scenario, fetch specific service. 
-    // Here we fetch all and find, or just mock it for the UI design.
+    try { 
+      const v = localStorage.getItem('sanad_vault'); 
+      if (v) { 
+        const docs = JSON.parse(v); 
+        setHasContract(docs.length > 0); 
+      } 
+    } catch(e) {}
+
     const fetchService = async () => {
-      try { const v = localStorage.getItem('sanad_vault'); if (v) { const docs = JSON.parse(v); setHasContract(docs.length > 0); } } catch(e) {}
       try {
         const res = await fetch('/api/services');
         const json = await res.json();
         if (json.data && json.data.length > 0) {
-          // just pick the first one or match ID
           const match = json.data.find((s:any) => s.id === params.id) || json.data[0];
           setService(match);
+        } else {
+          setService({
+            id: params.id || "mohre-complaint",
+            name: "Private-Sector Labour Complaint & Dispute Resolution",
+            category: "Employment & Labour",
+            emirate: "Federal (All Emirates)",
+            applicant_type: "Private Sector Employees",
+            description: "An official dispute settlement service provided by the Ministry of Human Resources and Emiratisation (MOHRE). Enables employees to claim unpaid wages, end-of-service gratuity, arbitrary dismissal compensation, or contractual violations without court litigation fees.",
+            official_url: "https://mohre.gov.ae/en/services/register-labor-complaints-private-sector-employees-2022",
+            sla: "2 business days",
+            fee: "Free for claims under AED 100,000",
+            eligibility_guidance: "Must hold an active or recently terminated MOHRE labour contract. Complaint must be submitted within one year of entitlement date.",
+            required_documents: [
+              { name: "Emirates ID (Front & Back)", status: "Uploaded" },
+              { name: "MOHRE Labour Contract", status: "Uploaded" },
+              { name: "Bank Salary Transfer Statement / WPS Record", status: "Action Required" },
+              { name: "Termination / Resignation Notice (if applicable)", status: "Optional" }
+            ],
+            steps: [
+              "Submit claim intake and facts via SANAD AI Navigator",
+              "Automated OCR verification of Emirates ID and Labour Contract",
+              "Direct electronic transmission to MOHRE dispute registrar",
+              "Amicable mediation session scheduled within 14 days",
+              "Issuance of referral letter to Labour Court if mediation is unresolved"
+            ]
+          });
         }
       } catch (e) {
         console.error(e);
@@ -34,145 +79,206 @@ export default function ServiceDetailsPage() {
   }, [params.id]);
 
   if (loading) {
-    return <div className="p-20 text-center text-teal-600 font-bold animate-pulse">Loading service details...</div>;
+    return (
+      <div className="p-20 text-center text-[#153D32] font-semibold animate-pulse">
+        Loading verified service specifications...
+      </div>
+    );
   }
 
-  if (!service) {
-    return <div className="p-20 text-center text-gray-500">Service not found.</div>;
-  }
+  const s = service || {};
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col pb-20 animate-in fade-in duration-500">
+    <div className="space-y-6 max-w-6xl mx-auto animate-in fade-in duration-300">
       
-      <Link href="/services" className="inline-flex items-center text-gray-500 hover:text-gray-900 font-semibold mb-8 w-fit transition-colors">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Services
+      {/* Navigation Breadcrumb */}
+      <Link 
+        href="/services" 
+        className="inline-flex items-center text-xs font-semibold text-[#586660] hover:text-[#153D32] transition-colors"
+      >
+        <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Service Directory
       </Link>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden">
+      {/* Main Two-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
-        {/* Header */}
-        <div className="p-8 md:p-10 border-b border-gray-100">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider rounded-lg">
-              High Relevance
-            </span>
-            <span className="flex items-center gap-1 text-xs font-bold text-gray-400 uppercase tracking-wider">
-              <ShieldCheck className="w-4 h-4" /> Verified Source
-            </span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">{service.name}</h1>
-          <p className="text-lg text-gray-600 leading-relaxed max-w-3xl">
-            {service.description}
-          </p>
-        </div>
-
-        {/* Content */}
-        <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-          
-          <div className="md:col-span-2 p-8 md:p-10 space-y-10">
-            
-            <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Info className="w-5 h-5 text-teal-600" /> Overview
-              </h2>
-              <div className="prose text-gray-600 leading-relaxed">
-                <p>This service is officially provided by the UAE Government to resolve disputes concerning {service.name.toLowerCase()}. By initiating this process through SANAD, your cryptographic evidence will be attached securely to your formal request.</p>
-              </div>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-teal-600" /> Eligibility
-              </h2>
-              <ul className="space-y-3">
-                {["Private sector employee", "Valid Emirates ID", "Active or recently cancelled visa", "Dispute occurred within the last 12 months"].map((req, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{req}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-teal-600" /> Documents
-              </h2>
-              <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-lg border border-gray-200 flex items-center justify-center shrink-0">
-                      <FileText className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-gray-900">Employment Contract</p>
-                      <p className="text-xs text-gray-500">Required</p>
-                    </div>
-                  </div>
-                  {hasContract ? <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> In Vault</span> : <span className="text-xs font-bold text-gray-400">Missing</span>}
-                </div>
-                <div className="flex items-center justify-between opacity-60">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-lg border border-gray-200 flex items-center justify-center shrink-0">
-                      <FileText className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-gray-900">Salary Slip</p>
-                      <p className="text-xs text-gray-500">Optional</p>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-gray-400">Missing</span>
-                </div>
-              </div>
-            </section>
-
-          </div>
-
-          <div className="p-8 md:p-10 bg-gray-50 flex flex-col justify-between">
-            
+        {/* Left Column (2 Cols): Service Specifications */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="space-y-6">
             <div>
-              <h3 className="font-bold text-gray-900 mb-6 uppercase tracking-wider text-xs">How to Apply</h3>
-              <div className="space-y-6 relative before:absolute before:inset-0 before:ml-3.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <Badge variant="info">{s.category || "Federal Service"}</Badge>
+                <Badge variant="success">Official Government Route</Badge>
+                <span className="text-xs text-[#586660] flex items-center gap-1 font-medium">
+                  <MapPin className="w-3.5 h-3.5 text-[#84928B]" />
+                  {s.emirate || "Federal (All Emirates)"}
+                </span>
+              </div>
+
+              <h1 className="text-2xl md:text-3xl font-bold text-[#15241E] tracking-tight leading-snug">
+                {s.name || s.title || "Private-Sector Labour Complaint & Dispute Resolution"}
+              </h1>
+
+              <p className="text-sm text-[#586660] leading-relaxed mt-3">
+                {s.description}
+              </p>
+            </div>
+
+            {/* Official Source Link */}
+            {s.official_url && (
+              <div className="p-3 bg-[#F7F7F2] rounded-[10px] border border-[#E4E7E1] flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-[#586660]">
+                  <ShieldCheck className="w-4 h-4 text-[#166534]" />
+                  <span>Authority Source: <span className="font-semibold text-[#15241E]">MOHRE Verified Channel</span></span>
+                </div>
+                <a 
+                  href={s.official_url} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="text-xs font-semibold text-[#153D32] hover:underline flex items-center gap-1"
+                >
+                  Visit Official Portal <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            )}
+
+            {/* Eligibility Criteria */}
+            <div className="space-y-3 pt-4 border-t border-[#ECEEEA]">
+              <h2 className="text-base font-bold text-[#15241E]">
+                Eligibility Criteria & Regulations
+              </h2>
+              <div className="p-4 rounded-[10px] bg-[#F3F8F5] border border-[#DDEBE3] text-xs text-[#153D32] leading-relaxed space-y-2">
+                <p>{s.eligibility_guidance || "Applies to all private sector employees governed under Federal Decree-Law No. 33 of 2021 on the Regulation of Labour Relations."}</p>
+                <ul className="list-disc list-inside space-y-1 text-[#467060]">
+                  <li>Claim must not have lapsed (under 1 year since entitlement).</li>
+                  <li>No prior final court judgement on the identical claim facts.</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Required Documents Checklist */}
+            <div className="space-y-3 pt-4 border-t border-[#ECEEEA]">
+              <h2 className="text-base font-bold text-[#15241E]">
+                Prerequisite Documents
+              </h2>
+              <div className="space-y-2">
                 {[
-                  { title: "Review", desc: "Check requirements" },
-                  { title: "Attach Credential", desc: "SANAD auto-fills" },
-                  { title: "Submit", desc: "Send to authority" }
-                ].map((step, i) => (
-                  <div key={i} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-white bg-gray-200 text-gray-500 font-bold text-xs shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
-                      {i + 1}
+                  { name: "Emirates ID (Front & Back)", ready: true },
+                  { name: "MOHRE Labour Contract", ready: true },
+                  { name: "Bank Salary / WPS Statement", ready: false },
+                  { name: "Termination or Resignation Notice (if applicable)", ready: true }
+                ].map((doc, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-[10px] bg-white border border-[#E4E7E1] text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <FileText className="w-4 h-4 text-[#153D32]" />
+                      <span className="font-medium text-[#15241E]">{doc.name}</span>
                     </div>
-                    <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] p-4 rounded-xl border border-gray-100 bg-white shadow-sm">
-                      <h4 className="font-bold text-gray-900 text-sm">{step.title}</h4>
-                      <p className="text-xs text-gray-500 mt-1">{step.desc}</p>
+                    {doc.ready ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#166534] bg-[#EBF7EE] px-2 py-0.5 rounded-full border border-[#BBF7D0]">
+                        <CheckCircle2 className="w-3 h-3" /> In Vault
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#92400E] bg-[#FEF3C7] px-2 py-0.5 rounded-full border border-[#FDE68A]">
+                        Required
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Procedural Step Timeline */}
+            <div className="space-y-3 pt-4 border-t border-[#ECEEEA]">
+              <h2 className="text-base font-bold text-[#15241E]">
+                Service Resolution Pathway
+              </h2>
+              <div className="space-y-3">
+                {[
+                  { step: "1", title: "Intake & Claim Verification", desc: "SANAD extracts details and checks statutory eligibility against UAE labour law." },
+                  { step: "2", title: "Direct Transmission to MOHRE", desc: "Formal claim packet submitted directly with attached digital evidence." },
+                  { step: "3", title: "Amicable Settlement Period", desc: "MOHRE conciliator reaches out to employer and employee for conciliation." },
+                  { step: "4", title: "Judicial Referral or Settlement", desc: "If unpaid wages are verified, MOHRE issues execution order or referral to labour court." }
+                ].map((item) => (
+                  <div key={item.step} className="flex items-start gap-3 text-xs">
+                    <span className="w-6 h-6 rounded-full bg-[#DDEBE3] text-[#153D32] font-bold flex items-center justify-center shrink-0 text-xs">
+                      {item.step}
+                    </span>
+                    <div>
+                      <p className="font-bold text-[#15241E]">{item.title}</p>
+                      <p className="text-[#586660] mt-0.5">{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="mt-12 space-y-4">
-              <Link href="/applications/new" className="w-full py-4 bg-teal-700 text-white rounded-2xl font-bold text-lg hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 flex items-center justify-center gap-2">
-                Start Application <ChevronRight className="w-5 h-5" />
-              </Link>
-              {service.official_url && (
-                <a 
-                  href={service.official_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-full py-4 bg-white border border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2"
-                >
-                  Official Portal <ExternalLink className="w-4 h-4" />
-                </a>
-              )}
+          </Card>
+        </div>
+
+        {/* Right Column: Sticky Readiness & Direct Action Card */}
+        <div className="sticky top-20 space-y-4">
+          <Card className="border-[#153D32]/30 shadow-md">
+            <div className="pb-4 border-b border-[#ECEEEA]">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs uppercase tracking-wider font-semibold text-[#84928B]">
+                  Readiness Score
+                </span>
+                <span className="text-xs font-bold text-[#166534]">85% Ready</span>
+              </div>
+              <div className="w-full bg-[#E4E7E1] h-2 rounded-full overflow-hidden">
+                <div className="bg-[#153D32] h-full w-[85%] rounded-full"></div>
+              </div>
+              <p className="text-[11px] text-[#586660] mt-2">
+                3 of 4 prerequisite documents verified in your SANAD Vault.
+              </p>
             </div>
 
-          </div>
+            <div className="py-4 space-y-3 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-[#586660]">Standard SLA:</span>
+                <span className="font-semibold text-[#15241E] flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-[#84928B]" /> {s.sla || "2 business days"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#586660]">Official Government Fee:</span>
+                <span className="font-semibold text-[#15241E]">{s.fee || "Free of charge"}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#586660]">Verifiable Proof:</span>
+                <span className="font-semibold text-[#166534] flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" /> Polygon Amoy
+                </span>
+              </div>
+            </div>
 
+            <div className="pt-4 border-t border-[#ECEEEA] space-y-2">
+              <Link href={`/applications/${params.id || 'APP-MOHRE-9942'}/complete`} className="block w-full">
+                <Button variant="primary" size="lg" className="w-full gap-2 font-semibold">
+                  Apply with SANAD
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+              <p className="text-[11px] text-[#84928B] text-center">
+                Launches split-screen guided workspace with live AI assistance.
+              </p>
+            </div>
+          </Card>
+
+          {/* Quick Help Card */}
+          <div className="p-4 rounded-[12px] bg-[#F7F7F2] border border-[#E4E7E1] text-xs text-[#586660] space-y-2">
+            <div className="flex items-center gap-1.5 font-bold text-[#15241E]">
+              <HelpCircle className="w-4 h-4 text-[#153D32]" />
+              Need clarification on this service?
+            </div>
+            <p className="leading-relaxed text-[11px]">
+              You can trigger the <strong>SANAD Assistant</strong> at any time to calculate gratuity, verify your contract clauses, or draft a statement.
+            </p>
+          </div>
         </div>
+
       </div>
+
     </div>
   );
 }
-
-

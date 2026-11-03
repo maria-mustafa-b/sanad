@@ -1,102 +1,78 @@
 "use client";
 
-import { useState } from "react";
-import { Bell, Clock, ShieldCheck, FileText, Building2, CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Bell, AlertTriangle, ArrowRight } from "lucide-react";
+import { useSituation } from "@/lib/context/SituationContext";
 
+type Reminder = { id: string; title: string; message: string; href: string; label: string };
+
+// Reminders are derived from the user's own data only: nothing here is invented.
 export default function NotificationsPage() {
-  const [activeTab, setActiveTab] = useState("ALL");
+  const { profile } = useSituation();
+  const [docs, setDocs] = useState<{ id: string; name: string; status: string; extraction?: { documentType?: string; expiryDate?: string } }[]>([]);
 
-  const notifications = [
-    {
-      id: 1,
-      type: "Application",
-      title: "Application status changed",
-      message: "Your application for 'Unpaid Wages Complaint' is now Under Review.",
-      time: "2 hours ago",
-      read: false,
-      icon: Clock,
-      color: "amber"
-    },
-    {
-      id: 2,
-      type: "Credential",
-      title: "Credential issued",
-      message: "Your SANAD credential (SANAD-VC-00124) has been issued successfully on the Polygon blockchain.",
-      time: "5 hours ago",
-      read: true,
-      icon: ShieldCheck,
-      color: "emerald"
-    },
-    {
-      id: 3,
-      type: "Document",
-      title: "Document analysis complete",
-      message: "We've extracted information from your uploaded Employment Contract.",
-      time: "1 day ago",
-      read: true,
-      icon: FileText,
-      color: "blue"
-    },
-    {
-      id: 4,
-      type: "Update",
-      title: "New service recommendation",
-      message: "Based on your profile, you may be eligible for 'Financial Assistance Program'.",
-      time: "2 days ago",
-      read: true,
-      icon: Building2,
-      color: "purple"
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("sanad_documents");
+      if (saved) setDocs(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  const reminders: Reminder[] = [];
+  for (const d of docs) {
+    const name = d.extraction?.documentType || d.name;
+    if (d.status === "NEEDS_CONFIRMATION") {
+      reminders.push({ id: `c-${d.id}`, title: `Review ${name}`, message: "SANAD read this document. Confirm the extracted details before they are used.", href: "/documents", label: "Review document" });
     }
-  ];
+    const exp = d.extraction?.expiryDate ? new Date(d.extraction.expiryDate) : null;
+    if (exp && !isNaN(exp.getTime())) {
+      const days = Math.ceil((exp.getTime() - Date.now()) / 86400000);
+      if (days <= 180) {
+        reminders.push({ id: `e-${d.id}`, title: `${name} ${days < 0 ? "has expired" : `expires in ${days} days`}`, message: `Expiry date read from your upload: ${d.extraction!.expiryDate}. Confirm on the original document.`, href: "/documents", label: "View document" });
+      }
+    }
+  }
+  const unconfirmed = Object.values(profile?.facts || {}).filter((f) => !f.confirmed).length;
+  if (unconfirmed) {
+    reminders.push({ id: "facts", title: `${unconfirmed} detail${unconfirmed > 1 ? "s" : ""} need your confirmation`, message: "Check what SANAD understood from your conversation.", href: "/situation", label: "Open My Situation" });
+  }
+  for (const [i, m] of (profile?.missing_info || []).entries()) {
+    reminders.push({ id: `m-${i}`, title: "Missing information", message: m, href: "/chat", label: "Tell SANAD" });
+  }
 
   return (
-    <div className="w-full max-w-3xl mx-auto flex flex-col pb-20 animate-in fade-in duration-500">
-      
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-in fade-in duration-300">
+      <div className="flex items-start gap-3 pb-2 border-b border-[#ECEFEA]">
+        <div className="w-10 h-10 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shrink-0">
+          <Bell className="w-5 h-5" />
+        </div>
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Notifications</h1>
-          <p className="text-gray-500">Stay updated on your claims and credentials.</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-[#153D32] tracking-tight">Notifications</h1>
+          <p className="text-xs sm:text-sm text-[#68716D] mt-0.5">Reminders built from your own documents and situation.</p>
         </div>
       </div>
 
-      <div className="flex gap-2 p-1 bg-gray-100 rounded-xl w-fit mb-8 overflow-x-auto">
-        {['All', 'Updates', 'Applications', 'Credentials'].map((tab) => (
-          <button 
-            key={tab}
-            onClick={() => setActiveTab(tab.toUpperCase())}
-            className={`px-6 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-all ${
-              activeTab === tab.toUpperCase() 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden divide-y divide-gray-100">
-        {notifications.map((notif) => (
-          <div key={notif.id} className={`p-6 flex items-start gap-4 transition-colors hover:bg-gray-50 ${!notif.read ? 'bg-blue-50/30' : ''}`}>
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm border border-${notif.color}-100 bg-${notif.color}-50 text-${notif.color}-600`}>
-              <notif.icon className="w-5 h-5" />
-            </div>
-            <div className="flex-1 pt-1">
-              <div className="flex items-start justify-between gap-4 mb-1">
-                <h3 className={`text-sm font-bold ${!notif.read ? 'text-gray-900' : 'text-gray-700'}`}>
-                  {notif.title}
-                </h3>
-                <span className="text-xs font-semibold text-gray-400 shrink-0">{notif.time}</span>
+      {reminders.length === 0 ? (
+        <p className="text-sm text-[#68716D] text-center py-12">You&apos;re all caught up. No reminders right now.</p>
+      ) : (
+        <div className="space-y-3">
+          {reminders.map((r) => (
+            <div key={r.id} className="bg-white rounded-2xl p-5 border border-[#ECEFEA] shadow-sm flex items-start justify-between gap-4">
+              <div className="flex gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-sm text-[#153D32]">{r.title}</p>
+                  <p className="text-xs text-[#5C6661] mt-0.5">{r.message}</p>
+                </div>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed">{notif.message}</p>
+              <Link href={r.href} className="inline-flex items-center gap-1 text-xs font-bold text-[#153D32] shrink-0 hover:underline">
+                {r.label} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
-            {!notif.read && (
-              <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 shrink-0"></div>
-            )}
-          </div>
-        ))}
-      </div>
-
+          ))}
+        </div>
+      )}
     </div>
   );
 }

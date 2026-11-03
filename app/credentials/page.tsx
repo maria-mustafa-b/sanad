@@ -1,157 +1,172 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { Plus, ShieldCheck, Download, QrCode, ArrowRight, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { 
+  ShieldCheck, 
+  CheckCircle2, 
+  ExternalLink, 
+  Copy, 
+  Check, 
+  QrCode, 
+  Lock, 
+  AlertTriangle 
+} from "lucide-react";
 
 export default function CredentialsPage() {
-  const [activeTab, setActiveTab] = useState('ALL');
-  const [claims, setClaims] = useState<any[]>([]);
-  const [needsAuth, setNeedsAuth] = useState(false);
+  const [copied, setCopied] = useState(false);
+  // Deployed SANADCredential contract on Polygon Amoy.
+  const realContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x13798285e9fa1aCd15930e8D510A34BB983F1484";
+  const sampleCredId = "SANAD-VC-00124";
 
-  useEffect(() => {
-    fetch('/api/claims').then(r => {
-      if (r.status === 401) { setNeedsAuth(true); return { data: null }; }
-      return r.json();
-    }).then(j => { if (j && j.data) setClaims(j.data) }).catch(console.error);
-  }, []);
-
-  const credentials = claims.map((c, i) => {
-    let sit = "Employment Situation";
-    try {
-      const intentObj = typeof c.intent === 'string' ? JSON.parse(c.intent) : c.intent;
-      if (intentObj.intent) sit = intentObj.intent;
-    } catch(e) {}
-    
-    return {
-      id: "SANAD-VC-0" + (124 + i),
-      situation: sit,
-      issueDate: new Date(c.created_at).toISOString().split('T')[0],
-      issuer: "SANAD",
-      blockchain: "Polygon Amoy",
-      status: "Valid"
-    }
-  });
-
-  if (credentials.length === 0) {
-    credentials.push({
-      id: "SANAD-VC-00124",
-      situation: "Employment Situation: Unpaid Wages",
-      issueDate: "2026-09-26",
-      issuer: "SANAD",
-      blockchain: "Polygon Amoy",
-      status: "Valid"
-    });
-  }
-
-  const filtered = activeTab === 'ALL' 
-    ? credentials 
-    : credentials.filter(c => c.status.toUpperCase() === activeTab);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(sampleCredId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <div className="w-full flex flex-col animate-in fade-in duration-500">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
       
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">My Credentials</h1>
-          <p className="text-gray-500">Manage your cryptographic proofs and verifiable claims.</p>
+      {/* ================= HEADER ================= */}
+      <div className="flex items-start gap-3 pb-2 border-b border-[#ECEFEA]">
+        <div className="w-10 h-10 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shrink-0 shadow-2xs">
+          <ShieldCheck className="w-5 h-5" />
         </div>
-        <Link href="/documents" className="flex items-center gap-2 px-6 py-3 bg-teal-700 text-white rounded-xl font-bold hover:bg-teal-800 transition shadow-lg shadow-teal-700/20 shrink-0">
-          <Plus className="w-5 h-5" /> Create New
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-[#153D32] tracking-tight">
+            My Credentials
+          </h1>
+          <p className="text-xs sm:text-sm text-[#68716D] mt-0.5">
+            Your verifiable documents and digital records (Polygon Amoy Testnet).
+          </p>
+        </div>
+      </div>
+
+      {/* Clear Prototype Notice to Prevent Misleading Officials */}
+      <div className="p-3.5 bg-amber-50/80 border border-amber-200 rounded-2xl text-xs text-amber-900 flex items-center gap-2.5">
+        <AlertTriangle className="w-4 h-4 shrink-0 text-amber-700" />
+        <span>
+          <strong>Prototype Notice:</strong> Digital credentials displayed here are demo testnet credentials anchored to Polygon Amoy for prototype verification.
+        </span>
+      </div>
+
+      {/* ================= UAE RESIDENCY DIGITAL CREDENTIAL CARD ================= */}
+      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#ECEFEA] shadow-sm relative overflow-hidden space-y-6">
+        
+        <div className="absolute right-0 bottom-0 w-80 h-40 bg-gradient-to-t from-[#DDEBE3]/40 to-transparent pointer-events-none rounded-bl-full"></div>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+          
+          <div className="space-y-4">
+            
+            <div className="flex items-start gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#FAFBF9] border border-[#ECEFEA] flex items-center justify-center shrink-0 text-xl shadow-2xs">
+                🦅
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-black text-[#153D32]">
+                  UAE Residency Attestation
+                </h2>
+                <p className="text-xs text-[#68716D]">
+                  SANAD Verifiable Digital Credential (Testnet)
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBF7EE] text-[#166534] border border-[#BBF7D0] text-xs font-bold">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Verified (Testnet Registry)</span>
+              </span>
+            </div>
+
+            <div className="space-y-1.5 text-xs text-[#5C6661] pt-1">
+              <p>
+                <span className="font-semibold text-[#202A27]">Credential ID:</span>{" "}
+                <button 
+                  onClick={handleCopy}
+                  className="font-mono font-bold text-[#153D32] hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{sampleCredId}</span>
+                  {copied ? <Check className="w-3 h-3 text-[#166534]" /> : <Copy className="w-3 h-3 text-[#8C9691]" />}
+                </button>
+              </p>
+              <p>
+                <span className="font-semibold text-[#202A27]">Issuer Node:</span><br />
+                SANAD UAE Gov AI Node (Polygon Amoy)
+              </p>
+              <p className="pt-0.5">
+                <span className="font-semibold text-[#202A27]">Registry Contract:</span><br />
+                <span className="font-mono text-[11px] text-[#153D32]">{realContractAddress}</span>
+              </p>
+            </div>
+
+          </div>
+
+          <div className="flex flex-col items-center justify-center p-6 bg-[#FAFBF9] rounded-2xl border border-[#ECEFEA] shrink-0 self-center md:self-auto shadow-2xs">
+            <div className="w-32 h-32 bg-white p-2 rounded-xl border border-[#DDE2D9] flex items-center justify-center shadow-2xs">
+              <svg className="w-full h-full text-[#153D32]" viewBox="0 0 100 100" fill="currentColor">
+                <rect x="10" y="10" width="25" height="25" rx="3" />
+                <rect x="15" y="15" width="15" height="15" fill="#FAFBF9" />
+                <rect x="18" y="18" width="9" height="9" />
+                <rect x="65" y="10" width="25" height="25" rx="3" />
+                <rect x="70" y="15" width="15" height="15" fill="#FAFBF9" />
+                <rect x="73" y="18" width="9" height="9" />
+                <rect x="10" y="65" width="25" height="25" rx="3" />
+                <rect x="15" y="70" width="15" height="15" fill="#FAFBF9" />
+                <rect x="18" y="73" width="9" height="9" />
+                <rect x="42" y="12" width="6" height="6" />
+                <rect x="52" y="20" width="6" height="6" />
+                <rect x="42" y="32" width="6" height="6" />
+                <rect x="42" y="45" width="16" height="16" />
+                <rect x="65" y="45" width="8" height="8" />
+                <rect x="80" y="55" width="10" height="10" />
+                <rect x="65" y="75" width="12" height="12" />
+                <rect x="42" y="75" width="8" height="8" />
+              </svg>
+            </div>
+            <Link 
+              href={`/verify?id=${sampleCredId}`}
+              className="text-[11px] font-bold text-[#153D32] hover:underline mt-3 flex items-center gap-1"
+            >
+              <span>Scan to Verify</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+          </div>
+
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-5 border-t border-[#F0F3EE] text-xs font-semibold text-[#5C6661] relative z-10">
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-[#166534]" />
+            <span>Zero Personal Data On-Chain</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-[#7C3AED]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#7C3AED]"></span>
+            <span className="font-bold">Polygon Amoy (Chain ID: 80002)</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div className="flex justify-between items-center pt-2">
+        <Link 
+          href="/situation" 
+          className="text-xs font-bold text-[#153D32] hover:underline"
+        >
+          ← Back to My Situation
+        </Link>
+        <Link 
+          href={`/verify?id=${sampleCredId}`}
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#153D32] hover:underline"
+        >
+          <span>Open Public Verifier</span>
+          <ExternalLink className="w-3.5 h-3.5" />
         </Link>
       </div>
 
-      {needsAuth && (
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-4 text-sm font-medium mb-6">
-          Sign in to see your credentials. Only you can access them — anonymous access was removed to protect you.
-        </div>
-      )}
-
-      <div className="flex gap-2 p-1 bg-gray-100 rounded-xl w-fit mb-8 overflow-x-auto">
-        {['All', 'Valid', 'Revoked', 'Expired'].map((tab) => (
-          <button 
-            key={tab}
-            onClick={() => setActiveTab(tab.toUpperCase())}
-            className={`px-6 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-all ${
-              activeTab === tab.toUpperCase() 
-                ? 'bg-white text-gray-900 shadow-sm' 
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {filtered.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-gray-100 p-20 flex flex-col items-center justify-center text-center shadow-sm">
-          <ShieldCheck className="w-16 h-16 text-gray-200 mb-4" />
-          <p className="text-xl font-bold text-gray-900 mb-2">No credentials found</p>
-          <p className="text-gray-500 max-w-sm">You haven't issued any credentials in this category yet.</p>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {filtered.map((cred) => (
-            <div key={cred.id} className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_4px_25px_rgb(0,0,0,0.06)] transition-all duration-300 flex flex-col">
-              
-              <div className="flex justify-between items-start mb-8 gap-4 border-b border-gray-100 pb-6">
-                <div>
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider mb-4 ${
-                    cred.status === 'Valid' ? 'bg-emerald-50 text-emerald-700' : 
-                    cred.status === 'Revoked' ? 'bg-red-50 text-red-700' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {cred.status === 'Valid' && <CheckCircle2 className="w-3.5 h-3.5" />}
-                    {cred.status === 'Revoked' && <XCircle className="w-3.5 h-3.5" />}
-                    {cred.status === 'Expired' && <Clock className="w-3.5 h-3.5" />}
-                    {cred.status.toUpperCase()}
-                  </div>
-                  <h3 className="font-bold text-lg text-gray-900 leading-snug">{cred.situation}</h3>
-                </div>
-                <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100">
-                  <ShieldCheck className="w-6 h-6 text-teal-600" />
-                </div>
-              </div>
-              
-              <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500">Credential ID</span>
-                  <span className="font-bold text-gray-900 font-mono bg-gray-50 px-2 py-0.5 rounded">{cred.id}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500">Issue Date</span>
-                  <span className="font-semibold text-gray-900">{cred.issueDate}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500">Issuer</span>
-                  <span className="font-semibold text-gray-900">{cred.issuer}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500">Blockchain</span>
-                  <span className="font-semibold text-gray-900 flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-purple-500"></div> {cred.blockchain}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="pt-6 border-t border-gray-100 flex items-center justify-between mt-auto gap-4">
-                <div className="flex gap-2">
-                  <button className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-colors tooltip-trigger" title="Download JSON">
-                    <Download className="w-5 h-5" />
-                  </button>
-                  <button className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-colors" title="Show QR">
-                    <QrCode className="w-5 h-5" />
-                  </button>
-                </div>
-                
-                <Link href={`/credentials/${cred.id}`} className="text-teal-700 font-bold flex items-center gap-1.5 hover:text-teal-800 transition-colors group">
-                  View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
-

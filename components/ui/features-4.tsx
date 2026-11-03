@@ -2,7 +2,7 @@ import { Sparkles, ShieldCheck, Mic, Globe2, FileSearch, Lock } from 'lucide-rea
 
 export function Features() {
     return (
-        <section className="py-12 md:py-20 bg-slate-900">
+        <section id="how-it-works" className="py-12 md:py-20 bg-slate-900 scroll-mt-20">
             <div className="mx-auto max-w-5xl space-y-8 px-6 md:space-y-16">
                 <div className="relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-12">
                     <h2 className="text-balance text-4xl font-extrabold lg:text-5xl text-white">The foundation for secure worker protection</h2>
