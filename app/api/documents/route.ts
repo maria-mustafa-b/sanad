@@ -1,21 +1,30 @@
 import { NextResponse } from 'next/server';
+
+// Leaves room for the provider fallback chain.
+export const maxDuration = 60;
 import { supabase } from '@/lib/supabase';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { z } from 'zod';
+import { aiConfigured, generateJSON } from '@/lib/ai/resilient';
+
+const ocrSchema = z.object({
+  documentType: z.string().default('Unknown document'),
+  extractedText: z.string().default(''),
+  fields: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+  unreadableFields: z.array(z.string()).default([]),
+  expiryDate: z.string().nullish(),
+  flags: z.array(z.string()).default([]),
+  readable: z.boolean().default(true),
+  confidence: z.number().default(0),
+});
 
 export async function POST(request: Request) {
   try {
-    const apiKey = process.env.AI_API_KEY;
-    if (!apiKey) {
+    if (!aiConfigured()) {
       return NextResponse.json(
-        {
-          error: 'AI_UNAVAILABLE',
-          message:
-            'The AI provider is not configured. Add AI_API_KEY to the environment before analyzing documents.',
-        },
+        { error: 'AI_UNAVAILABLE', message: 'The AI provider is not configured.' },
         { status: 503 },
       );
     }
-    const genAI = new GoogleGenerativeAI(apiKey);
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -29,8 +38,6 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(bytes);
     const base64Image = buffer.toString('base64');
     
-    const modelName = process.env.AI_MODEL || 'gemini-flash-latest';
-    const model = genAI.getGenerativeModel({ model: modelName });
 
     const prompt = `
       You are a legal document analyzer for the UAE. Extract the following information from this image:
@@ -55,34 +62,21 @@ export async function POST(request: Request) {
     `;
 
     let analysis;
-    let source = 'ai';
     try {
-      const result = await model.generateContent([
-        prompt,
-        {
-          inlineData: {
-            data: base64Image,
-            mimeType: file.type || 'image/jpeg'
-          }
-        }
-      ]);
-  
-      const responseText = result.response.text();
-      const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
-      analysis = JSON.parse(jsonStr);
+      const { data, provider } = await generateJSON(prompt, ocrSchema, {
+        data: base64Image,
+        mimeType: file.type || 'image/jpeg',
+      });
+      analysis = { ...data, provider };
     } catch (apiError) {
-      console.warn('AI provider failed; returning clearly-labelled sample analysis:', apiError);
-      // Honest demo fallback: static SAMPLE content, never presented as real OCR output.
-      source = 'sample_fallback';
-      analysis = {
-        documentType: 'Salary Slip (SAMPLE)',
-        extractedText: 'SAMPLE OUTPUT — the AI provider is unavailable, so this is fixed example text, not an extraction from your document. Try again.',
-        flags: ['Sample data only: upload the document again for a real analysis'],
-        confidence: 0
-      };
+      console.warn('OCR providers failed:', apiError);
+      return NextResponse.json(
+        { error: 'AI_FAILED', message: 'SANAD could not read this document right now. Nothing was extracted. Please try again.' },
+        { status: 502 },
+      );
     }
 
-    return NextResponse.json({ data: { ...analysis, source } }, { status: 200 });
+    return NextResponse.json({ data: { ...analysis, source: 'ai' } }, { status: 200 });
 
   } catch (error) {
     console.error('OCR API error:', error);
