@@ -224,6 +224,14 @@ export default function DocumentsPage() {
                 </div>
               )}
 
+              {doc.status === "CONFIRMED" && (
+                <div className="flex justify-end">
+                  <Link href="/situation" className="px-4 py-2 rounded-xl bg-[#F3F8F5] border border-[#BCE1CA] text-xs font-bold text-[#153D32]">
+                    Added to My Situation. View it →
+                  </Link>
+                </div>
+              )}
+
               {doc.status === "NEEDS_CONFIRMATION" && (
                 <div className="flex justify-end gap-2">
                   <button

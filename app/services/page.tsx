@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Card, Badge, Button } from "@/components/ui/Primitives";
 import { useSituation } from "@/lib/context/SituationContext";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function ServicesPage() {
   const [services, setServices] = useState<any[]>([]);
@@ -35,82 +36,6 @@ export default function ServicesPage() {
         const json = await res.json();
         if (json.data && json.data.length > 0) {
           setServices(json.data);
-        } else {
-          // Comprehensive UAE Government catalog fallback matching the challenge brief
-          setServices([
-            {
-              id: "mohre-complaint",
-              name: "Private-Sector Labour Complaint & Dispute Resolution",
-              category: "Labour",
-              emirate: "Federal",
-              applicant_type: "Resident",
-              description: "Register formal wage disputes, unpaid gratuity, or arbitrary termination claims through the Ministry of Human Resources and Emiratisation.",
-              sla: "2 business days",
-              fee: "Free of charge",
-              eligibility: "Active or cancelled MOHRE private sector labour contract within 1 year.",
-              official_url: "https://mohre.gov.ae"
-            },
-            {
-              id: "golden-visa-investor",
-              name: "UAE Golden Visa Nomination (Real Estate & Investors)",
-              category: "Residency",
-              emirate: "Federal",
-              applicant_type: "Resident",
-              description: "Long-term 10-year residency visa for real estate investors with property equity of AED 2,000,000 or more without sponsor requirements.",
-              sla: "3 business days",
-              fee: "AED 2,850",
-              eligibility: "Title deed with minimum AED 2M valuation + health insurance.",
-              official_url: "https://icp.gov.ae"
-            },
-            {
-              id: "ejari-registration",
-              name: "Ejari Tenancy Contract Registration & Attestation",
-              category: "Housing",
-              emirate: "Dubai",
-              applicant_type: "All",
-              description: "Mandatory official authentication of residential and commercial lease contracts under Dubai Land Department (DLD) regulations.",
-              sla: "Instant (Digital)",
-              fee: "AED 175 + VAT",
-              eligibility: "Valid tenancy contract signed by tenant & landlord, DEWA premise number, Emirates ID.",
-              official_url: "https://dubailand.gov.ae"
-            },
-            {
-              id: "family-sponsorship",
-              name: "Family & Dependent Residency Visa Issuance",
-              category: "Residency",
-              emirate: "Federal",
-              applicant_type: "Resident",
-              description: "Sponsor spouse, children, or dependent parents for UAE residency under GDRFA or ICP unified channels.",
-              sla: "48 hours",
-              fee: "AED 1,150",
-              eligibility: "Valid UAE residence visa, monthly salary of AED 4,000 or AED 3,000 plus accommodation, attested tenancy contract.",
-              official_url: "https://gdrfad.gov.ae"
-            },
-            {
-              id: "instant-trade-license",
-              name: "Instant Commercial Trade License (DED)",
-              category: "Commercial",
-              emirate: "Dubai",
-              applicant_type: "Business",
-              description: "Establish a mainland LLC or sole establishment in one single step without initial lease or MOA requirements for year one.",
-              sla: "10 minutes",
-              fee: "AED 12,500 (approx)",
-              eligibility: "UAE National or resident with valid Emirates ID; applicable activities only.",
-              official_url: "https://ded.ae"
-            },
-            {
-              id: "unemployment-insurance",
-              name: "Involuntary Loss of Employment (ILOE) Claim",
-              category: "Labour",
-              emirate: "Federal",
-              applicant_type: "Resident",
-              description: "Submit monthly compensation claim for private and federal government workers who lost their jobs due to non-disciplinary reasons.",
-              sla: "2 weeks",
-              fee: "Included in policy",
-              eligibility: "Subscribed to ILOE for at least 12 consecutive months; non-disciplinary job loss.",
-              official_url: "https://iloe.ae"
-            }
-          ]);
         }
       } catch (e) {
         console.error(e);
@@ -141,31 +66,20 @@ export default function ServicesPage() {
   const recommended = profile?.services || [];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      
-      {/* Page Header */}
-      <div className="border-b border-[#E4E7E1] pb-6">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-xs uppercase tracking-wider font-semibold text-[#84928B]">
-            UAE Unified Service Catalog
-          </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#166534]"></span>
-        </div>
-        <h1 className="text-2xl md:text-3xl font-bold text-[#15241E] tracking-tight">
-          Government Service Discovery
-        </h1>
-        <p className="text-sm text-[#586660]">
-          Search, evaluate eligibility, and launch guided applications across federal ministries and local departments.
-        </p>
-      </div>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-in fade-in duration-300">
+      <PageHeader
+        icon={Search}
+        title="Government Services"
+        subtitle="Official UAE services in SANAD's verified catalogue. Each one links to its government source."
+      />
 
       {/* Recommended for You: from the user's conversation with SANAD */}
       {recommended.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-bold text-[#153D32]">Recommended for you</h2>
+          <h2 className="font-black text-base text-[#153D32]">Recommended for you</h2>
           <div className="grid md:grid-cols-2 gap-3">
             {recommended.map((s) => (
-              <a key={s.id} href={s.url} target="_blank" rel="noreferrer" className="block p-4 rounded-2xl bg-white border border-[#BCE1CA] hover:border-[#153D32] text-xs">
+              <a key={s.id} href={s.url} target="_blank" rel="noreferrer" className="block p-5 rounded-3xl bg-[#F3F8F5] border border-[#BCE1CA] hover:border-[#153D32] text-xs shadow-sm">
                 <span className="font-mono text-[#467060] mr-2">{s.id}</span>
                 <span className="font-bold text-[#153D32]">{s.title}</span>
                 {s.why && <span className="block text-[#3A4540] mt-1">Why: {s.why}</span>}
@@ -186,12 +100,12 @@ export default function ServicesPage() {
             placeholder="Search by keyword, authority, or life event (e.g. 'golden visa', 'ejari', 'unpaid salary')..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white border border-[#E4E7E1] rounded-[10px] py-3.5 pl-11 pr-4 text-sm text-[#15241E] outline-none focus:border-[#153D32] focus:ring-1 focus:ring-[#153D32] shadow-xs transition-all"
+            className="w-full bg-white border border-[#E4E7E1] rounded-2xl py-3.5 pl-11 pr-4 text-sm text-[#15241E] outline-none focus:border-[#153D32] focus:ring-1 focus:ring-[#153D32] shadow-xs transition-all"
           />
         </div>
 
         {/* Filter Pills */}
-        <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-[12px] border border-[#E4E7E1]">
+        <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-3xl border border-[#ECEFEA] shadow-sm">
           {/* Category Filter */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-[#586660]">Category:</span>
@@ -245,7 +159,7 @@ export default function ServicesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((svc) => (
-            <Card key={svc.id || svc.name} className="flex flex-col justify-between hover:border-[#153D32] transition-colors">
+            <Card key={svc.id || svc.name} className="flex flex-col justify-between rounded-3xl border-[#ECEFEA] shadow-sm hover:border-[#153D32] transition-colors">
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
                   <Badge variant="info">
@@ -275,15 +189,10 @@ export default function ServicesPage() {
               </div>
 
               <div className="mt-5 pt-4 border-t border-[#ECEEEA] space-y-3">
-                <div className="flex items-center justify-between text-xs text-[#586660]">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-[#84928B]" />
-                    {svc.sla || "2-3 days"}
-                  </span>
-                  <span className="font-semibold text-[#15241E]">
-                    {svc.fee || "Free"}
-                  </span>
-                </div>
+                <p className="flex items-center gap-1 text-[11px] text-[#586660]">
+                  <Clock className="w-3.5 h-3.5 text-[#84928B]" />
+                  Fees and processing times: confirm on the official source.
+                </p>
 
                 <div className="flex items-center gap-2">
                   <Link href={`/services/${svc.id || 'mohre-complaint'}`} className="flex-1">

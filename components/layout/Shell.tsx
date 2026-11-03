@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   MessageSquare, 
   Users, 
@@ -16,14 +16,55 @@ import {
   Menu,
   X,
   ArrowLeft,
+  LogOut,
 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Pages anyone can open without signing in.
+  const isOpenRoute =
+    pathname === "/" ||
+    ["/auth", "/verify", "/privacy", "/terms", "/help", "/launch"].some((r) => pathname.startsWith(r));
+
+  // Everything else needs a signed-in user; send guests to sign in, then back here.
+  useEffect(() => {
+    if (isOpenRoute) return setAuthChecked(true);
+    let cancelled = false;
+    (async () => {
+      let signedIn = false;
+      try { signedIn = !!JSON.parse(localStorage.getItem("sanad_user") || "null")?.authenticated; } catch {}
+      if (!signedIn) {
+        const { data } = await supabase.auth.getSession();
+        const u = data.session?.user;
+        if (u) {
+          localStorage.setItem("sanad_user", JSON.stringify({ id: u.id, email: u.email, name: u.user_metadata?.full_name || u.email?.split("@")[0], authenticated: true }));
+          signedIn = true;
+        }
+      }
+      if (cancelled) return;
+      if (signedIn) setAuthChecked(true);
+      else router.replace(`/auth?redirect=${encodeURIComponent(pathname)}`);
+    })();
+    return () => { cancelled = true; };
+  }, [pathname, isOpenRoute, router]);
+
+  const signOut = async () => {
+    localStorage.removeItem("sanad_user");
+    await supabase.auth.signOut().catch(() => {});
+    router.push("/");
+  };
 
   // If we are on public presentation routes (landing page, auth page, verify page), DO NOT show the sidebar layout
   const isPublicRoute = pathname === "/" || pathname.startsWith("/auth") || pathname.startsWith("/verify");
+
+  if (!authChecked) {
+    return <div className="min-h-screen bg-[#FCFCFA]" />;
+  }
 
   if (isPublicRoute) {
     return (
@@ -122,6 +163,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <ArrowLeft className="w-4 h-4 text-[#7B8580]" />
             <span>Back to home</span>
           </Link>
+          <button
+            onClick={signOut}
+            className="flex items-center gap-2.5 text-xs font-semibold text-[#5C6661] hover:text-[#153D32] transition"
+          >
+            <LogOut className="w-4 h-4 text-[#7B8580]" />
+            <span>Sign out</span>
+          </button>
           <Link 
             href="/help"
             className="flex items-center gap-2.5 text-xs font-semibold text-[#5C6661] hover:text-[#153D32] transition"

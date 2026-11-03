@@ -219,12 +219,11 @@ function ChatVoiceInner() {
       addMessage({
         sender: "sanad",
         text: data.next_question ? `${data.reply}\n\n${data.next_question}` : data.reply,
+        // The connected journey: chat -> documents (OCR) -> situation -> services -> application
         quickActions: [
+          { label: "Upload documents", href: "/documents" },
           { label: "View My Situation", href: "/situation" },
-          ...(data.services || []).slice(0, 2).map((s: { title: string; url: string }) => ({
-            label: s.title,
-            href: s.url,
-          })),
+          ...(data.services?.length ? [{ label: "Prepare application", href: "/applications/family-sponsorship" }] : []),
         ],
       });
     } catch (e) {

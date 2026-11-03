@@ -40,34 +40,8 @@ export default function ServiceDetailsPage() {
         const res = await fetch('/api/services');
         const json = await res.json();
         if (json.data && json.data.length > 0) {
-          const match = json.data.find((s:any) => s.id === params.id) || json.data[0];
+          const match = json.data.find((s:any) => String(s.id) === String(params.id)) || null;
           setService(match);
-        } else {
-          setService({
-            id: params.id || "mohre-complaint",
-            name: "Private-Sector Labour Complaint & Dispute Resolution",
-            category: "Employment & Labour",
-            emirate: "Federal (All Emirates)",
-            applicant_type: "Private Sector Employees",
-            description: "An official dispute settlement service provided by the Ministry of Human Resources and Emiratisation (MOHRE). Enables employees to claim unpaid wages, end-of-service gratuity, arbitrary dismissal compensation, or contractual violations without court litigation fees.",
-            official_url: "https://mohre.gov.ae/en/services/register-labor-complaints-private-sector-employees-2022",
-            sla: "2 business days",
-            fee: "Free for claims under AED 100,000",
-            eligibility_guidance: "Must hold an active or recently terminated MOHRE labour contract. Complaint must be submitted within one year of entitlement date.",
-            required_documents: [
-              { name: "Emirates ID (Front & Back)", status: "Uploaded" },
-              { name: "MOHRE Labour Contract", status: "Uploaded" },
-              { name: "Bank Salary Transfer Statement / WPS Record", status: "Action Required" },
-              { name: "Termination / Resignation Notice (if applicable)", status: "Optional" }
-            ],
-            steps: [
-              "Submit claim intake and facts via SANAD AI Navigator",
-              "Automated OCR verification of Emirates ID and Labour Contract",
-              "Direct electronic transmission to MOHRE dispute registrar",
-              "Amicable mediation session scheduled within 14 days",
-              "Issuance of referral letter to Labour Court if mediation is unresolved"
-            ]
-          });
         }
       } catch (e) {
         console.error(e);
@@ -82,6 +56,16 @@ export default function ServiceDetailsPage() {
     return (
       <div className="p-20 text-center text-[#153D32] font-semibold animate-pulse">
         Loading verified service specifications...
+      </div>
+    );
+  }
+
+  if (!service) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-16 text-center space-y-4">
+        <h1 className="text-2xl font-black text-[#153D32]">Service not found</h1>
+        <p className="text-sm text-[#68716D]">This service is not in SANAD&apos;s verified catalogue.</p>
+        <Link href="/services" className="inline-block px-5 py-2.5 rounded-xl bg-[#153D32] text-white text-xs font-bold">Browse services</Link>
       </div>
     );
   }
@@ -237,12 +221,12 @@ export default function ServiceDetailsPage() {
               <div className="flex items-center justify-between">
                 <span className="text-[#586660]">Standard SLA:</span>
                 <span className="font-semibold text-[#15241E] flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-[#84928B]" /> {s.sla || "2 business days"}
+                  <Clock className="w-3.5 h-3.5 text-[#84928B]" /> Confirm on official source
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[#586660]">Official Government Fee:</span>
-                <span className="font-semibold text-[#15241E]">{s.fee || "Free of charge"}</span>
+                <span className="font-semibold text-[#15241E]">{s.fee || "See official source"}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[#586660]">Verifiable Proof:</span>
