@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 type Extraction = {
   documentType?: string;
   extractedText?: string;
-  fields?: { label: string; value: string }[];
+  fields?: { label: string; value: string; certain?: boolean }[];
   unreadableFields?: string[];
   expiryDate?: string;
   flags?: string[];
@@ -95,7 +95,7 @@ export default function DocumentsPage() {
   const confirmDoc = (doc: Doc) => {
     const type = doc.extraction?.documentType || doc.name;
     const facts = { ...(profile?.facts || {}) };
-    for (const f of doc.extraction?.fields || []) {
+    for (const f of (doc.extraction?.fields || []).filter((x) => x.certain !== false)) {
       facts[`doc_${doc.id}_${f.label}`] = { label: f.label, value: f.value, confirmed: true, source: `${type} (OCR)` };
     }
     updateProfile({
@@ -205,9 +205,10 @@ export default function DocumentsPage() {
                   {!!doc.extraction.fields?.length && (
                     <div className="grid sm:grid-cols-2 gap-2">
                       {doc.extraction.fields.map((f, i) => (
-                        <div key={i} className="p-2.5 rounded-lg bg-[#FAFBF9] border border-[#ECEFEA]">
+                        <div key={i} className={`p-2.5 rounded-lg border ${f.certain === false ? "bg-amber-50 border-amber-200" : "bg-[#FAFBF9] border-[#ECEFEA]"}`}>
                           <span className="text-[#68716D]">{f.label}</span>
                           <p className="font-bold text-[#202A27]">{f.value}</p>
+                          {f.certain === false && <span className="text-[10px] font-bold text-amber-800">Uncertain: check against the original</span>}
                         </div>
                       ))}
                     </div>

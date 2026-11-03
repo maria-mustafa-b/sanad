@@ -9,7 +9,7 @@ import { aiConfigured, generateJSON } from '@/lib/ai/resilient';
 const ocrSchema = z.object({
   documentType: z.string().default('Unknown document'),
   extractedText: z.string().default(''),
-  fields: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+  fields: z.array(z.object({ label: z.string(), value: z.string(), certain: z.boolean().default(false) })).default([]),
   unreadableFields: z.array(z.string()).default([]),
   expiryDate: z.string().nullish(),
   flags: z.array(z.string()).default([]),
@@ -46,13 +46,18 @@ export async function POST(request: Request) {
       - Dates (Expiry dates, salary periods)
       - Any illegal clauses (e.g., passport surrender, illegal fee deduction)
       
-      Only report what is actually legible. Never guess missing values.
+      STRICT OCR RULES:
+      - Copy characters exactly as printed. Never reconstruct, round, complete or "fix" a value.
+      - If any character of a value is blurred, cut off or ambiguous, mark that field "certain": false,
+        and also list it in unreadableFields. Placeholder digits such as 0000 must be copied as-is.
+      - If the image is blurred overall or a large part of the page is missing, set "readable": false.
+      - Fill extractedText only with text you can actually read.
 
       Respond in strict JSON format:
       {
         "documentType": "String",
         "extractedText": "String (Summary of the most important text)",
-        "fields": [{ "label": "String", "value": "String" }],
+        "fields": [{ "label": "String", "value": "String exactly as printed", "certain": true }],
         "unreadableFields": ["Fields that are missing, blurred or unreadable"],
         "expiryDate": "YYYY-MM-DD or empty string if none is visible",
         "flags": ["Array of strings highlighting risks or illegal clauses"],
