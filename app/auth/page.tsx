@@ -48,18 +48,8 @@ function AuthFormContent() {
       });
 
       if (error) {
-        // Safe local fallback session
-        const demoGoogleUser = {
-          id: "usr_google_" + Date.now(),
-          name: "Mohamed Tariq",
-          email: "m.tariq@gmail.com",
-          auth_provider: "Google",
-          authenticated: true,
-          role: "resident"
-        };
-        localStorage.setItem("sanad_user", JSON.stringify(demoGoogleUser));
+        setError("Google sign-in is unavailable right now. Please try again or use email.");
         setLoadingMethod(null);
-        router.push(redirectTarget);
       }
     } catch (e: any) {
       setError(e.message || "Google Authentication encountered an error.");
@@ -89,17 +79,8 @@ function AuthFormContent() {
         });
 
         if (signUpError) {
-          const newUser = {
-            id: "usr_" + Date.now(),
-            name: fullName || email.split("@")[0],
-            email,
-            auth_provider: "Email",
-            authenticated: true,
-            role: "resident"
-          };
-          localStorage.setItem("sanad_user", JSON.stringify(newUser));
+          setError(signUpError.message || "Could not create the account.");
           setLoadingMethod(null);
-          router.push(redirectTarget);
           return;
         }
 
@@ -123,17 +104,8 @@ function AuthFormContent() {
         });
 
         if (signInError) {
-          const user = {
-            id: "usr_" + Date.now(),
-            name: email.split("@")[0],
-            email,
-            auth_provider: "Email",
-            authenticated: true,
-            role: "resident"
-          };
-          localStorage.setItem("sanad_user", JSON.stringify(user));
+          setError(signInError.message || "Incorrect email or password.");
           setLoadingMethod(null);
-          router.push(redirectTarget);
           return;
         }
 
