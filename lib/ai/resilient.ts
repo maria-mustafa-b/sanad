@@ -6,10 +6,10 @@ import { z } from 'zod';
 type Image = { data: string; mimeType: string };
 type Result<T> = { data: T; provider: string };
 
-const TIMEOUT_MS = 9000;
+const TIMEOUT_MS = 20000;
 
 function geminiKeys() {
-  return [process.env.AI_API_KEY, process.env.AI_API_KEY_FALLBACK].filter(Boolean) as string[];
+  return [process.env.AI_API_KEY, process.env.AI_API_KEY_FALLBACK, process.env.AI_API_KEY_FALLBACK2].filter(Boolean) as string[];
 }
 
 function geminiModels() {
@@ -58,7 +58,7 @@ async function groq(prompt: string, image: Image | undefined) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
     body: JSON.stringify({
-      model: image ? 'meta-llama/llama-4-scout-17b-16e-instruct' : process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+      model: image ? process.env.GROQ_VISION_MODEL || 'qwen/qwen3.8-27b' : process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
       messages: [{ role: 'user', content }],
       response_format: { type: 'json_object' },
       temperature: 0.3,
@@ -74,12 +74,16 @@ export function aiConfigured() {
 export async function generateJSON<T>(prompt: string, schema: z.ZodType<T>, image?: Image): Promise<Result<T>> {
   const errors: string[] = [];
   const attempts: [string, () => Promise<unknown>][] = [];
-  for (const model of geminiModels()) {
-    for (const [i, key] of geminiKeys().entries()) {
-      attempts.push([`gemini:${model}:key${i + 1}`, () => gemini(prompt, image, key, model)]);
-    }
-  }
+  const [first, ...rest] = geminiModels();
+  // Preferred model on each key, then Groq, then the remaining Gemini models.
+  const keys = geminiKeys();
+  // Gemini is slow under load: one Gemini try, then Groq, then the other keys and models.
+  if (keys[0]) attempts.push([`gemini:${first}:key1`, () => gemini(prompt, image, keys[0], first)]);
   attempts.push(['groq', () => groq(prompt, image)]);
+  for (const [i, key] of keys.entries()) if (i > 0) attempts.push([`gemini:${first}:key${i + 1}`, () => gemini(prompt, image, key, first)]);
+  for (const model of rest) {
+    for (const [i, key] of geminiKeys().entries()) attempts.push([`gemini:${model}:key${i + 1}`, () => gemini(prompt, image, key, model)]);
+  }
 
   for (const [name, run] of attempts) {
     try {
