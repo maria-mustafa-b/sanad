@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { FileText, ArrowRight, ExternalLink } from "lucide-react";
 import { useSituation } from "@/lib/context/SituationContext";
+import { PageHeader } from "@/components/ui/page-header";
 
 // Application status is only shown when it comes from an official integration.
 // SANAD has none connected yet, so this page never invents IDs or statuses.
@@ -13,19 +14,10 @@ export default function MyApplicationsPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
-      <div className="flex items-start gap-3 pb-2 border-b border-[#ECEFEA]">
-        <div className="w-10 h-10 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shrink-0">
-          <FileText className="w-5 h-5" />
-        </div>
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#153D32] tracking-tight">My Applications</h1>
-          <p className="text-xs sm:text-sm text-[#68716D] mt-0.5">
-            Prepare applications with SANAD, then submit them on the official government portal.
-          </p>
-        </div>
-      </div>
+      <PageHeader icon={FileText} title="My Applications" subtitle="Prepare applications with SANAD, then submit them on the official government portal." />
 
       <div className="bg-white rounded-3xl p-8 border border-[#ECEFEA] shadow-sm text-center space-y-3">
+        <img src="/ui/03_family_sponsorship_illustration.jpg" alt="" className="h-32 mx-auto object-contain" />
         <h2 className="text-lg font-black text-[#153D32]">No submitted applications</h2>
         <p className="text-xs sm:text-sm text-[#68716D] max-w-lg mx-auto">
           SANAD never submits on your behalf. Reference numbers and official statuses will appear here only once an

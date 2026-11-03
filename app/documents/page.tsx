@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FolderOpen, Upload, CheckCircle2, FileText, AlertTriangle, Loader2, Trash2 } from "lucide-react";
 import { useSituation } from "@/lib/context/SituationContext";
+import { PageHeader } from "@/components/ui/page-header";
 
 type Extraction = {
   documentType?: string;
@@ -35,6 +36,7 @@ export default function DocumentsPage() {
   const [documents, setDocuments] = useState<Doc[]>([]);
   const [consent, setConsent] = useState(false);
   const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<"ALL" | Doc["status"]>("ALL");
 
   useEffect(() => {
     try {
@@ -103,24 +105,15 @@ export default function DocumentsPage() {
     patch(doc.id, { status: "CONFIRMED" });
   };
 
-  const visible = documents.filter((d) =>
+  const visible = documents.filter((d) => (filter === "ALL" || d.status === filter) &&
     `${d.name} ${d.extraction?.documentType || ""}`.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-in fade-in duration-300">
-      <div className="flex items-start gap-3 pb-2 border-b border-[#ECEFEA]">
-        <div className="w-10 h-10 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shrink-0">
-          <FolderOpen className="w-5 h-5" />
-        </div>
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#153D32] tracking-tight">My Documents</h1>
-          <p className="text-xs sm:text-sm text-[#68716D] mt-0.5">
-            Upload a document, review what SANAD read, and confirm before it is used. The list is kept in this browser.
-          </p>
-        </div>
-      </div>
+      <PageHeader icon={FolderOpen} title="My Documents" subtitle="Upload a document, review what SANAD read, and confirm before it is used. The list is kept in this browser." />
 
+      <div className="grid md:grid-cols-[1.6fr_1fr] gap-6 items-start">
       <div className="bg-white rounded-3xl p-6 border border-[#ECEFEA] shadow-sm space-y-4">
         <label className="flex items-start gap-2 text-xs text-[#3A4540]">
           <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5" />
@@ -131,12 +124,39 @@ export default function DocumentsPage() {
             consent ? "border-[#C2DCD0] cursor-pointer hover:border-[#153D32]" : "border-[#E4E7E1] opacity-50 cursor-not-allowed"
           }`}
         >
-          <Upload className="w-6 h-6 text-[#153D32]" />
+          <img src="/ui/04_documents_forms_illustration.jpg" alt="" className="h-20 object-contain" />
           <span className="text-sm font-bold text-[#153D32]">Upload a Document</span>
           <span className="text-xs text-[#68716D]">PDF, JPG or PNG, up to 10 MB</span>
           <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" disabled={!consent} onChange={handleFileUpload} />
         </label>
       </div>
+
+      <div className="bg-white rounded-3xl p-6 border border-[#ECEFEA] shadow-sm space-y-3">
+        <h3 className="font-black text-base text-[#153D32]">Document Status</h3>
+        {([
+          ["Confirmed", "CONFIRMED"],
+          ["Processing", "ANALYZING"],
+          ["Review needed", "NEEDS_CONFIRMATION"],
+          ["Failed", "FAILED"],
+        ] as const).map(([label, st]) => (
+          <div key={st} className="flex justify-between text-xs border-b border-[#F0F3EE] pb-2 last:border-0">
+            <span className="text-[#3A4540]">{label}</span>
+            <b className="text-[#153D32]">{documents.filter((d) => d.status === st).length}</b>
+          </div>
+        ))}
+      </div>
+      </div>
+
+      {documents.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {([["All", "ALL"], ["Confirmed", "CONFIRMED"], ["Review needed", "NEEDS_CONFIRMATION"], ["Failed", "FAILED"]] as const).map(([label, st]) => (
+            <button key={st} onClick={() => setFilter(st)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold ${filter === st ? "bg-[#153D32] text-white" : "bg-white border border-[#E3E7E0] text-[#5C6661]"}`}>
+              {label} ({st === "ALL" ? documents.length : documents.filter((d) => d.status === st).length})
+            </button>
+          ))}
+        </div>
+      )}
 
       {documents.length > 0 && (
         <input

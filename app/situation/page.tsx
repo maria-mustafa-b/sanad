@@ -2,319 +2,155 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { 
-  Users, 
-  Sparkles, 
-  ArrowRight, 
-  CheckCircle2, 
-  FileText, 
-  Upload, 
-  ShieldCheck, 
-  RefreshCw,
-  ExternalLink,
-  MessageSquare,
-  AlertCircle,
-  HelpCircle,
-  Clock,
-  Briefcase,
-  Mic
-} from "lucide-react";
+import Image from "next/image";
+import { Users, Sparkles, Mic, Home, Briefcase, Heart, ShieldCheck, Target, ArrowRight, FileText } from "lucide-react";
 import { useSituation, type SituationProfile } from "@/lib/context/SituationContext";
+
+// Find a stated fact by keywords in its key or label (EN/AR/HI labels all work).
+function pick(profile: SituationProfile, words: string[]) {
+  const hit = Object.entries(profile.facts || {}).find(([k, f]) =>
+    words.some((w) => k.toLowerCase().includes(w) || f.label.toLowerCase().includes(w))
+  );
+  return hit?.[1];
+}
+
+function PageHeader({ updated }: { updated?: string }) {
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-[#ECEFEA] bg-gradient-to-r from-white via-white to-[#FBF3EA]">
+      <div className="absolute inset-y-0 right-0 w-1/2 opacity-60 pointer-events-none">
+        <Image src="/ui/01_header_skyline_banner.jpg" alt="" fill className="object-cover object-bottom [mask-image:linear-gradient(to_right,transparent,black_60%)]" />
+      </div>
+      <div className="relative flex items-center gap-4 p-6 sm:p-8">
+        <div className="w-14 h-14 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shrink-0">
+          <Users className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-black text-[#153D32] tracking-tight">My Situation</h1>
+          <p className="text-xs sm:text-sm text-[#5C6661] mt-1 max-w-md">
+            Your current circumstances and goals, kept up to date through your conversations with SANAD.
+            {updated && <span className="block text-[11px] text-[#8C9691] mt-1">Last updated: {updated}</span>}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function MySituationPage() {
   const { profile, updateProfile } = useSituation();
-  const [activeTab, setActiveTab] = useState<"overview" | "eligibility" | "requirements" | "next_steps">("overview");
+  const hasData = !!profile && (!!profile.summary || Object.keys(profile.facts || {}).length > 0);
 
-  // ================= IF NO SITUATION RECORDED YET (FRESH USER STATE) =================
-  if (!profile || (!profile.summary && !Object.keys(profile.facts || {}).length)) {
+  if (!hasData) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8 animate-in fade-in duration-300">
-        {/* Header */}
-        <div className="flex items-center gap-3 pb-4 border-b border-[#ECEFEA]">
-          <div className="w-10 h-10 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shadow-2xs">
-            <Users className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#153D32] tracking-tight">
-              My Situation
-            </h1>
-            <p className="text-xs text-[#68716D] mt-0.5">
-              Your confirmed details and personalised guidance.
-            </p>
-          </div>
-        </div>
-
-        {/* Empty State Banner (No Hardcoded Mock Data) */}
-        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#ECEFEA] shadow-sm text-center flex flex-col items-center justify-center space-y-4">
-          <div className="w-16 h-16 rounded-full bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shadow-2xs">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-in fade-in duration-300">
+        <PageHeader />
+        <div className="bg-white rounded-3xl p-10 border border-[#ECEFEA] shadow-sm text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-[#EBF5EF] text-[#153D32] flex items-center justify-center mx-auto">
             <Sparkles className="w-8 h-8" />
           </div>
-          
-          <div className="space-y-1 max-w-md">
-            <h2 className="text-xl font-black text-[#153D32]">
-              No Situation Recorded Yet
-            </h2>
-            <p className="text-xs sm:text-sm text-[#68716D] leading-relaxed">
-              SANAD personalizes this overview based on what you share in conversation. Speak or chat with SANAD to build your customized situation profile, eligibility analysis, and checklist.
-            </p>
-          </div>
-
-          <div className="pt-2">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#153D32] hover:bg-[#103027] text-white text-xs font-bold transition shadow-sm"
-            >
-              <Mic className="w-4 h-4" />
-              <span>Speak to SANAD Now</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-          </div>
+          <h2 className="text-xl font-black text-[#153D32]">No situation recorded yet</h2>
+          <p className="text-sm text-[#68716D] max-w-md mx-auto">
+            Tell SANAD about your situation in any language. Your details appear here for you to review and confirm.
+          </p>
+          <Link href="/chat" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#153D32] text-white text-xs font-bold">
+            <Mic className="w-4 h-4" /> Talk to SANAD
+          </Link>
         </div>
       </div>
     );
   }
 
-  // ================= POPULATED STATE (REAL CONVERSATION EXTRACTED DATA) =================
+  const p = profile!;
+  const tiles = [
+    { icon: Home, title: "Residency", fact: pick(p, ["residen", "emirate", "إقامة", "إمارة"]) },
+    { icon: Briefcase, title: "Employment", fact: pick(p, ["employ", "sector", "job", "عمل"]) },
+    { icon: Heart, title: "Family", fact: pick(p, ["depend", "sponsor", "parent", "family", "والد"]) },
+    { icon: Home, title: "Accommodation", fact: pick(p, ["housing", "accommodat", "tenancy", "rent", "سكن", "إيجار"]) },
+  ];
+  const goal = pick(p, ["goal", "intent", "هدف"])?.value || p.target_service;
+  const services = p.services || [];
+  const confirmed = Object.values(p.facts || {}).filter((f) => f.confirmed).length;
+  const total = Object.keys(p.facts || {}).length;
+
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8 animate-in fade-in duration-300">
-      
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#ECEFEA]">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shadow-2xs">
-            <Users className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#153D32] tracking-tight">
-              My Situation
-            </h1>
-            <p className="text-xs text-[#68716D] mt-0.5">
-              Your confirmed details and personalised guidance.
-            </p>
-          </div>
-        </div>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-in fade-in duration-300">
+      <PageHeader updated={p.last_updated} />
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-[#68716D]">
-          <span>Last updated: {profile.last_updated || "Just now"}</span>
-          <CheckCircle2 className="w-4 h-4 text-[#166534]" />
-        </div>
-      </div>
-
-      {/* A. SITUATION SUMMARY */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#ECEFEA] shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      {/* Summary */}
+      <div className="bg-white rounded-3xl p-6 border border-[#ECEFEA] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#F4F6F2] text-[#153D32] flex items-center justify-center shrink-0">
-            <Users className="w-6 h-6" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="font-black text-base text-[#153D32]">
-              Your Situation Summary
-            </h3>
-            <p className="text-sm text-[#5C6661] leading-relaxed max-w-2xl">
-              {profile.summary || "Built only from what you told SANAD. Review, edit and confirm each detail below."}
+          <Sparkles className="w-7 h-7 text-[#153D32] shrink-0" />
+          <div>
+            <h2 className="font-black text-lg text-[#153D32]">Your Situation Summary</h2>
+            <p className="text-sm text-[#5C6661] mt-1">
+              {p.summary || `SANAD has recorded ${total} detail${total === 1 ? "" : "s"} from your conversation. ${confirmed} confirmed by you.`}
             </p>
           </div>
         </div>
-
-        <Link
-          href="/chat"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FAFBF9] border border-[#DDE2D9] text-xs font-bold text-[#153D32] hover:bg-[#153D32] hover:text-white transition shadow-2xs shrink-0 cursor-pointer"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Update with SANAD</span>
+        <Link href="/chat" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#BCE1CA] bg-[#F3F8F5] text-xs font-bold text-[#153D32] shrink-0">
+          <Mic className="w-4 h-4" /> Update with SANAD
         </Link>
       </div>
 
-      {/* TABS */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
-        {[
-          { id: "overview", label: "Overview" },
-          { id: "eligibility", label: "Eligibility" },
-          { id: "requirements", label: "Requirements" },
-          { id: "next_steps", label: "Next Steps" },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`px-5 py-2 rounded-full text-xs font-bold transition shadow-2xs cursor-pointer ${
-              activeTab === tab.id
-                ? "bg-[#153D32] text-white shadow-xs"
-                : "bg-white border border-[#E3E7E0] text-[#5C6661] hover:border-[#153D32]"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* TAB 1: OVERVIEW */}
-      {activeTab === "overview" && (
-        <div className="space-y-8 animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#ECEFEA] shadow-sm space-y-6">
-            <div className="flex items-start justify-between flex-wrap gap-4 pb-4 border-b border-[#F0F3EE]">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#EBF5EF] text-[#153D32] flex items-center justify-center shrink-0">
-                  <Users className="w-6 h-6" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-black text-[#153D32]">
-                    {profile.target_service || "Identified Government Service"}
-                  </h2>
-                  <p className="text-xs text-[#68716D] mt-0.5">
-                    Recommended based on your recent conversation.
-                  </p>
-                </div>
-              </div>
-
-              <span className="px-3.5 py-1 rounded-full bg-[#EBF7EE] text-[#166534] border border-[#BBF7D0] text-xs font-bold">
-                Recommended
-              </span>
-            </div>
-
-            {/* Your Eligibility Callout */}
-            <div className="bg-[#FAFBF9] rounded-2xl p-5 border border-[#ECEFEA] space-y-3">
-              <div className="flex items-center gap-2 text-xs font-black text-[#153D32] uppercase tracking-wider">
-                <ShieldCheck className="w-4 h-4 text-[#166534]" />
-                <span>Your Eligibility Assessment</span>
-              </div>
-
-              <div className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-[#BCE1CA]">
-                <CheckCircle2 className="w-5 h-5 text-[#166534] shrink-0" />
-                <div>
-                  <p className="text-xs sm:text-sm font-bold text-[#153D32]">
-                    You are eligible based on your stated information.
-                  </p>
-                  <p className="text-[11px] text-[#6E7873]">
-                    Official authority review applies upon formal filing.
-                  </p>
-                </div>
-              </div>
-
-              {profile.reasons && profile.reasons.length > 0 && (
-                <div className="pt-2 space-y-2">
-                  <p className="text-xs font-bold text-[#153D32]">Why this is recommended for you:</p>
-                  <div className="space-y-1.5 text-xs text-[#5C6661]">
-                    {profile.reasons.map((r, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#166534] shrink-0" />
-                        <span>{r}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Action Bar */}
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <Link
-                href="/applications/family-sponsorship"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#153D32] hover:bg-[#103027] text-white text-xs font-bold transition shadow-sm"
-              >
-                <span>Continue to Application Assistance</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2: ELIGIBILITY */}
-      {activeTab === "eligibility" && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#ECEFEA] shadow-sm space-y-6 animate-in fade-in duration-200">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#EBF5EF] text-[#166534] flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-black text-lg text-[#153D32]">Your Details</h3>
-              <p className="text-xs text-[#68716D]">What you told SANAD. Not verified by any authority; confirm official requirements on the linked service.</p>
-            </div>
-          </div>
-
-          <FactsEditor profile={profile} updateProfile={updateProfile} />
-        </div>
-      )}
-
-      {/* TAB 3: REQUIREMENTS */}
-      {activeTab === "requirements" && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#ECEFEA] shadow-sm space-y-6 animate-in fade-in duration-200">
-          <div className="flex items-center justify-between pb-2 border-b border-[#F0F3EE]">
-            <div>
-              <h3 className="font-black text-lg text-[#153D32]">Document Requirements Checklist</h3>
-              <p className="text-xs text-[#68716D]">Vault sync for your specific service</p>
-            </div>
-            <Link
-              href="/documents"
-              className="px-4 py-2 rounded-xl bg-[#153D32] text-white text-xs font-bold hover:bg-[#103027] transition"
-            >
-              Document Vault
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <h4 className="text-xs font-extrabold text-[#166534] uppercase tracking-wider">Already Available</h4>
-              {(profile.documents_ready || []).map((d, i) => (
-                <div key={i} className="p-3.5 rounded-xl bg-[#FAFBF9] border border-[#BCE1CA] flex items-center justify-between text-xs">
-                  <span className="font-bold text-[#153D32]">{d}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-[#EBF7EE] text-[#166534] font-bold text-[10px]">Ready</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-xs font-extrabold text-amber-700 uppercase tracking-wider">Action Needed</h4>
-              {(profile.documents_needed || []).map((d, i) => (
-                <div key={i} className="p-3.5 rounded-xl bg-[#FAFBF9] border border-amber-200 flex items-center justify-between text-xs">
-                  <span className="font-bold text-[#202A27]">{d}</span>
-                  <Link href="/documents" className="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 font-bold text-[10px] hover:bg-amber-200 transition">
-                    Upload
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: NEXT STEPS */}
-      {activeTab === "next_steps" && (
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#ECEFEA] shadow-sm space-y-6 animate-in fade-in duration-200">
-          <div>
-            <h3 className="font-black text-lg text-[#153D32]">Recommended Sequence of Actions</h3>
-            <p className="text-xs text-[#68716D]">Step-by-step path forward</p>
-          </div>
-
-          <div className="space-y-3">
-            {(profile.next_steps || [
-              "Confirm your extracted details",
-              "Upload remaining required files",
-              "Complete ministerial application assistance"
-            ]).map((step, idx) => (
-              <div key={idx} className="p-4 rounded-2xl bg-[#FAFBF9] border border-[#ECEFEA] flex items-start gap-4">
-                <div className="w-7 h-7 rounded-full bg-[#153D32] text-white flex items-center justify-center font-bold text-xs shrink-0">
-                  {idx + 1}
-                </div>
-                <div>
-                  <h4 className="font-bold text-xs sm:text-sm text-[#153D32]">{step}</h4>
-                </div>
+      <div className="grid lg:grid-cols-[1.6fr_1fr] gap-6">
+        {/* Key details */}
+        <div className="bg-white rounded-3xl p-6 border border-[#ECEFEA] shadow-sm">
+          <h3 className="font-black text-base text-[#153D32] mb-4">Key Details</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {tiles.map((t) => (
+              <div key={t.title} className="rounded-2xl border border-[#ECEFEA] bg-[#FAFBF9] p-4 text-center">
+                <t.icon className="w-6 h-6 text-[#153D32] mx-auto" />
+                <p className="mt-2 text-xs font-bold text-[#153D32]">{t.title}</p>
+                <p className={`text-[11px] mt-0.5 ${t.fact ? "text-[#3A4540]" : "text-[#8C9691] italic"}`}>
+                  {t.fact?.value || "Not provided"}
+                </p>
               </div>
             ))}
           </div>
+        </div>
 
-          <div className="flex justify-end pt-2">
-            <Link
-              href="/applications/family-sponsorship"
-              className="px-6 py-3 rounded-xl bg-[#153D32] hover:bg-[#103027] text-white text-xs font-bold transition shadow-sm inline-flex items-center gap-2"
-            >
-              <span>Start Application</span>
-              <ArrowRight className="w-4 h-4" />
+        {/* Goal */}
+        <div className="relative overflow-hidden rounded-3xl border border-[#ECEFEA] bg-white shadow-sm min-h-[180px]">
+          <Image src="/ui/02_family_support_photo.jpg" alt="" fill className="object-cover object-bottom opacity-90" />
+          <div className="relative p-6">
+            <h3 className="font-black text-base text-[#153D32] flex items-center gap-2"><Target className="w-5 h-5" /> Your Goal</h3>
+            <p className="mt-3 inline-block px-4 py-2 rounded-xl bg-white/90 border border-[#ECEFEA] text-sm font-bold text-[#153D32]">
+              {goal || "Tell SANAD what you want to achieve"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Suggested for you */}
+      {services.length > 0 && (
+        <div className="bg-white rounded-3xl p-6 border border-[#ECEFEA] shadow-sm space-y-4">
+          <div>
+            <h3 className="font-black text-base text-[#153D32]">Suggested for You</h3>
+            <p className="text-xs text-[#68716D]">Official services from the SANAD catalogue, matched to what you told SANAD.</p>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-3">
+            {services.slice(0, 2).map((s, i) => (
+              <a key={s.id} href={s.url} target="_blank" rel="noreferrer"
+                className={`rounded-2xl border p-4 text-xs hover:border-[#153D32] ${i === 0 ? "bg-[#F3F8F5] border-[#BCE1CA]" : "bg-white border-[#ECEFEA]"}`}>
+                <p className="font-bold text-sm text-[#153D32]">{s.title}</p>
+                {s.why && <p className="text-[#5C6661] mt-1">{s.why}</p>}
+                <span className="inline-flex items-center gap-1 mt-2 font-bold text-[#153D32]">Official source <ArrowRight className="w-3 h-3" /></span>
+              </a>
+            ))}
+            <Link href="/applications/family-sponsorship" className="rounded-2xl border border-[#ECEFEA] bg-white p-4 text-xs hover:border-[#153D32]">
+              <img src="/ui/06_application_progress_illustration.jpg" alt="" className="w-full h-20 object-contain mb-1" />
+              <p className="font-bold text-sm text-[#153D32] mt-1">Prepare application</p>
+              <p className="text-[#5C6661] mt-1">Fill the form with your confirmed details.</p>
             </Link>
           </div>
         </div>
       )}
 
+      {/* All details with source + confirmation */}
+      <div className="bg-white rounded-3xl p-6 border border-[#ECEFEA] shadow-sm space-y-2">
+        <h3 className="font-black text-base text-[#153D32] flex items-center gap-2"><ShieldCheck className="w-5 h-5" /> Your Details</h3>
+        <FactsEditor profile={p} updateProfile={updateProfile} />
+      </div>
     </div>
   );
 }

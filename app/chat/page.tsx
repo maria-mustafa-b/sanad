@@ -30,20 +30,54 @@ function ChatVoiceInner() {
   const [speakingId, setSpeakingId] = useState<string | null>(null);
 
   // Read a reply aloud in the script it was written in.
-  const speak = (id: string, text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    if (speakingId === id) { setSpeakingId(null); return; }
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const stopSpeaking = () => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+    setSpeakingId(null);
+  };
+
+  // Browser voice fallback: prefer a "Natural"/"Online" neural voice for the text's language.
+  const speakWithBrowser = (id: string, text: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return setSpeakingId(null);
+    const lang = /[؀-ۿ]/.test(text) ? (/[ٹڈڑںھہے]/.test(text) ? "ur" : "ar")
+      : /[ऀ-ॿ]/.test(text) ? "hi"
+      : /[ঀ-৿]/.test(text) ? "bn"
+      : /[ഀ-ൿ]/.test(text) ? "ml"
+      : "en";
+    const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith(lang));
+    const voice = voices.find((v) => /natural|online|neural|google/i.test(v.name)) || voices[0];
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = /[؀-ۿ]/.test(text) ? (/[ٹڈڑںھہے]/.test(text) ? "ur-PK" : "ar-AE")
-      : /[ऀ-ॿ]/.test(text) ? "hi-IN"
-      : /[ঀ-৿]/.test(text) ? "bn-IN"
-      : /[ഀ-ൿ]/.test(text) ? "ml-IN"
-      : "en-US";
+    if (voice) u.voice = voice;
+    u.lang = voice?.lang || lang;
+    u.rate = 0.95;
     u.onend = () => setSpeakingId(null);
     u.onerror = () => setSpeakingId(null);
-    setSpeakingId(id);
     window.speechSynthesis.speak(u);
+  };
+
+  // Natural neural voice from the server first, browser voice if that fails.
+  const speak = async (id: string, text: string) => {
+    if (speakingId === id) return stopSpeaking();
+    stopSpeaking();
+    setSpeakingId(id);
+    try {
+      const res = await fetch("/api/ai/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) throw new Error("tts");
+      const url = URL.createObjectURL(await res.blob());
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => { URL.revokeObjectURL(url); setSpeakingId(null); };
+      await audio.play();
+    } catch {
+      speakWithBrowser(id, text);
+    }
   };
   const [inputText, setInputText] = useState(initialQuery);
   const [isRecording, setIsRecording] = useState(false);
@@ -225,7 +259,7 @@ function ChatVoiceInner() {
         <div className="flex items-center gap-2.5">
           {messages.length > 0 && (
             <button
-              onClick={() => { window.speechSynthesis?.cancel(); clearChat(); }}
+              onClick={() => { stopSpeaking(); clearChat(); }}
               className="px-3 py-1.5 rounded-full bg-white border border-[#E3E7E0] text-[11px] font-bold text-[#153D32] hover:bg-[#F4F6F2]"
             >
               New conversation

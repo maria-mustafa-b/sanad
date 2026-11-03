@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { 
   Search, 
@@ -24,6 +24,12 @@ export default function PublicVerificationPage() {
   const [state, setState] = useState<'IDLE' | 'LOADING' | 'SUCCESS' | 'NOT_FOUND'>('IDLE');
   const [verifiedData, setVerifiedData] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+
+  // Pre-fill from /verify?id=... (QR codes and credential links).
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("id");
+    if (id) setCredId(id);
+  }, []);
 
   // Deployed SANADCredential contract on Polygon Amoy.
   const realContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x13798285e9fa1aCd15930e8D510A34BB983F1484";
@@ -106,7 +112,7 @@ export default function PublicVerificationPage() {
                 value={credId}
                 onChange={(e) => setCredId(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleVerify()}
-                placeholder="Enter Credential ID (e.g. SANAD-VC-00124 or 0x7a9f...)"
+                placeholder="Enter a credential ID"
                 className="w-full pl-12 pr-4 py-3.5 bg-[#FAFBF9] border border-[#DDE2D9] rounded-2xl text-xs sm:text-sm text-[#202A27] placeholder:text-[#8C9691] focus:outline-none focus:border-[#153D32]"
               />
             </div>
@@ -126,15 +132,9 @@ export default function PublicVerificationPage() {
             </button>
           </div>
 
-          <div className="flex items-center gap-2 mt-3 text-xs text-[#68716D]">
-            <span>Try sample ID:</span>
-            <button 
-              onClick={() => setCredId("SANAD-VC-00124")}
-              className="font-mono text-[#153D32] font-bold hover:underline"
-            >
-              SANAD-VC-00124
-            </button>
-          </div>
+          <p className="mt-3 text-xs text-[#68716D]">
+            Only credentials that exist in the SANAD registry verify. Unknown IDs are reported as not found.
+          </p>
         </div>
 
         {/* Result: NOT FOUND (Genuine & Honest) */}
