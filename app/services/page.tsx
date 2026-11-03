@@ -291,12 +291,12 @@ export default function ServicesPage() {
                       Service Details
                     </Button>
                   </Link>
-                  <Link href={`/applications/${svc.id || 'APP-MOHRE-9942'}/complete`} className="flex-1">
+                  <a href={svc.official_url || svc.url || "#"} target="_blank" rel="noreferrer" className="flex-1">
                     <Button variant="primary" size="sm" className="w-full gap-1">
-                      Apply
+                      Official portal
                       <ArrowRight className="w-3 h-3" />
                     </Button>
-                  </Link>
+                  </a>
                 </div>
               </div>
             </Card>

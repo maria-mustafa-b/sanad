@@ -253,7 +253,7 @@ export default function ServiceDetailsPage() {
             </div>
 
             <div className="pt-4 border-t border-[#ECEEEA] space-y-2">
-              <Link href={`/applications/${params.id || 'APP-MOHRE-9942'}/complete`} className="block w-full">
+              <Link href={`/chat?q=${encodeURIComponent(`Help me prepare an application for: ${s.name || s.title || "this service"}`)}&send=1`} className="block w-full">
                 <Button variant="primary" size="lg" className="w-full gap-2 font-semibold">
                   Apply with SANAD
                   <ArrowRight className="w-4 h-4" />

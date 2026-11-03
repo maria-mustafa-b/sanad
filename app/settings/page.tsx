@@ -75,21 +75,21 @@ export default function SettingsPage() {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-extrabold text-sm sm:text-base text-[#153D32]">
-                UAE PASS Verified Identity
+                UAE PASS
               </h3>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#EBF7EE] text-[#166534] border border-[#BBF7D0] text-[10px] font-bold">
-                Active & Synced
+              <span className="px-2.5 py-0.5 rounded-full bg-[#F4F6F2] text-[#68716D] border border-[#E3E7E0] text-[10px] font-bold">
+                Not connected
               </span>
             </div>
             <p className="text-xs text-[#68716D] mt-0.5">
-              UID: 784-1994-1234567-1 • High Assurance Level (SOP3)
+              UAE PASS sign-in is not integrated in this prototype.
             </p>
           </div>
         </div>
 
         <button 
           type="button"
-          onClick={() => alert("UAE PASS Authentication active and verified.")}
+          onClick={() => alert("UAE PASS integration is not available in this prototype.")}
           className="px-4 py-2 rounded-xl bg-[#FAFBF9] border border-[#DDE2D9] text-xs font-bold text-[#153D32] hover:bg-white transition shadow-2xs shrink-0 cursor-pointer"
         >
           Re-authenticate
