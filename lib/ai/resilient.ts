@@ -7,6 +7,7 @@ type Image = { data: string; mimeType: string };
 type Result<T> = { data: T; provider: string };
 
 const TIMEOUT_MS = 20000;
+const FIRST_GEMINI_TIMEOUT_MS = 30000;
 
 function geminiKeys() {
   return [process.env.AI_API_KEY, process.env.AI_API_KEY_FALLBACK, process.env.AI_API_KEY_FALLBACK2].filter(Boolean) as string[];
@@ -17,9 +18,9 @@ function geminiModels() {
   return [...new Set([preferred, 'gemini-3.5-flash', 'gemini-3.8-flash', 'gemini-flash-latest'].filter(Boolean))] as string[];
 }
 
-async function fetchJson(url: string, init: RequestInit) {
+async function fetchJson(url: string, init: RequestInit, timeoutMs = TIMEOUT_MS) {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch(url, { ...init, signal: ctrl.signal });
     const body = await res.json().catch(() => null);
@@ -34,14 +35,14 @@ function parseModelJson(text: string) {
   return JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, '').trim());
 }
 
-async function gemini(prompt: string, image: Image | undefined, key: string, model: string) {
+async function gemini(prompt: string, image: Image | undefined, key: string, model: string, timeoutMs = TIMEOUT_MS) {
   const parts: object[] = [{ text: prompt }];
   if (image) parts.push({ inlineData: image });
   const body = await fetchJson(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ contents: [{ parts }], generationConfig: { responseMimeType: 'application/json' } }),
-  });
+  }, timeoutMs);
   const text = body?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text || '').join('') || '';
   return parseModelJson(text);
 }
@@ -78,7 +79,7 @@ export async function generateJSON<T>(prompt: string, schema: z.ZodType<T>, imag
   // Preferred model on each key, then Groq, then the remaining Gemini models.
   const keys = geminiKeys();
   // Gemini is slow under load: one Gemini try, then Groq, then the other keys and models.
-  if (keys[0]) attempts.push([`gemini:${first}:key1`, () => gemini(prompt, image, keys[0], first)]);
+  if (keys[0]) attempts.push([`gemini:${first}:key1`, () => gemini(prompt, image, keys[0], first, FIRST_GEMINI_TIMEOUT_MS)]);
   attempts.push(['groq', () => groq(prompt, image)]);
   for (const [i, key] of keys.entries()) if (i > 0) attempts.push([`gemini:${first}:key${i + 1}`, () => gemini(prompt, image, key, first)]);
   for (const model of rest) {
