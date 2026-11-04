@@ -6,8 +6,8 @@ import { z } from 'zod';
 type Image = { data: string; mimeType: string };
 type Result<T> = { data: T; provider: string };
 
-const TIMEOUT_MS = 20000;
-const FIRST_GEMINI_TIMEOUT_MS = 30000;
+const TIMEOUT_MS = 8000;
+const FIRST_GEMINI_TIMEOUT_MS = 48000;
 
 function geminiKeys() {
   return [process.env.AI_API_KEY, process.env.AI_API_KEY_FALLBACK, process.env.AI_API_KEY_FALLBACK2].filter(Boolean) as string[];
