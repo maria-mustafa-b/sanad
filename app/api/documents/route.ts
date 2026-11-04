@@ -72,7 +72,16 @@ export async function POST(request: Request) {
         data: base64Image,
         mimeType: file.type || 'image/jpeg',
       });
-      analysis = { ...data, provider };
+      // The Groq fallback reader is less reliable on poor scans: never trust its values blindly.
+      analysis =
+        provider === 'groq'
+          ? {
+              ...data,
+              provider,
+              fields: data.fields.map((f) => ({ ...f, certain: false })),
+              flags: [...data.flags, 'Read by the backup AI reader: check every value against the original.'],
+            }
+          : { ...data, provider };
     } catch (apiError) {
       console.warn('OCR providers failed:', apiError);
       return NextResponse.json(
