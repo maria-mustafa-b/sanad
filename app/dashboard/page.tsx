@@ -20,12 +20,22 @@ import {
 import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";
 import { useSituation } from "@/lib/context/SituationContext";
 
+const voiceErrors: Record<string, string> = {
+  "not-allowed": "Microphone access is blocked. Allow the mic in your browser settings, or type instead.",
+  "service-not-allowed": "Microphone access is blocked. Allow the mic in your browser settings, or type instead.",
+  "no-speech": "I didn't hear anything. Tap the mic and try again.",
+  "audio-capture": "No microphone was found. Check your mic, or type instead.",
+  "network": "Voice recognition needs an internet connection. Try again, or type instead.",
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const { addMessage, updateProfile } = useSituation();
 
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const [voiceError, setVoiceError] = useState("");
+  const transcriptRef = useRef("");
   const [isAiProcessing, setIsAiProcessing] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
 
@@ -48,21 +58,28 @@ export default function DashboardPage() {
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = true;
-        
+        recognition.lang = navigator.language || "en-US";
+
         recognition.onresult = (event: any) => {
           let currentTranscript = "";
           for (let i = 0; i < event.results.length; i++) {
             currentTranscript += event.results[i][0].transcript;
           }
+          transcriptRef.current = currentTranscript;
           setTranscript(currentTranscript);
         };
 
+        // The browser ends listening when the user stops talking: send what it heard.
         recognition.onend = () => {
           setIsRecording(false);
+          const heard = transcriptRef.current.trim();
+          transcriptRef.current = "";
+          if (heard) processSpokenQuery(heard);
         };
 
         recognition.onerror = (e: any) => {
           console.warn("Speech recognition error:", e);
+          setVoiceError(voiceErrors[e.error] || "Voice input failed. Try again, or type instead.");
           setIsRecording(false);
         };
 
@@ -80,17 +97,17 @@ export default function DashboardPage() {
     }
 
     if (isRecording) {
+      // onend sends the transcript.
       recognitionRef.current.stop();
-      setIsRecording(false);
-      if (transcript.trim()) {
-        processSpokenQuery(transcript.trim());
-      }
     } else {
       setTranscript("");
+      setVoiceError("");
+      transcriptRef.current = "";
       try {
         recognitionRef.current.start();
         setIsRecording(true);
       } catch (err) {
+        setVoiceError("Voice input could not start. Try again, or type instead.");
         setIsRecording(false);
       }
     }
@@ -186,7 +203,7 @@ export default function DashboardPage() {
               <VoicePoweredOrb 
                 className="w-full h-full"
                 hue={150} // Emerald Green Theme matching SANAD
-                enableVoiceControl={true}
+                enableVoiceControl={false}
                 onVoiceDetected={(detected) => setIsRecording(detected)}
               />
             </div>
@@ -242,6 +259,12 @@ export default function DashboardPage() {
             </Link>
 
           </div>
+
+          {voiceError && (
+            <p role="alert" className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 px-4 py-2 rounded-xl">
+              {voiceError}
+            </p>
+          )}
 
           {isAiProcessing && (
             <div className="flex items-center gap-2 text-xs font-bold text-[#153D32] bg-[#EBF7EE] border border-[#BBF7D0] px-4 py-2 rounded-full animate-pulse">

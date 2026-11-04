@@ -54,9 +54,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }, [pathname, isOpenRoute, router]);
 
   const signOut = async () => {
-    localStorage.removeItem("sanad_user");
+    // Personal data lives in this browser: never leave it for the next person.
+    ["sanad_user", "sanad_chat_history_v2", "sanad_situation_profile_v2", "sanad_documents", "sanad_application_draft_family", "sanad_applications"].forEach((k) =>
+      localStorage.removeItem(k)
+    );
     await supabase.auth.signOut().catch(() => {});
-    router.push("/");
+    window.location.href = "/";
   };
 
   // If we are on public presentation routes (landing page, auth page, verify page), DO NOT show the sidebar layout

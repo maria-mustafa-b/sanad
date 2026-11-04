@@ -17,7 +17,7 @@ import {
   Eye,
   Check
 } from "lucide-react";
-import { useSituation } from "@/lib/context/SituationContext";
+import { useSituation, sponsorshipService } from "@/lib/context/SituationContext";
 
 const DRAFT_KEY = "sanad_application_draft_family";
 
@@ -71,11 +71,22 @@ export default function ApplicationAssistancePage() {
   // SANAD never submits. The final step hands the user to the official portal.
   const [isSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const handleSubmit = () => setSubmitted(true);
+  const handleSubmit = () => {
+    // Listed in My Applications as prepared: SANAD has not filed anything.
+    try {
+      const list = JSON.parse(localStorage.getItem("sanad_applications") || "[]");
+      const entry = { id: service?.id, title: service?.title, url: service?.url, preparedAt: new Date().toLocaleString() };
+      localStorage.setItem(
+        "sanad_applications",
+        JSON.stringify([entry, ...list.filter((a: { id?: string }) => a.id !== entry.id)])
+      );
+    } catch {}
+    setSubmitted(true);
+  };
 
   // The application follows the service SANAD matched in conversation, not a fixed visa.
-  const service = profile?.services?.[0];
-  const isFamily = !!service && /family|sponsor/i.test(service.title);
+  const service = sponsorshipService(profile);
+  const isFamily = !!service;
   const OFFICIAL_URL = service?.url || "";
   const authority = (() => { try { return new URL(OFFICIAL_URL).hostname; } catch { return ""; } })();
 
@@ -92,7 +103,7 @@ export default function ApplicationAssistancePage() {
         <div className="bg-white rounded-3xl p-10 border border-[#ECEFEA] shadow-sm text-center space-y-4">
           <h1 className="text-2xl font-black text-[#153D32]">Application Assistance</h1>
           <p className="text-sm text-[#68716D] max-w-md mx-auto">
-            Tell SANAD about your situation first. SANAD will find the right official service, then help you prepare that application.
+            Application help is available for family and parent sponsorship. Tell SANAD about your situation, and if this applies to you, you can prepare the application here. For other services, use the official portal SANAD gives you.
           </p>
           <Link href="/chat" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#153D32] text-white text-xs font-bold">
             Talk to SANAD <ArrowRight className="w-4 h-4" />

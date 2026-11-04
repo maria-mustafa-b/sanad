@@ -21,6 +21,14 @@ import {
 } from "lucide-react";
 import { useSituation } from "@/lib/context/SituationContext";
 
+const voiceErrors: Record<string, string> = {
+  "not-allowed": "Microphone access is blocked. Allow the mic in your browser settings, or type instead.",
+  "service-not-allowed": "Microphone access is blocked. Allow the mic in your browser settings, or type instead.",
+  "no-speech": "I didn't hear anything. Tap the mic and try again.",
+  "audio-capture": "No microphone was found. Check your mic, or type instead.",
+  "network": "Voice recognition needs an internet connection. Try again, or type instead.",
+};
+
 function ChatVoiceInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -82,6 +90,7 @@ function ChatVoiceInner() {
   const [inputText, setInputText] = useState(initialQuery);
   const [isRecording, setIsRecording] = useState(false);
   const [autoSendVoice, setAutoSendVoice] = useState(false);
+  const [voiceError, setVoiceError] = useState("");
   const [isAiProcessing, setIsAiProcessing] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
 
@@ -105,6 +114,11 @@ function ChatVoiceInner() {
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = true;
+        recognition.lang = navigator.language || "en-US";
+        recognition.onerror = (e: any) => {
+          setVoiceError(voiceErrors[e.error] || "Voice input failed. Try again, or type instead.");
+          setIsRecording(false);
+        };
         recognition.onresult = (event: any) => {
           let transcript = "";
           for (let i = 0; i < event.results.length; i++) {
@@ -130,8 +144,13 @@ function ChatVoiceInner() {
       recognitionRef.current.stop();
       setIsRecording(false);
     } else {
-      setIsRecording(true);
-      recognitionRef.current.start();
+      setVoiceError("");
+      try {
+        recognitionRef.current.start();
+        setIsRecording(true);
+      } catch {
+        setVoiceError("Voice input could not start. Try again, or type instead.");
+      }
     }
   };
 
@@ -223,7 +242,9 @@ function ChatVoiceInner() {
         quickActions: [
           { label: "Upload documents", href: "/documents" },
           { label: "View My Situation", href: "/situation" },
-          ...(data.services?.length ? [{ label: "Prepare application", href: "/applications/family-sponsorship" }] : []),
+          ...((data.services || []).some((s: { title: string }) => /family|sponsor|parent/i.test(s.title))
+            ? [{ label: "Prepare application", href: "/applications/family-sponsorship" }]
+            : []),
         ],
       });
     } catch (e) {
@@ -286,6 +307,11 @@ function ChatVoiceInner() {
               Type or tap the mic and speak in any language. SANAD asks one question at a time and remembers your answers.
             </p>
           </div>
+        )}
+        {voiceError && (
+          <p role="alert" className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 px-4 py-2 rounded-xl">
+            {voiceError}
+          </p>
         )}
         {isRecording && (
           <div className="flex justify-end">

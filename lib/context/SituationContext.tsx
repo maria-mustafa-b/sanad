@@ -41,12 +41,26 @@ interface SituationContextType {
   clearChat: () => void;
 }
 
+// Bumped to v2 so demo conversations saved by older builds are never shown again.
+const PROFILE_KEY = "sanad_situation_profile_v2";
+const CHAT_KEY = "sanad_chat_history_v2";
+
+if (typeof window !== "undefined") {
+  localStorage.removeItem("sanad_situation_profile");
+  localStorage.removeItem("sanad_chat_history");
+}
+
+// The guided application only covers family/parent sponsorship for now.
+export function sponsorshipService(profile: SituationProfile | null) {
+  return profile?.services?.find((s) => /family|sponsor|parent/i.test(s.title));
+}
+
 const SituationContext = createContext<SituationContextType | null>(null);
 
 export function SituationProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<SituationProfile | null>(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("sanad_situation_profile");
+      const saved = localStorage.getItem(PROFILE_KEY);
       if (saved) {
         try { return JSON.parse(saved); } catch (e) {}
       }
@@ -56,7 +70,7 @@ export function SituationProvider({ children }: { children: React.ReactNode }) {
 
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("sanad_chat_history");
+      const saved = localStorage.getItem(CHAT_KEY);
       if (saved) {
         try { 
           const parsed = JSON.parse(saved);
@@ -70,16 +84,16 @@ export function SituationProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       if (profile) {
-        localStorage.setItem("sanad_situation_profile", JSON.stringify(profile));
+        localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
       } else {
-        localStorage.removeItem("sanad_situation_profile");
+        localStorage.removeItem(PROFILE_KEY);
       }
     }
   }, [profile]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("sanad_chat_history", JSON.stringify(messages));
+      localStorage.setItem(CHAT_KEY, JSON.stringify(messages));
     }
   }, [messages]);
 
@@ -121,8 +135,8 @@ export function SituationProvider({ children }: { children: React.ReactNode }) {
     setMessages([]);
     setProfile(null);
     if (typeof window !== "undefined") {
-      localStorage.removeItem("sanad_chat_history");
-      localStorage.removeItem("sanad_situation_profile");
+      localStorage.removeItem(CHAT_KEY);
+      localStorage.removeItem(PROFILE_KEY);
     }
   };
 

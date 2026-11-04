@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Users, Sparkles, Mic, Home, Briefcase, Heart, ShieldCheck, Target, ArrowRight, FileText } from "lucide-react";
-import { useSituation, type SituationProfile } from "@/lib/context/SituationContext";
+import { useSituation, sponsorshipService, type SituationProfile } from "@/lib/context/SituationContext";
 
 // Find a stated fact by keywords in its key or label (EN/AR/HI labels all work).
 function pick(profile: SituationProfile, words: string[]) {
@@ -137,11 +137,13 @@ export default function MySituationPage() {
                 <span className="inline-flex items-center gap-1 mt-2 font-bold text-[#153D32]">Official source <ArrowRight className="w-3 h-3" /></span>
               </a>
             ))}
+            {sponsorshipService(p) && (
             <Link href="/applications/family-sponsorship" className="rounded-2xl border border-[#ECEFEA] bg-white p-4 text-xs hover:border-[#153D32]">
               <img src="/ui/06_application_progress_illustration.jpg" alt="" className="w-full h-20 object-contain mb-1" />
               <p className="font-bold text-sm text-[#153D32] mt-1">Prepare application</p>
               <p className="text-[#5C6661] mt-1">Fill the form with your confirmed details.</p>
             </Link>
+            )}
           </div>
         </div>
       )}
