@@ -19,27 +19,15 @@ import {
 } from "lucide-react";
 import { VoicePoweredOrb } from "@/components/ui/voice-powered-orb";
 import { useSituation } from "@/lib/context/SituationContext";
-
-const voiceErrors: Record<string, string> = {
-  "not-allowed": "Microphone access is blocked. Allow the mic in your browser settings, or type instead.",
-  "service-not-allowed": "Microphone access is blocked. Allow the mic in your browser settings, or type instead.",
-  "no-speech": "I didn't hear anything. Tap the mic and try again.",
-  "audio-capture": "No microphone was found. Check your mic, or type instead.",
-  "network": "Voice recognition needs an internet connection. Try again, or type instead.",
-};
+import { useVoiceInput } from "@/lib/hooks/use-voice-input";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { addMessage, updateProfile } = useSituation();
 
-  const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState("");
   const [voiceError, setVoiceError] = useState("");
-  const transcriptRef = useRef("");
   const [isAiProcessing, setIsAiProcessing] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
-
-  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -50,73 +38,19 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Web Speech API for voice recognition on Ask SANAD
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = navigator.language || "en-US";
-
-        recognition.onresult = (event: any) => {
-          let currentTranscript = "";
-          for (let i = 0; i < event.results.length; i++) {
-            currentTranscript += event.results[i][0].transcript;
-          }
-          transcriptRef.current = currentTranscript;
-          setTranscript(currentTranscript);
-        };
-
-        // The browser ends listening when the user stops talking: send what it heard.
-        recognition.onend = () => {
-          setIsRecording(false);
-          const heard = transcriptRef.current.trim();
-          transcriptRef.current = "";
-          if (heard) processSpokenQuery(heard);
-        };
-
-        recognition.onerror = (e: any) => {
-          console.warn("Speech recognition error:", e);
-          setVoiceError(voiceErrors[e.error] || "Voice input failed. Try again, or type instead.");
-          setIsRecording(false);
-        };
-
-        recognitionRef.current = recognition;
-      }
-    }
-  }, []);
-
-  // Handle user speech submission
-  const handleVoiceToggle = () => {
-    if (!recognitionRef.current) {
-      // Fallback for browsers without speech API
-      router.push("/chat");
-      return;
-    }
-
-    if (isRecording) {
-      // onend sends the transcript.
-      recognitionRef.current.stop();
-    } else {
-      setTranscript("");
-      setVoiceError("");
-      transcriptRef.current = "";
-      try {
-        recognitionRef.current.start();
-        setIsRecording(true);
-      } catch (err) {
-        setVoiceError("Voice input could not start. Try again, or type instead.");
-        setIsRecording(false);
-      }
-    }
-  };
-
   // The chat page sends ?q= to the assistant with full conversation context.
   const processSpokenQuery = (spokenText: string) => {
     setIsAiProcessing(true);
     router.push(`/chat?q=${encodeURIComponent(spokenText)}&send=1`);
+  };
+
+  const { isRecording, isTranscribing, toggle } = useVoiceInput({
+    onText: processSpokenQuery,
+    onError: setVoiceError,
+  });
+  const handleVoiceToggle = () => {
+    setVoiceError("");
+    toggle();
   };
 
   const examplePrompts = [
@@ -204,7 +138,6 @@ export default function DashboardPage() {
                 className="w-full h-full"
                 hue={150} // Emerald Green Theme matching SANAD
                 enableVoiceControl={false}
-                onVoiceDetected={(detected) => setIsRecording(detected)}
               />
             </div>
             
@@ -213,7 +146,7 @@ export default function DashboardPage() {
             </h3>
             <p className="text-xs text-[#7B8580] max-w-sm">
               {isRecording 
-                ? (transcript || "Speak clearly into your microphone...") 
+                ? "Speak in any language. I'll stop when you pause." 
                 : "Tap the mic and tell me what you need in your language"}
             </p>
           </div>
@@ -266,7 +199,7 @@ export default function DashboardPage() {
             </p>
           )}
 
-          {isAiProcessing && (
+          {(isAiProcessing || isTranscribing) && (
             <div className="flex items-center gap-2 text-xs font-bold text-[#153D32] bg-[#EBF7EE] border border-[#BBF7D0] px-4 py-2 rounded-full animate-pulse">
               <Loader2 className="w-4 h-4 animate-spin" />
               <span>SANAD AI is analyzing your speech...</span>

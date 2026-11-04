@@ -20,14 +20,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { useSituation } from "@/lib/context/SituationContext";
-
-const voiceErrors: Record<string, string> = {
-  "not-allowed": "Microphone access is blocked. Allow the mic in your browser settings, or type instead.",
-  "service-not-allowed": "Microphone access is blocked. Allow the mic in your browser settings, or type instead.",
-  "no-speech": "I didn't hear anything. Tap the mic and try again.",
-  "audio-capture": "No microphone was found. Check your mic, or type instead.",
-  "network": "Voice recognition needs an internet connection. Try again, or type instead.",
-};
+import { useVoiceInput } from "@/lib/hooks/use-voice-input";
 
 function ChatVoiceInner() {
   const router = useRouter();
@@ -88,14 +81,11 @@ function ChatVoiceInner() {
     }
   };
   const [inputText, setInputText] = useState(initialQuery);
-  const [isRecording, setIsRecording] = useState(false);
-  const [autoSendVoice, setAutoSendVoice] = useState(false);
   const [voiceError, setVoiceError] = useState("");
   const [isAiProcessing, setIsAiProcessing] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -106,54 +96,6 @@ function ChatVoiceInner() {
     }
   }, []);
 
-  // Web Speech API
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = navigator.language || "en-US";
-        recognition.onerror = (e: any) => {
-          setVoiceError(voiceErrors[e.error] || "Voice input failed. Try again, or type instead.");
-          setIsRecording(false);
-        };
-        recognition.onresult = (event: any) => {
-          let transcript = "";
-          for (let i = 0; i < event.results.length; i++) {
-            transcript += event.results[i][0].transcript;
-          }
-          setInputText(transcript);
-        };
-        recognition.onend = () => {
-          setIsRecording(false);
-          setAutoSendVoice(true);
-        };
-        recognitionRef.current = recognition;
-      }
-    }
-  }, []);
-
-  const toggleRecording = () => {
-    if (!recognitionRef.current) {
-      alert("Speech recognition is not supported in this browser. Please use text input or Chrome/Edge.");
-      return;
-    }
-    if (isRecording) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
-    } else {
-      setVoiceError("");
-      try {
-        recognitionRef.current.start();
-        setIsRecording(true);
-      } catch {
-        setVoiceError("Voice input could not start. Try again, or type instead.");
-      }
-    }
-  };
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -161,15 +103,6 @@ function ChatVoiceInner() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isAiProcessing]);
-
-  // When the user stops speaking, send what was transcribed.
-  useEffect(() => {
-    if (autoSendVoice) {
-      setAutoSendVoice(false);
-      if (inputText.trim()) handleSend();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoSendVoice]);
 
   // Voice/typed query handed over from the dashboard: send it once.
   const autoSent = useRef(false);
@@ -257,6 +190,16 @@ function ChatVoiceInner() {
     }
   };
 
+  // Spoken input is transcribed on the server and sent straight to the assistant.
+  const { isRecording, isTranscribing, toggle } = useVoiceInput({
+    onText: (text) => handleSend(text),
+    onError: setVoiceError,
+  });
+  const toggleRecording = () => {
+    setVoiceError("");
+    toggle();
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] max-w-5xl mx-auto px-4 sm:px-6 py-4 animate-in fade-in duration-300">
       
@@ -317,7 +260,15 @@ function ChatVoiceInner() {
           <div className="flex justify-end">
             <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-800">
               <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-              {inputText || "Listening..."}
+              Listening... SANAD stops when you pause.
+            </div>
+          </div>
+        )}
+        {isTranscribing && (
+          <div className="flex justify-end">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#EBF5EF] border border-[#BCE1CA] text-xs text-[#153D32]">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Transcribing your voice...
             </div>
           </div>
         )}
