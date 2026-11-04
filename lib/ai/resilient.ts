@@ -74,26 +74,30 @@ export function aiConfigured() {
 
 export async function generateJSON<T>(prompt: string, schema: z.ZodType<T>, image?: Image): Promise<Result<T>> {
   const errors: string[] = [];
-  const attempts: [string, () => Promise<unknown>][] = [];
-  const [first, ...rest] = geminiModels();
-  // Preferred model on each key, then Groq, then the remaining Gemini models.
-  const keys = geminiKeys();
-  // Gemini is slow under load: one Gemini try, then Groq, then the other keys and models.
-  if (keys[0]) attempts.push([`gemini:${first}:key1`, () => gemini(prompt, image, keys[0], first, FIRST_GEMINI_TIMEOUT_MS)]);
-  attempts.push(['groq', () => groq(prompt, image)]);
-  for (const [i, key] of keys.entries()) if (i > 0) attempts.push([`gemini:${first}:key${i + 1}`, () => gemini(prompt, image, key, first)]);
-  for (const model of rest) {
-    for (const [i, key] of geminiKeys().entries()) attempts.push([`gemini:${model}:key${i + 1}`, () => gemini(prompt, image, key, model)]);
-  }
-
-  for (const [name, run] of attempts) {
-    try {
-      const parsed = schema.safeParse(await run());
-      if (parsed.success) return { data: parsed.data, provider: name };
-      errors.push(`${name}: invalid shape`);
-    } catch (e) {
-      errors.push(`${name}: ${(e as Error).message}`);
+  // Gemini first on every key and model (fast failures cost little), within a time budget
+  // that always leaves room for the Groq fallback inside Vercel's 60s limit.
+  const deadline = Date.now() + 52000;
+  const GROQ_RESERVE_MS = 7000;
+  for (const model of geminiModels()) {
+    for (const [i, key] of geminiKeys().entries()) {
+      const budget = deadline - Date.now() - GROQ_RESERVE_MS;
+      if (budget < 3000) break;
+      const name = `gemini:${model}:key${i + 1}`;
+      try {
+        const parsed = schema.safeParse(await gemini(prompt, image, key, model, Math.min(budget, FIRST_GEMINI_TIMEOUT_MS)));
+        if (parsed.success) return { data: parsed.data, provider: name };
+        errors.push(`${name}: invalid shape`);
+      } catch (e) {
+        errors.push(`${name}: ${(e as Error).message}`);
+      }
     }
+  }
+  try {
+    const parsed = schema.safeParse(await groq(prompt, image));
+    if (parsed.success) return { data: parsed.data, provider: 'groq' };
+    errors.push('groq: invalid shape');
+  } catch (e) {
+    errors.push(`groq: ${(e as Error).message}`);
   }
   throw new Error(`All AI providers failed. ${errors.join(' | ')}`);
 }
